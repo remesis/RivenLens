@@ -5,13 +5,21 @@
 $ErrorActionPreference = 'Stop'
 $pending = Join-Path $PSScriptRoot 'update-pending.json'
 if (Test-Path -LiteralPath $pending) {
+    $dataDirectoryJson = py -3.13 -B (Join-Path $PSScriptRoot 'instance.py') --data-directory
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($dataDirectoryJson)) {
+        throw 'The RivenLens data folder could not be located. No files were changed.'
+    }
+    $dataDirectory = $dataDirectoryJson | ConvertFrom-Json
+    if ($dataDirectory -isnot [string] -or -not [IO.Path]::IsPathRooted($dataDirectory)) {
+        throw 'The RivenLens data folder is invalid. No files were changed.'
+    }
+    $updatesDirectory = [IO.Path]::GetFullPath((Join-Path $dataDirectory 'updates'))
     try {
         $updateJob = (Get-Content -LiteralPath $pending -Raw | ConvertFrom-Json).job
         if ([string]::IsNullOrWhiteSpace($updateJob)) { throw 'Missing recovery folder.' }
     } catch {
-        throw "The pending update marker is damaged. No files were changed. Keep the recovery folders in: $env:LOCALAPPDATA\Arbitrations\RivenLens Native\updates"
+        throw "The pending update marker is damaged. No files were changed. Keep the recovery folders in: $updatesDirectory"
     }
-    $updatesDirectory = [IO.Path]::GetFullPath((Join-Path $env:LOCALAPPDATA 'Arbitrations\RivenLens Native\updates'))
     $resolvedJob = [IO.Path]::GetFullPath($updateJob)
     if ((Split-Path -Parent $resolvedJob) -ne $updatesDirectory -or (Split-Path -Leaf $resolvedJob) -notlike 'update-*') {
         throw 'The update recovery path is invalid. No files were changed.'

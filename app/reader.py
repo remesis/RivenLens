@@ -13,7 +13,7 @@ from PIL import Image, ImageChops, ImageOps
 
 from parser import CATALOG, NAME_KEYS, FOOTER, clean_text, fingerprint, parse_cards
 from rank_reader import detect_rank
-from ocr_budget import allow_retry
+from ocr_budget import allow_retry, primary_read, reserve_verifications
 from layout import (
     action_line,
     card_region,
@@ -411,7 +411,7 @@ async def refine_card(engine, image, card, force=False):
     engine._refine_schedule = schedule
     for offset in range(start, len(order)):
         index = order[offset]
-        if not allow_retry(engine):
+        if not allow_retry(engine, verification=location):
             # Keep exact-pixel retries separate from recent full-read agreement.
             # Changed pixels retain a retry hint, never a substitute stat line.
             if cache_key not in pending and len(pending) >= 12:
@@ -586,6 +586,9 @@ async def read_frame(
     engine._frame_region = None
     engine._scene_lines = None
     engine._frame_budget = budget
+    # Keep one of the bounded retry passes for each card, even when a slow
+    # discovery/caption call exhausts the time allowance before refinement.
+    reserve_verifications(engine, 2)
     engine._validate_stats = validate_stats
     metadata_image = rank_image if rank_image is not None else image
     hint = getattr(engine, "_session_variant_hint", None)
@@ -775,8 +778,9 @@ async def read_cards(
             Image.Resampling.LANCZOS,
         )
         actual_scale = (area.width / (box[2] - box[0]), area.height / (box[3] - box[1]))
-        lines = await engine.read(area)
+        lines = await primary_read(engine, area)
         result = parse_cards(lines, area.width, area.height)
+        reserve_verifications(engine, len(result["cards"]))
         result["mode"] = observe_mode(engine, map_lines(lines, box[:2], actual_scale))
         if result["mode"] == "unknown":
             result["mode"] = await read_action_mode(engine, image)
@@ -860,11 +864,16 @@ async def read_cards(
         if not allow_retry(engine):
             return focused
     engine._next_scene_search = time.monotonic() + 0.75
-    lines = await engine.read(image)
+    lines = (
+        await engine.read(image)
+        if focused is not None
+        else await primary_read(engine, image)
+    )
     engine._scene_lines = lines
     if marker := fits_marker(lines):
         remember_marker(engine, marker)
     result = parse_cards(lines, image.width, image.height)
+    reserve_verifications(engine, len(result["cards"]))
     result["mode"] = observe_mode(engine, lines)
     if result["mode"] == "unknown":
         result["mode"] = (
@@ -924,6 +933,7 @@ async def read_cards(
             engine._next_tile_search = time.monotonic() + 2
         tiled = parse_cards(tiles, image.width, image.height)
         if tiled["cards"]:
+            reserve_verifications(engine, len(tiled["cards"]))
             tiled = await refine_result(
                 engine, image, tiled, recover=True, on_verified=on_verified
             )
@@ -966,7 +976,7 @@ async def read_action_mode(engine, image):
     if cached and cached[0] == identity:
         engine._frame_action = cached[2]
         return cached[1]
-    lines = await engine.read(ImageOps.autocontrast(area.convert("L")))
+    lines = await primary_read(engine, ImageOps.autocontrast(area.convert("L")))
     positioned = (
         map_lines(lines, box[:2]) if all("x" in line for line in lines) else lines
     )

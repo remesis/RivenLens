@@ -4,10 +4,47 @@
 
 """An OS-released file lease shared only by RivenLens and its installer."""
 
+import ctypes
 import errno
 import hashlib
-import os
 from pathlib import Path
+from uuid import UUID
+
+
+def local_appdata():
+    """Use Windows' current known folder, including redirected user profiles."""
+    shell = ctypes.WinDLL("shell32")
+    ole = ctypes.WinDLL("ole32")
+    shell.SHGetKnownFolderPath.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_uint32,
+        ctypes.c_void_p,
+        ctypes.POINTER(ctypes.c_void_p),
+    ]
+    shell.SHGetKnownFolderPath.restype = ctypes.c_long
+    ole.CoTaskMemFree.argtypes = [ctypes.c_void_p]
+    ole.CoTaskMemFree.restype = None
+    folder = (ctypes.c_ubyte * 16).from_buffer_copy(
+        UUID("f1b32785-6fba-4fcf-9d55-7b8e7f157091").bytes_le
+    )
+    pointer = ctypes.c_void_p()
+    try:
+        result = shell.SHGetKnownFolderPath(
+            ctypes.byref(folder), 0, None, ctypes.byref(pointer)
+        )
+        if result < 0 or not pointer.value:
+            raise OSError("Windows could not locate the local application data folder.")
+        path = Path(ctypes.wstring_at(pointer))
+        if not path.is_absolute():
+            raise OSError("Windows returned an invalid application data folder.")
+        return path
+    finally:
+        ole.CoTaskMemFree(pointer)
+
+
+def data_directory():
+    """The same location for application settings, leases and update recovery."""
+    return local_appdata() / "Arbitrations" / "RivenLens Native"
 
 
 class InstallationLease:
@@ -15,11 +52,8 @@ class InstallationLease:
         identity = hashlib.sha256(
             str(Path(root).resolve()).casefold().encode()
         ).hexdigest()[:24]
-        base = Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData/Local"))
         directory = (
-            Path(directory)
-            if directory
-            else base / "Arbitrations/RivenLens Native/locks"
+            Path(directory) if directory is not None else data_directory() / "locks"
         )
         self.path = directory / (identity + ".lease")
         self.stream = None
@@ -56,3 +90,16 @@ class InstallationLease:
                 msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
             finally:
                 stream.close()
+
+
+if __name__ == "__main__":
+    import argparse
+    import json
+
+    arguments = argparse.ArgumentParser(
+        description="Resolve RivenLens' local data folder."
+    )
+    arguments.add_argument("--data-directory", action="store_true", required=True)
+    arguments.parse_args()
+    # ASCII JSON survives PowerShell's legacy console encodings for Unicode paths.
+    print(json.dumps(str(data_directory())))

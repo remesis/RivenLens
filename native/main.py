@@ -12,13 +12,13 @@ from pathlib import Path
 NATIVE = Path(__file__).resolve().parent
 sys.path.insert(0, str(NATIVE.parent / "app"))
 
-from PySide6.QtCore import QStandardPaths, QTimer  # noqa: E402
+from PySide6.QtCore import QTimer  # noqa: E402
 from PySide6.QtGui import QColor, QFont, QIcon, QPalette  # noqa: E402
 from PySide6.QtWidgets import QApplication, QMessageBox  # noqa: E402
 
 from appearance import theme_for  # noqa: E402
 from desktop import ICON, set_taskbar_identity  # noqa: E402
-from instance import InstallationLease  # noqa: E402
+from instance import InstallationLease, data_directory  # noqa: E402
 from preferences import Preferences  # noqa: E402
 from releases import ReleaseConfig  # noqa: E402
 from updates import StartupUpdates  # noqa: E402
@@ -53,11 +53,7 @@ def main():
         palette.setColor(role, QColor(color))
     app.setPalette(palette)
     app.setStyleSheet(theme_for())
-    directory = Path(
-        QStandardPaths.writableLocation(
-            QStandardPaths.StandardLocation.AppLocalDataLocation
-        )
-    )
+    directory = data_directory()
     instance = InstallationLease(NATIVE.parent, directory / "locks")
     if not instance.acquire():
         QMessageBox.information(

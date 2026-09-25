@@ -17,7 +17,14 @@ servers.
 RivenLens uses **local Optical Character Recognition (OCR)** to read the text
 already on your screen. It does not read game memory, obtain account tokens,
 interact with the game or contact Warframe's servers. You make every in-game
-choice.
+choice. However, it's important to use your own judgement and use it at your own risk.
+
+According to section 2.f of the Warframe EULA, you agree that you will not under any
+circumstance use unauthorized third‑party tools designed to modify the game experience.
+You should read the EULA and the code yourself and decide whether you want to use this tool.
+
+Digital Extremes PSA about third‑party software:
+https://forums.warframe.com/topic/1320042-third-party-software-and-you/
 
 ## Getting started
 
