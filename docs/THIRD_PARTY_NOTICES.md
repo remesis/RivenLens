@@ -1,6 +1,6 @@
 # Third-party notices and credits
 
-The GPL-3.0-only grant in [LICENSE.txt](LICENSE.txt) covers RivenLens' original
+The GPL-3.0-only grant in [LICENSE](../LICENSE) covers RivenLens' original
 application code and documentation. Dependencies remain under their own licenses.
 It does not grant rights to third-party trademarks or content.
 

@@ -1,6 +1,6 @@
 # Copyright (C) 2026 remesis and RivenLens contributors.
 # SPDX-License-Identifier: GPL-3.0-only
-# See docs/LICENSE.txt for the license and warranty disclaimer.
+# See LICENSE in the project root for the license and warranty disclaimer.
 
 """Local catalog expansion and conservative grading-variant resolution."""
 

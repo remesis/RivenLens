@@ -17,7 +17,7 @@ servers.
 RivenLens uses **local Optical Character Recognition (OCR)** to read the text
 already on your screen. It does not read game memory, obtain account tokens,
 interact with the game or contact Warframe's servers. You make every in-game
-choice. There is no browser interface or local web server.
+choice.
 
 ## Getting started
 
@@ -65,7 +65,7 @@ Only newer published releases prompt for an update. [Release configuration](docs
 Copyright (C) 2026 remesis and RivenLens contributors.
 
 RivenLens is free software under the **GNU General Public License version 3
-only** ([GPL-3.0-only](docs/LICENSE.txt)). You may use, modify and redistribute
+only** ([GPL-3.0-only](LICENSE)). You may use, modify and redistribute
 it under those terms. It comes **without warranty**. Distributed modified
 versions must remain GPL-licensed and provide corresponding source code.
 [Third-party notices and credits](docs/THIRD_PARTY_NOTICES.md).

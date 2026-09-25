@@ -1,6 +1,6 @@
 # Copyright (C) 2026 remesis and RivenLens contributors.
 # SPDX-License-Identifier: GPL-3.0-only
-# See docs/LICENSE.txt for the license and warranty disclaimer.
+# See LICENSE in the project root for the license and warranty disclaimer.
 
 """Validated release extraction and reversible replacement of application files."""
 
@@ -16,7 +16,7 @@ from pathlib import Path, PurePosixPath
 
 from releases import ReleaseConfig, version_number
 
-ROOT_FILES = frozenset({"README.md", "requirements.txt", "Start Riven Lens.cmd"})
+ROOT_FILES = frozenset({"README.md", "LICENSE", "requirements.txt", "Start Riven Lens.cmd"})
 SOURCE_DIRS = frozenset({"app", "native", "docs"})
 LOCAL_NAMES = frozenset({".venv", ".runtimes", "__pycache__", ".git", ".ruff_cache"})
 STATE_FILES = frozenset({"native/runtime.json", "native/update-pending.json"})

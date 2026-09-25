@@ -1,6 +1,6 @@
 # Copyright (C) 2026 remesis and RivenLens contributors.
 # SPDX-License-Identifier: GPL-3.0-only
-# See docs/LICENSE.txt for the license and warranty disclaimer.
+# See LICENSE in the project root for the license and warranty disclaimer.
 
 """Bounded asynchronous HTTPS transfers, with atomic ZIP downloads."""
 
@@ -70,7 +70,7 @@ class GithubTransfer(QObject):
         request.setRawHeader(
             b"Accept",
             b"application/octet-stream"
-            if self.download
+            if self.download and QUrl(url).host() != "api.github.com"
             else b"application/vnd.github+json",
         )
         request.setTransferTimeout(15_000 if self.download else 10_000)
@@ -115,7 +115,9 @@ class GithubTransfer(QObject):
         status = reply.attribute(QNetworkRequest.Attribute.HttpStatusCodeAttribute)
         target = reply.attribute(QNetworkRequest.Attribute.RedirectionTargetAttribute)
         if status in (301, 302, 303, 307, 308) and target:
-            url = reply.url().resolved(target).toString()
+            url = reply.url().resolved(target).toString(
+                QUrl.ComponentFormattingOption.FullyEncoded
+            )
             self.release_reply()
             self.redirects += 1
             if self.redirects > 5:
