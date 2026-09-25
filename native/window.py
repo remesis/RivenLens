@@ -5,7 +5,7 @@
 """RivenLens desktop window. No embedded browser, HTTP server or web socket."""
 
 from PySide6.QtCore import QByteArray, Qt, QTimer, QUrl
-from PySide6.QtGui import QAction, QDesktopServices, QIcon, QPixmap
+from PySide6.QtGui import QAction, QDesktopServices, QIcon, QPixmap, QRegion
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QMenu,
@@ -56,6 +56,8 @@ class MainWindow(QWidget):
         self._closing = False
         self._settings = None
         self._ui_scale = None
+        self._position_pending = True
+        self._position_ready = False
         self._resize_timer = QTimer(self)
         self._resize_timer.setSingleShot(True)
         self._resize_timer.setInterval(35)
@@ -217,6 +219,35 @@ class MainWindow(QWidget):
         if self._initial_size_pending:
             self._initial_size_pending = False
             QTimer.singleShot(0, self.set_initial_size)
+        if self._position_pending:
+            self._position_pending = False
+            QTimer.singleShot(0, self.restore_position)
+
+    def restore_position(self):
+        if self._closing:
+            return
+        # Apply frame coordinates after Windows has created the native borders.
+        # Qt's geometry still restores the saved size and maximized state.
+        if not (self.isMinimized() or self.isMaximized() or self.isFullScreen()):
+            position = self.state["windowPosition"]
+            if position:
+                self.move(*position)
+            self.keep_on_screen()
+        self._position_ready = True
+        self.remember_position()
+
+    def remember_position(self):
+        if (
+            self._position_ready
+            and self.isVisible()
+            and not (self.isMinimized() or self.isMaximized() or self.isFullScreen())
+        ):
+            self.state["windowPosition"] = [self.x(), self.y()]
+
+    def moveEvent(self, event):
+        super().moveEvent(event)
+        if hasattr(self, "_position_ready"):
+            self.remember_position()
 
     def set_initial_size(self):
         # Keep the initial outer size consistent, including the native title bar.
@@ -296,10 +327,23 @@ class MainWindow(QWidget):
 
         screens = QApplication.screens()
         geometry = self.frameGeometry()
-        screen = next(
-            (s for s in screens if s.availableGeometry().intersects(geometry)),
-            QApplication.primaryScreen(),
+        visible = QRegion()
+        for screen in screens:
+            visible = visible.united(QRegion(screen.availableGeometry()))
+        if QRegion(geometry).subtracted(visible).isEmpty():
+            return
+
+        def overlap(screen):
+            rect = screen.availableGeometry().intersected(geometry)
+            return max(0, rect.width()) * max(0, rect.height())
+
+        screen = max(
+            (screen for screen in screens if overlap(screen)),
+            key=overlap,
+            default=QApplication.primaryScreen(),
         )
+        if screen is None:
+            return
         area = screen.availableGeometry()
         border_width = max(0, geometry.width() - self.width())
         border_height = max(0, geometry.height() - self.height())
@@ -475,18 +519,26 @@ class MainWindow(QWidget):
 
     def set_topmost(self, enabled):
         self.state["alwaysOnTop"] = enabled
+        self.persist()
+        if bool(self.windowFlags() & Qt.WindowType.WindowStaysOnTopHint) == enabled:
+            return
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, enabled)
         self.show()
-        self.persist()
+        # Changing the owner's native flags must not take focus from Settings.
+        if self._settings is not None:
+            self._settings.raise_()
+            self._settings.activateWindow()
 
     def open_settings(self):
-        if self._settings:
-            self._settings.show()
+        if self._settings is not None or self._closing:
             return
-        self._settings = SettingsDialog(self)
-        self._settings.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
-        self._settings.finished.connect(lambda *_: setattr(self, "_settings", None))
-        self._settings.show()
+        dialog = SettingsDialog(self)
+        dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        self._settings = dialog
+        try:
+            dialog.exec()
+        finally:
+            self._settings = None
 
     def try_close(self):
         if (
@@ -499,6 +551,8 @@ class MainWindow(QWidget):
     def closeEvent(self, event):
         if not self._closing:
             self._closing = True
+            if self._settings is not None:
+                self._settings.reject()
             if hasattr(self, "updates"):
                 self.updates.shutdown()
             self.running = False
@@ -507,6 +561,7 @@ class MainWindow(QWidget):
             self._save_timer.stop()
             self._resize_timer.stop()
             self._balance_timer.stop()
+            self.remember_position()
             self.state["geometry"] = bytes(self.saveGeometry().toBase64()).decode(
                 "ascii"
             )

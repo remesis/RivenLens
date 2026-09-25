@@ -2,6 +2,8 @@
 
 A small desktop companion for grading Rivens as you roll.
 
+![RivenLens example](native/data/example-image.png)
+
 ## Why use RivenLens instead of AlecaFrame or WFHelper?
 
 If you just want Riven grades without giving a tool access to the game or your

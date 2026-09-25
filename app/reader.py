@@ -163,12 +163,25 @@ async def variant_hint(engine, image, *, discover=True):
         lines = await engine.read(sample)
         attempted = True
         hint = caption_variant(lines)
-        label_seen = label_seen or fits_marker(lines) is not None
+        located = fits_marker(lines)
+        label_seen = label_seen or located is not None
         attempt += 1
         engine._variant_hint_cache = (identity, hint, attempt, label_seen)
         if hint is not None:
             engine._variant_search_phase = 0
             return hint
+        if located and all(key in located for key in ("x", "y", "w", "h")):
+            sx, sy = sample.width / area.width, sample.height / area.height
+            # The quick strips can contain the heading while clipping the name.
+            # Locate that heading in source pixels before treating the panel as
+            # found. Only the first strip has this direct coordinate mapping.
+            if 0 <= located["y"] and (
+                located["y"] + located["h"] <= strips[0].height * sy
+            ):
+                mapped = map_lines([located], boxes[0][:2], (sx, sy))[0]
+                # Finish any affordable treatments of this crop first. If they
+                # fail, the next scan uses the heading-relative panel instead.
+                remember_marker(engine, mapped)
     if attempt == 3 and attempted:
         engine._next_variant_retry = time.monotonic() + 1
     if label_seen:

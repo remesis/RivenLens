@@ -44,6 +44,7 @@ DEFAULTS = {
         "region": [0, 0, 100, 100],
     },
     "geometry": "",
+    "windowPosition": [],
     "windowLayoutVersion": 0,
 }
 
@@ -97,6 +98,11 @@ def sanitize(saved):
         s for s in state["spliceWatch"] if isinstance(s, str) and s in SPLICE_IDS
     ]
     state["capture"] = capture_settings(state["capture"])
+    position = state["windowPosition"]
+    if len(position) != 2 or any(
+        type(value) is not int or not -(2**30) <= value < 2**30 for value in position
+    ):
+        state["windowPosition"] = []
     for audio in (state, state["ocrWarningAudio"]):
         volume = audio.get("soundVolume", 50)
         audio["soundVolume"] = (

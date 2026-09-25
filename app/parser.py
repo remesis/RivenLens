@@ -197,12 +197,56 @@ def identify_trait(text):
     return next(iter(candidates)) if len(candidates) == 1 else None
 
 
+def join_title_lines(first, following):
+    left = min(first["x"], following["x"])
+    right = max(first["x"] + first["w"], following["x"] + following["w"])
+    text = clean_text(first["text"])
+    separator = "" if text.endswith("-") else " "
+    return {
+        **first,
+        "text": text + separator + clean_text(following["text"]),
+        "fontHeight": first.get("fontHeight", first["h"]),
+        "x": left,
+        "w": right - left,
+        "h": following["y"] + following["h"] - first["y"],
+    }
+
+
+def complete_title(header, lines):
+    """Join a visibly wrapped suffix, without guessing from traits or past rolls."""
+    anchor = header
+    while clean_text(header["text"]).endswith("-"):
+        font = header.get("fontHeight", header["h"])
+        center = header["x"] + header["w"] / 2
+        nearby = [
+            line
+            for line in lines
+            if -font * 0.25 < line["y"] - header["y"] - header["h"] < font * 1.1
+            and font * 0.55 <= line["h"] <= font * 1.6
+            and abs(line["x"] + line["w"] / 2 - center)
+            < max(header["w"], line["w"]) * 0.35
+        ]
+        if not nearby:
+            break
+        following = min(nearby, key=lambda line: line["y"])
+        text = clean_text(following["text"])
+        if not re.fullmatch(r"[A-Za-z][A-Za-z-]*", text) or identify_trait(text):
+            break
+        joined = join_title_lines(header, {**following, "text": text})
+        if not weapon_title(joined["text"]):
+            break
+        header = joined
+    # A continuation completes the display name, not the title's font size.
+    # Keep the existing anchor so stat crops and card positions do not expand.
+    return {**anchor, "text": header["text"]}
+
+
 def card_headers(lines):
     headers = []
     for line in lines:
         name = weapon_title(line["text"])
         if name:
-            headers.append((line, name))
+            headers.append((complete_title(line, lines), name))
             continue
         if clean_text(line["text"]).casefold() not in NAME_PREFIXES:
             continue
@@ -220,18 +264,10 @@ def card_headers(lines):
             if not nearby:
                 break
             following = min(nearby, key=lambda other: other["y"])
-            right = max(joined["x"] + joined["w"], following["x"] + following["w"])
-            joined = {
-                **joined,
-                "text": joined["text"] + " " + following["text"],
-                "fontHeight": line["h"],
-                "x": min(joined["x"], following["x"]),
-                "h": following["y"] + following["h"] - joined["y"],
-            }
-            joined["w"] = right - joined["x"]
+            joined = join_title_lines(joined, following)
             name = weapon_title(joined["text"])
             if name:
-                headers.append((joined, name))
+                headers.append((complete_title(joined, lines), name))
                 break
             last = following
     return headers

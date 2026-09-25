@@ -356,10 +356,12 @@ class RollCard(QFrame):
         empty.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.stack.addWidget(empty)
         details, content = box(spacing=2)
-        self.name = label("", "cardName")
-        self.title = label("", "cardTitle")
+        self.name = label("", "cardName", wrap=True)
+        self.name.setMinimumWidth(0)
+        self.name.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred
+        )
         content.addWidget(self.name)
-        content.addWidget(self.title)
         self.rows = []
         for _ in range(4):
             row, h = box(False, spacing=4)
@@ -418,9 +420,8 @@ class RollCard(QFrame):
         if preferences["rankMode"] == "manual":
             rank_text += " MANUAL"
         self.meta.setText(f"{self.caption} · {card['format']} · {rank_text}")
-        self.name.setText(variant["name"] if variant else card["weapon"])
+        self.name.setText(card.get("title") or card["weapon"])
         self.name.setToolTip(self.name.text())
-        self.title.setText(card.get("title", ""))
         for index, (row, text, grade_label) in enumerate(self.rows):
             row.setVisible(index < len(card["stats"]))
             if index >= len(card["stats"]):
