@@ -1,0 +1,15 @@
+# Generated Python files stay local.
+__pycache__/
+*.py[cod]
+.ruff_cache/
+
+# Local captures, development helpers and credentials do not belong in releases.
+test_*
+bench_*
+inspect_*
+qa-*
+*.log
+.env
+.env.*
+*.pem
+*.key

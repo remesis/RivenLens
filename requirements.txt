@@ -1,0 +1,11 @@
+mss==10.2.0
+dxcam==0.3.0
+Pillow==12.3.0
+winrt-runtime==3.2.1
+winrt-Windows.Foundation==3.2.1
+winrt-Windows.Foundation.Collections==3.2.1
+winrt-Windows.Media.Ocr==3.2.1
+winrt-Windows.Graphics.Imaging==3.2.1
+winrt-Windows.Storage.Streams==3.2.1
+winrt-Windows.Globalization==3.2.1
+PySide6==6.11.2

@@ -1,0 +1,2746 @@
+{
+  "splices": [
+    {
+      "id": "blast",
+      "name": "Blast",
+      "group": "all",
+      "recipe": "Cold + Heat"
+    },
+    {
+      "id": "corrosive",
+      "name": "Corrosive",
+      "group": "all",
+      "recipe": "Electricity + Toxin"
+    },
+    {
+      "id": "gas",
+      "name": "Gas",
+      "group": "all",
+      "recipe": "Heat + Toxin"
+    },
+    {
+      "id": "magnetic",
+      "name": "Magnetic",
+      "group": "all",
+      "recipe": "Cold + Electricity"
+    },
+    {
+      "id": "radiation",
+      "name": "Radiation",
+      "group": "all",
+      "recipe": "Heat + Electricity"
+    },
+    {
+      "id": "viral",
+      "name": "Viral",
+      "group": "all",
+      "recipe": "Cold + Toxin"
+    },
+    {
+      "id": "damage-to-orokin",
+      "name": "Damage to Orokin",
+      "group": "all",
+      "recipe": "Damage to Corpus + Damage to Grineer"
+    },
+    {
+      "id": "damage-to-techrot",
+      "name": "Damage to Techrot",
+      "group": "all",
+      "recipe": "Damage to Corpus + Damage to Infested"
+    },
+    {
+      "id": "damage-to-scaldra",
+      "name": "Damage to Scaldra",
+      "group": "all",
+      "recipe": "Damage to Infested + Damage to Grineer"
+    },
+    {
+      "id": "weakpoint-damage",
+      "name": "Weakpoint Damage",
+      "group": "ranged",
+      "recipe": "Damage + Zoom; or Damage + Multishot"
+    },
+    {
+      "id": "weakpoint-critical-chance",
+      "name": "Weakpoint Critical Chance",
+      "group": "ranged",
+      "recipe": "Critical Chance + Zoom; or Critical Chance + Multishot"
+    },
+    {
+      "id": "ammo-efficiency",
+      "name": "Ammo Efficiency",
+      "group": "ranged",
+      "recipe": "Magazine Capacity + Reload Speed; or Weapon Recoil + Ammo Maximum"
+    },
+    {
+      "id": "magazine-reload-while-holstered",
+      "name": "Magazine Reload While Holstered",
+      "group": "ranged",
+      "recipe": "Ammo Maximum + Reload Speed; or Ammo Maximum + Magazine Capacity"
+    },
+    {
+      "id": "status-damage",
+      "name": "Status Damage",
+      "group": "all",
+      "recipe": "Damage + Status Chance"
+    },
+    {
+      "id": "heavy-attack-damage",
+      "name": "Heavy Attack Damage",
+      "group": "melee",
+      "recipe": "Heavy Attack Efficiency + Additional Combo Count"
+    },
+    {
+      "id": "heavy-attack-windup-speed",
+      "name": "Heavy Attack Windup Speed",
+      "group": "melee",
+      "recipe": "Heavy Attack Efficiency + Combo Duration"
+    },
+    {
+      "id": "parry-angle",
+      "name": "Parry Angle",
+      "group": "melee",
+      "recipe": "Attack Speed + Range"
+    },
+    {
+      "id": "slam-damage",
+      "name": "Slam Damage",
+      "group": "melee",
+      "recipe": "Damage + Attack Speed"
+    }
+  ],
+  "recipes": {
+    "Archgun": {
+      "blast": [
+        [
+          "cold",
+          "heat"
+        ]
+      ],
+      "corrosive": [
+        [
+          "electricity",
+          "toxin"
+        ]
+      ],
+      "gas": [
+        [
+          "heat",
+          "toxin"
+        ]
+      ],
+      "magnetic": [
+        [
+          "cold",
+          "electricity"
+        ]
+      ],
+      "radiation": [
+        [
+          "heat",
+          "electricity"
+        ]
+      ],
+      "viral": [
+        [
+          "cold",
+          "toxin"
+        ]
+      ],
+      "damage-to-orokin": [
+        [
+          "damage-to-corpus",
+          "damage-to-grineer"
+        ]
+      ],
+      "damage-to-techrot": [
+        [
+          "damage-to-corpus",
+          "damage-to-infested"
+        ]
+      ],
+      "damage-to-scaldra": [
+        [
+          "damage-to-infested",
+          "damage-to-grineer"
+        ]
+      ],
+      "weakpoint-damage": [
+        [
+          "damage",
+          "zoom"
+        ],
+        [
+          "damage",
+          "multishot"
+        ]
+      ],
+      "weakpoint-critical-chance": [
+        [
+          "critical-chance",
+          "zoom"
+        ],
+        [
+          "critical-chance",
+          "multishot"
+        ]
+      ],
+      "ammo-efficiency": [
+        [
+          "magazine-capacity",
+          "reload-speed"
+        ],
+        [
+          "weapon-recoil",
+          "ammo-maximum"
+        ]
+      ],
+      "magazine-reload-while-holstered": [
+        [
+          "ammo-maximum",
+          "reload-speed"
+        ],
+        [
+          "ammo-maximum",
+          "magazine-capacity"
+        ]
+      ],
+      "status-damage": [
+        [
+          "damage",
+          "status-chance"
+        ]
+      ],
+      "heavy-attack-damage": [],
+      "heavy-attack-windup-speed": [],
+      "parry-angle": [],
+      "slam-damage": []
+    },
+    "Kitgun": {
+      "blast": [
+        [
+          "cold",
+          "heat"
+        ]
+      ],
+      "corrosive": [
+        [
+          "electricity",
+          "toxin"
+        ]
+      ],
+      "gas": [
+        [
+          "heat",
+          "toxin"
+        ]
+      ],
+      "magnetic": [
+        [
+          "cold",
+          "electricity"
+        ]
+      ],
+      "radiation": [
+        [
+          "heat",
+          "electricity"
+        ]
+      ],
+      "viral": [
+        [
+          "cold",
+          "toxin"
+        ]
+      ],
+      "damage-to-orokin": [
+        [
+          "damage-to-corpus",
+          "damage-to-grineer"
+        ]
+      ],
+      "damage-to-techrot": [
+        [
+          "damage-to-corpus",
+          "damage-to-infested"
+        ]
+      ],
+      "damage-to-scaldra": [
+        [
+          "damage-to-infested",
+          "damage-to-grineer"
+        ]
+      ],
+      "weakpoint-damage": [
+        [
+          "damage",
+          "zoom"
+        ],
+        [
+          "damage",
+          "multishot"
+        ]
+      ],
+      "weakpoint-critical-chance": [
+        [
+          "critical-chance",
+          "zoom"
+        ],
+        [
+          "critical-chance",
+          "multishot"
+        ]
+      ],
+      "ammo-efficiency": [
+        [
+          "magazine-capacity",
+          "reload-speed"
+        ],
+        [
+          "weapon-recoil",
+          "ammo-maximum"
+        ]
+      ],
+      "magazine-reload-while-holstered": [
+        [
+          "ammo-maximum",
+          "reload-speed"
+        ],
+        [
+          "ammo-maximum",
+          "magazine-capacity"
+        ]
+      ],
+      "status-damage": [
+        [
+          "damage",
+          "status-chance"
+        ]
+      ],
+      "heavy-attack-damage": [],
+      "heavy-attack-windup-speed": [],
+      "parry-angle": [],
+      "slam-damage": []
+    },
+    "Melee": {
+      "blast": [
+        [
+          "cold",
+          "heat"
+        ]
+      ],
+      "corrosive": [
+        [
+          "electricity",
+          "toxin"
+        ]
+      ],
+      "gas": [
+        [
+          "heat",
+          "toxin"
+        ]
+      ],
+      "magnetic": [
+        [
+          "cold",
+          "electricity"
+        ]
+      ],
+      "radiation": [
+        [
+          "heat",
+          "electricity"
+        ]
+      ],
+      "viral": [
+        [
+          "cold",
+          "toxin"
+        ]
+      ],
+      "damage-to-orokin": [
+        [
+          "damage-to-corpus",
+          "damage-to-grineer"
+        ]
+      ],
+      "damage-to-techrot": [
+        [
+          "damage-to-corpus",
+          "damage-to-infested"
+        ]
+      ],
+      "damage-to-scaldra": [
+        [
+          "damage-to-infested",
+          "damage-to-grineer"
+        ]
+      ],
+      "weakpoint-damage": [],
+      "weakpoint-critical-chance": [],
+      "ammo-efficiency": [],
+      "magazine-reload-while-holstered": [],
+      "status-damage": [
+        [
+          "melee-damage",
+          "status-chance"
+        ]
+      ],
+      "heavy-attack-damage": [
+        [
+          "heavy-attack-efficiency",
+          "additional-combo-count-chance"
+        ]
+      ],
+      "heavy-attack-windup-speed": [
+        [
+          "heavy-attack-efficiency",
+          "combo-duration"
+        ]
+      ],
+      "parry-angle": [
+        [
+          "fire-rate-attack-speed",
+          "range"
+        ]
+      ],
+      "slam-damage": [
+        [
+          "melee-damage",
+          "fire-rate-attack-speed"
+        ]
+      ]
+    },
+    "Pistol": {
+      "blast": [
+        [
+          "cold",
+          "heat"
+        ]
+      ],
+      "corrosive": [
+        [
+          "electricity",
+          "toxin"
+        ]
+      ],
+      "gas": [
+        [
+          "heat",
+          "toxin"
+        ]
+      ],
+      "magnetic": [
+        [
+          "cold",
+          "electricity"
+        ]
+      ],
+      "radiation": [
+        [
+          "heat",
+          "electricity"
+        ]
+      ],
+      "viral": [
+        [
+          "cold",
+          "toxin"
+        ]
+      ],
+      "damage-to-orokin": [
+        [
+          "damage-to-corpus",
+          "damage-to-grineer"
+        ]
+      ],
+      "damage-to-techrot": [
+        [
+          "damage-to-corpus",
+          "damage-to-infested"
+        ]
+      ],
+      "damage-to-scaldra": [
+        [
+          "damage-to-infested",
+          "damage-to-grineer"
+        ]
+      ],
+      "weakpoint-damage": [
+        [
+          "damage",
+          "zoom"
+        ],
+        [
+          "damage",
+          "multishot"
+        ]
+      ],
+      "weakpoint-critical-chance": [
+        [
+          "critical-chance",
+          "zoom"
+        ],
+        [
+          "critical-chance",
+          "multishot"
+        ]
+      ],
+      "ammo-efficiency": [
+        [
+          "magazine-capacity",
+          "reload-speed"
+        ],
+        [
+          "weapon-recoil",
+          "ammo-maximum"
+        ]
+      ],
+      "magazine-reload-while-holstered": [
+        [
+          "ammo-maximum",
+          "reload-speed"
+        ],
+        [
+          "ammo-maximum",
+          "magazine-capacity"
+        ]
+      ],
+      "status-damage": [
+        [
+          "damage",
+          "status-chance"
+        ]
+      ],
+      "heavy-attack-damage": [],
+      "heavy-attack-windup-speed": [],
+      "parry-angle": [],
+      "slam-damage": []
+    },
+    "Rifle": {
+      "blast": [
+        [
+          "cold",
+          "heat"
+        ]
+      ],
+      "corrosive": [
+        [
+          "electricity",
+          "toxin"
+        ]
+      ],
+      "gas": [
+        [
+          "heat",
+          "toxin"
+        ]
+      ],
+      "magnetic": [
+        [
+          "cold",
+          "electricity"
+        ]
+      ],
+      "radiation": [
+        [
+          "heat",
+          "electricity"
+        ]
+      ],
+      "viral": [
+        [
+          "cold",
+          "toxin"
+        ]
+      ],
+      "damage-to-orokin": [
+        [
+          "damage-to-corpus",
+          "damage-to-grineer"
+        ]
+      ],
+      "damage-to-techrot": [
+        [
+          "damage-to-corpus",
+          "damage-to-infested"
+        ]
+      ],
+      "damage-to-scaldra": [
+        [
+          "damage-to-infested",
+          "damage-to-grineer"
+        ]
+      ],
+      "weakpoint-damage": [
+        [
+          "damage",
+          "zoom"
+        ],
+        [
+          "damage",
+          "multishot"
+        ]
+      ],
+      "weakpoint-critical-chance": [
+        [
+          "critical-chance",
+          "zoom"
+        ],
+        [
+          "critical-chance",
+          "multishot"
+        ]
+      ],
+      "ammo-efficiency": [
+        [
+          "magazine-capacity",
+          "reload-speed"
+        ],
+        [
+          "weapon-recoil",
+          "ammo-maximum"
+        ]
+      ],
+      "magazine-reload-while-holstered": [
+        [
+          "ammo-maximum",
+          "reload-speed"
+        ],
+        [
+          "ammo-maximum",
+          "magazine-capacity"
+        ]
+      ],
+      "status-damage": [
+        [
+          "damage",
+          "status-chance"
+        ]
+      ],
+      "heavy-attack-damage": [],
+      "heavy-attack-windup-speed": [],
+      "parry-angle": [],
+      "slam-damage": []
+    },
+    "Shotgun": {
+      "blast": [
+        [
+          "cold",
+          "heat"
+        ]
+      ],
+      "corrosive": [
+        [
+          "electricity",
+          "toxin"
+        ]
+      ],
+      "gas": [
+        [
+          "heat",
+          "toxin"
+        ]
+      ],
+      "magnetic": [
+        [
+          "cold",
+          "electricity"
+        ]
+      ],
+      "radiation": [
+        [
+          "heat",
+          "electricity"
+        ]
+      ],
+      "viral": [
+        [
+          "cold",
+          "toxin"
+        ]
+      ],
+      "damage-to-orokin": [
+        [
+          "damage-to-corpus",
+          "damage-to-grineer"
+        ]
+      ],
+      "damage-to-techrot": [
+        [
+          "damage-to-corpus",
+          "damage-to-infested"
+        ]
+      ],
+      "damage-to-scaldra": [
+        [
+          "damage-to-infested",
+          "damage-to-grineer"
+        ]
+      ],
+      "weakpoint-damage": [
+        [
+          "damage",
+          "zoom"
+        ],
+        [
+          "damage",
+          "multishot"
+        ]
+      ],
+      "weakpoint-critical-chance": [
+        [
+          "critical-chance",
+          "zoom"
+        ],
+        [
+          "critical-chance",
+          "multishot"
+        ]
+      ],
+      "ammo-efficiency": [
+        [
+          "magazine-capacity",
+          "reload-speed"
+        ],
+        [
+          "weapon-recoil",
+          "ammo-maximum"
+        ]
+      ],
+      "magazine-reload-while-holstered": [
+        [
+          "ammo-maximum",
+          "reload-speed"
+        ],
+        [
+          "ammo-maximum",
+          "magazine-capacity"
+        ]
+      ],
+      "status-damage": [
+        [
+          "damage",
+          "status-chance"
+        ]
+      ],
+      "heavy-attack-damage": [],
+      "heavy-attack-windup-speed": [],
+      "parry-angle": [],
+      "slam-damage": []
+    },
+    "Zaw": {
+      "blast": [
+        [
+          "cold",
+          "heat"
+        ]
+      ],
+      "corrosive": [
+        [
+          "electricity",
+          "toxin"
+        ]
+      ],
+      "gas": [
+        [
+          "heat",
+          "toxin"
+        ]
+      ],
+      "magnetic": [
+        [
+          "cold",
+          "electricity"
+        ]
+      ],
+      "radiation": [
+        [
+          "heat",
+          "electricity"
+        ]
+      ],
+      "viral": [
+        [
+          "cold",
+          "toxin"
+        ]
+      ],
+      "damage-to-orokin": [
+        [
+          "damage-to-corpus",
+          "damage-to-grineer"
+        ]
+      ],
+      "damage-to-techrot": [
+        [
+          "damage-to-corpus",
+          "damage-to-infested"
+        ]
+      ],
+      "damage-to-scaldra": [
+        [
+          "damage-to-infested",
+          "damage-to-grineer"
+        ]
+      ],
+      "weakpoint-damage": [],
+      "weakpoint-critical-chance": [],
+      "ammo-efficiency": [],
+      "magazine-reload-while-holstered": [],
+      "status-damage": [
+        [
+          "melee-damage",
+          "status-chance"
+        ]
+      ],
+      "heavy-attack-damage": [
+        [
+          "heavy-attack-efficiency",
+          "additional-combo-count-chance"
+        ]
+      ],
+      "heavy-attack-windup-speed": [
+        [
+          "heavy-attack-efficiency",
+          "combo-duration"
+        ]
+      ],
+      "parry-angle": [
+        [
+          "fire-rate-attack-speed",
+          "range"
+        ]
+      ],
+      "slam-damage": [
+        [
+          "melee-damage",
+          "fire-rate-attack-speed"
+        ]
+      ]
+    }
+  },
+  "baselines": {
+    "Archgun": {
+      "blast": {
+        "id": "blast",
+        "name": "Blast",
+        "group": "all",
+        "recipe": "Cold + Heat",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "corrosive": {
+        "id": "corrosive",
+        "name": "Corrosive",
+        "group": "all",
+        "recipe": "Electricity + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "gas": {
+        "id": "gas",
+        "name": "Gas",
+        "group": "all",
+        "recipe": "Heat + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "magnetic": {
+        "id": "magnetic",
+        "name": "Magnetic",
+        "group": "all",
+        "recipe": "Cold + Electricity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "radiation": {
+        "id": "radiation",
+        "name": "Radiation",
+        "group": "all",
+        "recipe": "Heat + Electricity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "viral": {
+        "id": "viral",
+        "name": "Viral",
+        "group": "all",
+        "recipe": "Cold + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "damage-to-orokin": {
+        "id": "damage-to-orokin",
+        "name": "Damage to Orokin",
+        "group": "all",
+        "recipe": "Damage to Corpus + Damage to Grineer",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.45,
+        "value": 0.005,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "damage-to-techrot": {
+        "id": "damage-to-techrot",
+        "name": "Damage to Techrot",
+        "group": "all",
+        "recipe": "Damage to Corpus + Damage to Infested",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.45,
+        "value": 0.005,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "damage-to-scaldra": {
+        "id": "damage-to-scaldra",
+        "name": "Damage to Scaldra",
+        "group": "all",
+        "recipe": "Damage to Infested + Damage to Grineer",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.45,
+        "value": 0.005,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "weakpoint-damage": {
+        "id": "weakpoint-damage",
+        "name": "Weakpoint Damage",
+        "group": "ranged",
+        "recipe": "Damage + Zoom; or Damage + Multishot",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 225,
+        "value": 0.025,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "weakpoint-critical-chance": {
+        "id": "weakpoint-critical-chance",
+        "name": "Weakpoint Critical Chance",
+        "group": "ranged",
+        "recipe": "Critical Chance + Zoom; or Critical Chance + Multishot",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 247.5,
+        "value": 0.0275,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "ammo-efficiency": {
+        "id": "ammo-efficiency",
+        "name": "Ammo Efficiency",
+        "group": "ranged",
+        "recipe": "Magazine Capacity + Reload Speed; or Weapon Recoil + Ammo Maximum",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 9,
+        "value": 0.001,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "magazine-reload-while-holstered": {
+        "id": "magazine-reload-while-holstered",
+        "name": "Magazine Reload While Holstered",
+        "group": "ranged",
+        "recipe": "Ammo Maximum + Reload Speed; or Ammo Maximum + Magazine Capacity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": null,
+        "value": null,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "unknown",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "status-damage": {
+        "id": "status-damage",
+        "name": "Status Damage",
+        "group": "all",
+        "recipe": "Damage + Status Chance",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "heavy-attack-damage": null,
+      "heavy-attack-windup-speed": null,
+      "parry-angle": null,
+      "slam-damage": null
+    },
+    "Kitgun": {
+      "blast": {
+        "id": "blast",
+        "name": "Blast",
+        "group": "all",
+        "recipe": "Cold + Heat",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "cold",
+        "baselineSource": null
+      },
+      "corrosive": {
+        "id": "corrosive",
+        "name": "Corrosive",
+        "group": "all",
+        "recipe": "Electricity + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "electricity",
+        "baselineSource": null
+      },
+      "gas": {
+        "id": "gas",
+        "name": "Gas",
+        "group": "all",
+        "recipe": "Heat + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "heat",
+        "baselineSource": null
+      },
+      "magnetic": {
+        "id": "magnetic",
+        "name": "Magnetic",
+        "group": "all",
+        "recipe": "Cold + Electricity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "cold",
+        "baselineSource": null
+      },
+      "radiation": {
+        "id": "radiation",
+        "name": "Radiation",
+        "group": "all",
+        "recipe": "Heat + Electricity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "heat",
+        "baselineSource": null
+      },
+      "viral": {
+        "id": "viral",
+        "name": "Viral",
+        "group": "all",
+        "recipe": "Cold + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "cold",
+        "baselineSource": null
+      },
+      "damage-to-orokin": {
+        "id": "damage-to-orokin",
+        "name": "Damage to Orokin",
+        "group": "all",
+        "recipe": "Damage to Corpus + Damage to Grineer",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.449999991,
+        "value": 0.0049999999,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "damage-to-corpus",
+        "baselineSource": null
+      },
+      "damage-to-techrot": {
+        "id": "damage-to-techrot",
+        "name": "Damage to Techrot",
+        "group": "all",
+        "recipe": "Damage to Corpus + Damage to Infested",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.449999991,
+        "value": 0.0049999999,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "damage-to-corpus",
+        "baselineSource": null
+      },
+      "damage-to-scaldra": {
+        "id": "damage-to-scaldra",
+        "name": "Damage to Scaldra",
+        "group": "all",
+        "recipe": "Damage to Infested + Damage to Grineer",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.449999991,
+        "value": 0.0049999999,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "damage-to-infested",
+        "baselineSource": null
+      },
+      "weakpoint-damage": {
+        "id": "weakpoint-damage",
+        "name": "Weakpoint Damage",
+        "group": "ranged",
+        "recipe": "Damage + Zoom; or Damage + Multishot",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": null,
+        "value": null,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "unknown",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "weakpoint-critical-chance": {
+        "id": "weakpoint-critical-chance",
+        "name": "Weakpoint Critical Chance",
+        "group": "ranged",
+        "recipe": "Critical Chance + Zoom; or Critical Chance + Multishot",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": null,
+        "value": null,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "unknown",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "ammo-efficiency": {
+        "id": "ammo-efficiency",
+        "name": "Ammo Efficiency",
+        "group": "ranged",
+        "recipe": "Magazine Capacity + Reload Speed; or Weapon Recoil + Ammo Maximum",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": null,
+        "value": null,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "unknown",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "magazine-reload-while-holstered": {
+        "id": "magazine-reload-while-holstered",
+        "name": "Magazine Reload While Holstered",
+        "group": "ranged",
+        "recipe": "Ammo Maximum + Reload Speed; or Ammo Maximum + Magazine Capacity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": null,
+        "value": null,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "unknown",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "status-damage": {
+        "id": "status-damage",
+        "name": "Status Damage",
+        "group": "all",
+        "recipe": "Damage + Status Chance",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": null,
+        "value": null,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "unknown",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "heavy-attack-damage": null,
+      "heavy-attack-windup-speed": null,
+      "parry-angle": null,
+      "slam-damage": null
+    },
+    "Melee": {
+      "blast": {
+        "id": "blast",
+        "name": "Blast",
+        "group": "all",
+        "recipe": "Cold + Heat",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "cold",
+        "baselineSource": null
+      },
+      "corrosive": {
+        "id": "corrosive",
+        "name": "Corrosive",
+        "group": "all",
+        "recipe": "Electricity + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "electricity",
+        "baselineSource": null
+      },
+      "gas": {
+        "id": "gas",
+        "name": "Gas",
+        "group": "all",
+        "recipe": "Heat + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "heat",
+        "baselineSource": null
+      },
+      "magnetic": {
+        "id": "magnetic",
+        "name": "Magnetic",
+        "group": "all",
+        "recipe": "Cold + Electricity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "cold",
+        "baselineSource": null
+      },
+      "radiation": {
+        "id": "radiation",
+        "name": "Radiation",
+        "group": "all",
+        "recipe": "Heat + Electricity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "heat",
+        "baselineSource": null
+      },
+      "viral": {
+        "id": "viral",
+        "name": "Viral",
+        "group": "all",
+        "recipe": "Cold + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "cold",
+        "baselineSource": null
+      },
+      "damage-to-orokin": {
+        "id": "damage-to-orokin",
+        "name": "Damage to Orokin",
+        "group": "all",
+        "recipe": "Damage to Corpus + Damage to Grineer",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.449999991,
+        "value": 0.0049999999,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "damage-to-corpus",
+        "baselineSource": null
+      },
+      "damage-to-techrot": {
+        "id": "damage-to-techrot",
+        "name": "Damage to Techrot",
+        "group": "all",
+        "recipe": "Damage to Corpus + Damage to Infested",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.449999991,
+        "value": 0.0049999999,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "damage-to-corpus",
+        "baselineSource": null
+      },
+      "damage-to-scaldra": {
+        "id": "damage-to-scaldra",
+        "name": "Damage to Scaldra",
+        "group": "all",
+        "recipe": "Damage to Infested + Damage to Grineer",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.449999991,
+        "value": 0.0049999999,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "damage-to-infested",
+        "baselineSource": null
+      },
+      "weakpoint-damage": null,
+      "weakpoint-critical-chance": null,
+      "ammo-efficiency": null,
+      "magazine-reload-while-holstered": null,
+      "status-damage": {
+        "id": "status-damage",
+        "name": "Status Damage",
+        "group": "all",
+        "recipe": "Damage + Status Chance",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": null,
+        "value": null,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "unknown",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "heavy-attack-damage": {
+        "id": "heavy-attack-damage",
+        "name": "Heavy Attack Damage",
+        "group": "melee",
+        "recipe": "Heavy Attack Efficiency + Additional Combo Count",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 119.7,
+        "value": 0.013300000000000001,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "heavy-attack-windup-speed": {
+        "id": "heavy-attack-windup-speed",
+        "name": "Heavy Attack Windup Speed",
+        "group": "melee",
+        "recipe": "Heavy Attack Efficiency + Combo Duration",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 119.7,
+        "value": 0.013300000000000001,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "parry-angle": {
+        "id": "parry-angle",
+        "name": "Parry Angle",
+        "group": "melee",
+        "recipe": "Attack Speed + Range",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": null,
+        "value": null,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "unknown",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "slam-damage": {
+        "id": "slam-damage",
+        "name": "Slam Damage",
+        "group": "melee",
+        "recipe": "Damage + Attack Speed",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 119.7,
+        "value": 0.013300000000000001,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      }
+    },
+    "Pistol": {
+      "blast": {
+        "id": "blast",
+        "name": "Blast",
+        "group": "all",
+        "recipe": "Cold + Heat",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "corrosive": {
+        "id": "corrosive",
+        "name": "Corrosive",
+        "group": "all",
+        "recipe": "Electricity + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "gas": {
+        "id": "gas",
+        "name": "Gas",
+        "group": "all",
+        "recipe": "Heat + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "magnetic": {
+        "id": "magnetic",
+        "name": "Magnetic",
+        "group": "all",
+        "recipe": "Cold + Electricity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "radiation": {
+        "id": "radiation",
+        "name": "Radiation",
+        "group": "all",
+        "recipe": "Heat + Electricity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "viral": {
+        "id": "viral",
+        "name": "Viral",
+        "group": "all",
+        "recipe": "Cold + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "damage-to-orokin": {
+        "id": "damage-to-orokin",
+        "name": "Damage to Orokin",
+        "group": "all",
+        "recipe": "Damage to Corpus + Damage to Grineer",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.45,
+        "value": 0.005,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "damage-to-techrot": {
+        "id": "damage-to-techrot",
+        "name": "Damage to Techrot",
+        "group": "all",
+        "recipe": "Damage to Corpus + Damage to Infested",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.45,
+        "value": 0.005,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "damage-to-scaldra": {
+        "id": "damage-to-scaldra",
+        "name": "Damage to Scaldra",
+        "group": "all",
+        "recipe": "Damage to Infested + Damage to Grineer",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.45,
+        "value": 0.005,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "weakpoint-damage": {
+        "id": "weakpoint-damage",
+        "name": "Weakpoint Damage",
+        "group": "ranged",
+        "recipe": "Damage + Zoom; or Damage + Multishot",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "weakpoint-critical-chance": {
+        "id": "weakpoint-critical-chance",
+        "name": "Weakpoint Critical Chance",
+        "group": "ranged",
+        "recipe": "Critical Chance + Zoom; or Critical Chance + Multishot",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "ammo-efficiency": {
+        "id": "ammo-efficiency",
+        "name": "Ammo Efficiency",
+        "group": "ranged",
+        "recipe": "Magazine Capacity + Reload Speed; or Weapon Recoil + Ammo Maximum",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 9,
+        "value": 0.001,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "magazine-reload-while-holstered": {
+        "id": "magazine-reload-while-holstered",
+        "name": "Magazine Reload While Holstered",
+        "group": "ranged",
+        "recipe": "Ammo Maximum + Reload Speed; or Ammo Maximum + Magazine Capacity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "status-damage": {
+        "id": "status-damage",
+        "name": "Status Damage",
+        "group": "all",
+        "recipe": "Damage + Status Chance",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "heavy-attack-damage": null,
+      "heavy-attack-windup-speed": null,
+      "parry-angle": null,
+      "slam-damage": null
+    },
+    "Rifle": {
+      "blast": {
+        "id": "blast",
+        "name": "Blast",
+        "group": "all",
+        "recipe": "Cold + Heat",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "corrosive": {
+        "id": "corrosive",
+        "name": "Corrosive",
+        "group": "all",
+        "recipe": "Electricity + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "gas": {
+        "id": "gas",
+        "name": "Gas",
+        "group": "all",
+        "recipe": "Heat + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "magnetic": {
+        "id": "magnetic",
+        "name": "Magnetic",
+        "group": "all",
+        "recipe": "Cold + Electricity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "radiation": {
+        "id": "radiation",
+        "name": "Radiation",
+        "group": "all",
+        "recipe": "Heat + Electricity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "viral": {
+        "id": "viral",
+        "name": "Viral",
+        "group": "all",
+        "recipe": "Cold + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "damage-to-orokin": {
+        "id": "damage-to-orokin",
+        "name": "Damage to Orokin",
+        "group": "all",
+        "recipe": "Damage to Corpus + Damage to Grineer",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.45,
+        "value": 0.005,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "damage-to-techrot": {
+        "id": "damage-to-techrot",
+        "name": "Damage to Techrot",
+        "group": "all",
+        "recipe": "Damage to Corpus + Damage to Infested",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.45,
+        "value": 0.005,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "damage-to-scaldra": {
+        "id": "damage-to-scaldra",
+        "name": "Damage to Scaldra",
+        "group": "all",
+        "recipe": "Damage to Infested + Damage to Grineer",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.45,
+        "value": 0.005,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "weakpoint-damage": {
+        "id": "weakpoint-damage",
+        "name": "Weakpoint Damage",
+        "group": "ranged",
+        "recipe": "Damage + Zoom; or Damage + Multishot",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 225,
+        "value": 0.025,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "weakpoint-critical-chance": {
+        "id": "weakpoint-critical-chance",
+        "name": "Weakpoint Critical Chance",
+        "group": "ranged",
+        "recipe": "Critical Chance + Zoom; or Critical Chance + Multishot",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 247.5,
+        "value": 0.0275,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "ammo-efficiency": {
+        "id": "ammo-efficiency",
+        "name": "Ammo Efficiency",
+        "group": "ranged",
+        "recipe": "Magazine Capacity + Reload Speed; or Weapon Recoil + Ammo Maximum",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 9,
+        "value": 0.001,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "magazine-reload-while-holstered": {
+        "id": "magazine-reload-while-holstered",
+        "name": "Magazine Reload While Holstered",
+        "group": "ranged",
+        "recipe": "Ammo Maximum + Reload Speed; or Ammo Maximum + Magazine Capacity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "status-damage": {
+        "id": "status-damage",
+        "name": "Status Damage",
+        "group": "all",
+        "recipe": "Damage + Status Chance",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "heavy-attack-damage": null,
+      "heavy-attack-windup-speed": null,
+      "parry-angle": null,
+      "slam-damage": null
+    },
+    "Shotgun": {
+      "blast": {
+        "id": "blast",
+        "name": "Blast",
+        "group": "all",
+        "recipe": "Cold + Heat",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "corrosive": {
+        "id": "corrosive",
+        "name": "Corrosive",
+        "group": "all",
+        "recipe": "Electricity + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "gas": {
+        "id": "gas",
+        "name": "Gas",
+        "group": "all",
+        "recipe": "Heat + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "magnetic": {
+        "id": "magnetic",
+        "name": "Magnetic",
+        "group": "all",
+        "recipe": "Cold + Electricity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "radiation": {
+        "id": "radiation",
+        "name": "Radiation",
+        "group": "all",
+        "recipe": "Heat + Electricity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "viral": {
+        "id": "viral",
+        "name": "Viral",
+        "group": "all",
+        "recipe": "Cold + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "damage-to-orokin": {
+        "id": "damage-to-orokin",
+        "name": "Damage to Orokin",
+        "group": "all",
+        "recipe": "Damage to Corpus + Damage to Grineer",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.45,
+        "value": 0.005,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "damage-to-techrot": {
+        "id": "damage-to-techrot",
+        "name": "Damage to Techrot",
+        "group": "all",
+        "recipe": "Damage to Corpus + Damage to Infested",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.45,
+        "value": 0.005,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "damage-to-scaldra": {
+        "id": "damage-to-scaldra",
+        "name": "Damage to Scaldra",
+        "group": "all",
+        "recipe": "Damage to Infested + Damage to Grineer",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.45,
+        "value": 0.005,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "weakpoint-damage": {
+        "id": "weakpoint-damage",
+        "name": "Weakpoint Damage",
+        "group": "ranged",
+        "recipe": "Damage + Zoom; or Damage + Multishot",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 225,
+        "value": 0.025,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "weakpoint-critical-chance": {
+        "id": "weakpoint-critical-chance",
+        "name": "Weakpoint Critical Chance",
+        "group": "ranged",
+        "recipe": "Critical Chance + Zoom; or Critical Chance + Multishot",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 247.5,
+        "value": 0.0275,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "ammo-efficiency": {
+        "id": "ammo-efficiency",
+        "name": "Ammo Efficiency",
+        "group": "ranged",
+        "recipe": "Magazine Capacity + Reload Speed; or Weapon Recoil + Ammo Maximum",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 9,
+        "value": 0.001,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "magazine-reload-while-holstered": {
+        "id": "magazine-reload-while-holstered",
+        "name": "Magazine Reload While Holstered",
+        "group": "ranged",
+        "recipe": "Ammo Maximum + Reload Speed; or Ammo Maximum + Magazine Capacity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "status-damage": {
+        "id": "status-damage",
+        "name": "Status Damage",
+        "group": "all",
+        "recipe": "Damage + Status Chance",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 90,
+        "value": 0.01,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "heavy-attack-damage": null,
+      "heavy-attack-windup-speed": null,
+      "parry-angle": null,
+      "slam-damage": null
+    },
+    "Zaw": {
+      "blast": {
+        "id": "blast",
+        "name": "Blast",
+        "group": "all",
+        "recipe": "Cold + Heat",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "cold",
+        "baselineSource": null
+      },
+      "corrosive": {
+        "id": "corrosive",
+        "name": "Corrosive",
+        "group": "all",
+        "recipe": "Electricity + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "electricity",
+        "baselineSource": null
+      },
+      "gas": {
+        "id": "gas",
+        "name": "Gas",
+        "group": "all",
+        "recipe": "Heat + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "heat",
+        "baselineSource": null
+      },
+      "magnetic": {
+        "id": "magnetic",
+        "name": "Magnetic",
+        "group": "all",
+        "recipe": "Cold + Electricity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "cold",
+        "baselineSource": null
+      },
+      "radiation": {
+        "id": "radiation",
+        "name": "Radiation",
+        "group": "all",
+        "recipe": "Heat + Electricity",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "heat",
+        "baselineSource": null
+      },
+      "viral": {
+        "id": "viral",
+        "name": "Viral",
+        "group": "all",
+        "recipe": "Cold + Toxin",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 89.9999982,
+        "value": 0.0099999998,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "cold",
+        "baselineSource": null
+      },
+      "damage-to-orokin": {
+        "id": "damage-to-orokin",
+        "name": "Damage to Orokin",
+        "group": "all",
+        "recipe": "Damage to Corpus + Damage to Grineer",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.449999991,
+        "value": 0.0049999999,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "damage-to-corpus",
+        "baselineSource": null
+      },
+      "damage-to-techrot": {
+        "id": "damage-to-techrot",
+        "name": "Damage to Techrot",
+        "group": "all",
+        "recipe": "Damage to Corpus + Damage to Infested",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.449999991,
+        "value": 0.0049999999,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "damage-to-corpus",
+        "baselineSource": null
+      },
+      "damage-to-scaldra": {
+        "id": "damage-to-scaldra",
+        "name": "Damage to Scaldra",
+        "group": "all",
+        "recipe": "Damage to Infested + Damage to Grineer",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "x",
+        "baseValue": 0.449999991,
+        "value": 0.0049999999,
+        "roundTo": 0.01,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "assumed",
+        "baselineReference": "damage-to-infested",
+        "baselineSource": null
+      },
+      "weakpoint-damage": null,
+      "weakpoint-critical-chance": null,
+      "ammo-efficiency": null,
+      "magazine-reload-while-holstered": null,
+      "status-damage": {
+        "id": "status-damage",
+        "name": "Status Damage",
+        "group": "all",
+        "recipe": "Damage + Status Chance",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": null,
+        "value": null,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "unknown",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "heavy-attack-damage": {
+        "id": "heavy-attack-damage",
+        "name": "Heavy Attack Damage",
+        "group": "melee",
+        "recipe": "Heavy Attack Efficiency + Additional Combo Count",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 119.7,
+        "value": 0.013300000000000001,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "heavy-attack-windup-speed": {
+        "id": "heavy-attack-windup-speed",
+        "name": "Heavy Attack Windup Speed",
+        "group": "melee",
+        "recipe": "Heavy Attack Efficiency + Combo Duration",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 119.7,
+        "value": 0.013300000000000001,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "parry-angle": {
+        "id": "parry-angle",
+        "name": "Parry Angle",
+        "group": "melee",
+        "recipe": "Attack Speed + Range",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": null,
+        "value": null,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "unknown",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      },
+      "slam-damage": {
+        "id": "slam-damage",
+        "name": "Slam Damage",
+        "group": "melee",
+        "recipe": "Damage + Attack Speed",
+        "positive": true,
+        "negative": false,
+        "reverse": false,
+        "unit": "%",
+        "baseValue": 119.7,
+        "value": 0.013300000000000001,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "baselineStatus": "provisional",
+        "baselineReference": null,
+        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+      }
+    }
+  },
+  "goodSounds": [
+    {
+      "id": "chime",
+      "name": "Classic chime",
+      "notes": [
+        880,
+        1174.66
+      ],
+      "gap": 0.12,
+      "decay": 0.23
+    },
+    {
+      "id": "bell",
+      "name": "Clear bell",
+      "notes": [
+        1318.51
+      ],
+      "gap": 0.1,
+      "decay": 0.8
+    },
+    {
+      "id": "soft",
+      "name": "Soft tap",
+      "notes": [
+        523.25
+      ],
+      "gap": 0.1,
+      "decay": 0.3
+    },
+    {
+      "id": "arcade",
+      "name": "Arcade",
+      "notes": [
+        659.25,
+        987.77,
+        1318.51
+      ],
+      "gap": 0.09,
+      "decay": 0.15,
+      "wave": "triangle"
+    },
+    {
+      "id": "double",
+      "name": "Double ping",
+      "notes": [
+        1046.5,
+        1046.5
+      ],
+      "gap": 0.2,
+      "decay": 0.15
+    },
+    {
+      "id": "chord",
+      "name": "Warm chord",
+      "notes": [
+        523.25,
+        659.25,
+        783.99
+      ],
+      "gap": 0,
+      "decay": 0.6
+    },
+    {
+      "id": "sparkle",
+      "name": "Sparkle",
+      "notes": [
+        1567.98,
+        2093,
+        2637.02
+      ],
+      "gap": 0.08,
+      "decay": 0.3
+    },
+    {
+      "id": "rise",
+      "name": "Rising notes",
+      "notes": [
+        440,
+        554.37,
+        659.25,
+        880
+      ],
+      "gap": 0.11,
+      "decay": 0.18
+    },
+    {
+      "id": "low",
+      "name": "Low tone",
+      "notes": [
+        329.63,
+        440
+      ],
+      "gap": 0.14,
+      "decay": 0.3
+    },
+    {
+      "id": "pulse",
+      "name": "Triple pulse",
+      "notes": [
+        740,
+        740,
+        740
+      ],
+      "gap": 0.16,
+      "decay": 0.08,
+      "wave": "triangle"
+    }
+  ],
+  "warningSounds": [
+    {
+      "id": "soft-fall",
+      "name": "Soft fall",
+      "notes": [
+        523.25,
+        392
+      ],
+      "gap": 0.14,
+      "decay": 0.24
+    },
+    {
+      "id": "low-tap",
+      "name": "Low tap",
+      "notes": [
+        293.66
+      ],
+      "gap": 0,
+      "decay": 0.3
+    },
+    {
+      "id": "two-knocks",
+      "name": "Two soft knocks",
+      "notes": [
+        349.23,
+        349.23
+      ],
+      "gap": 0.22,
+      "decay": 0.16,
+      "wave": "triangle"
+    },
+    {
+      "id": "warm-drop",
+      "name": "Warm drop",
+      "notes": [
+        440,
+        329.63,
+        261.63
+      ],
+      "gap": 0.13,
+      "decay": 0.22
+    },
+    {
+      "id": "muted-bell",
+      "name": "Muted bell",
+      "notes": [
+        659.25
+      ],
+      "gap": 0,
+      "decay": 0.42
+    },
+    {
+      "id": "gentle-bump",
+      "name": "Gentle bump",
+      "notes": [
+        261.63,
+        293.66
+      ],
+      "gap": 0.16,
+      "decay": 0.2
+    },
+    {
+      "id": "hollow-pair",
+      "name": "Hollow pair",
+      "notes": [
+        392,
+        293.66
+      ],
+      "gap": 0.24,
+      "decay": 0.27
+    },
+    {
+      "id": "quiet-triple",
+      "name": "Quiet triple",
+      "notes": [
+        329.63,
+        329.63,
+        329.63
+      ],
+      "gap": 0.18,
+      "decay": 0.12
+    },
+    {
+      "id": "soft-chord",
+      "name": "Soft chord",
+      "notes": [
+        261.63,
+        311.13
+      ],
+      "gap": 0,
+      "decay": 0.38
+    },
+    {
+      "id": "wooden-note",
+      "name": "Wooden note",
+      "notes": [
+        220,
+        440
+      ],
+      "gap": 0.08,
+      "decay": 0.17,
+      "wave": "triangle"
+    }
+  ]
+}
