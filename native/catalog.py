@@ -9,6 +9,8 @@ import re
 import unicodedata
 from pathlib import Path
 
+from grading import FORMATS, grade_stat
+
 DATA_DIR = Path(__file__).resolve().parent / "data"
 REFERENCE = json.loads((DATA_DIR / "reference.json").read_text(encoding="utf-8"))
 SPLICES = REFERENCE["splices"]
@@ -169,3 +171,75 @@ class Catalog:
         if identity == "damage" and kind in ("Melee", "Zaw"):
             identity = "melee-damage"
         return next((t for t in self.definitions[kind] if t["id"] == identity), None)
+
+    def grading_variant(self, card, saved=None):
+        """Allow shared ranges without claiming which variant is on screen."""
+        resolved = self.variant(card, saved)
+        if resolved:
+            return resolved
+        group = self.group(card)
+        variants = group["variants"] if group else []
+        if variants and len({(v["kind"], v["disposition"]) for v in variants}) == 1:
+            return {
+                "id": None,
+                "name": group["name"],
+                "kind": variants[0]["kind"],
+                "disposition": variants[0]["disposition"],
+                "source": "shared",
+            }
+        return None
+
+    def variant_mismatch(self, card, hint):
+        """Request a caption recheck, never infer a variant from rolled values."""
+        variant = self.variant({**card, "variantHint": hint})
+        if not variant or card.get("rank") is None or not card.get("complete"):
+            return False
+        for stat in card["stats"]:
+            trait = self.trait(variant, stat["id"])
+            if not trait or trait.get("baselineStatus") in ("assumed", "provisional"):
+                continue
+            result = grade_stat(
+                stat,
+                trait,
+                variant["disposition"],
+                card["format"],
+                self.range_model,
+                card["rank"],
+            )
+            if result.get("invalid") and result.get("range"):
+                return True
+        return False
+
+    def plausible_stats(self, card):
+        """Reject contradictory numbers, without choosing a rank or variant.
+
+        An OCR reading must fit at least one whole-card combination. Testing
+        every rank and variant keeps caption/pip failures out of stat warnings.
+        Unconfirmed baselines remain readable and are not used as evidence.
+        """
+        group = self.group(card)
+        if not group or card.get("format") not in FORMATS:
+            return True
+        for variant in group["variants"]:
+            known = [
+                (stat, trait)
+                for stat in card["stats"]
+                if (trait := self.trait(variant, stat["id"]))
+                and trait.get("baselineStatus") not in ("assumed", "provisional")
+            ]
+            if len(known) < 2:
+                return True
+            for rank in range(self.range_model["maxRank"] + 1):
+                if all(
+                    not grade_stat(
+                        stat,
+                        trait,
+                        variant["disposition"],
+                        card["format"],
+                        self.range_model,
+                        rank,
+                    ).get("invalid")
+                    for stat, trait in known
+                ):
+                    return True
+        return False

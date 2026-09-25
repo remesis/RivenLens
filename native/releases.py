@@ -58,7 +58,9 @@ class ReleaseConfig:
 
     @property
     def enabled(self):
-        return bool(self.repository and version_number(self.version))
+        return bool(
+            self.repository and self.asset_name and version_number(self.version)
+        )
 
     @property
     def api_url(self):
@@ -114,12 +116,6 @@ def newer_release(config, payload):
         return None
     version = ".".join(map(str, number))
     filename = f"RivenLens-{version}.zip"
-    if not config.asset_name:
-        return Release(
-            version,
-            f"https://api.github.com/repos/{config.repository}/zipball/{quote(tag)}",
-            filename,
-        )
     assets = payload.get("assets", [])
     if not isinstance(assets, list):
         return None
@@ -136,8 +132,8 @@ def newer_release(config, payload):
         if type(size) is not int or size <= 0:
             return None
         digest = asset.get("digest") or ""
-        if not isinstance(digest, str) or (
-            digest and not re.fullmatch(r"sha256:[0-9a-f]{64}", digest)
+        if not isinstance(digest, str) or not re.fullmatch(
+            r"sha256:[0-9a-f]{64}", digest
         ):
             return None
         return Release(

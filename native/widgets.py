@@ -343,13 +343,8 @@ class RollCard(QFrame):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(10, 9, 10, 9)
         layout.setSpacing(4)
-        header, header_row = box(False, spacing=3)
         self.meta = label(title, "cardMeta")
-        self.stale = label("LAST READ", "stale")
-        self.stale.hide()
-        header_row.addWidget(self.meta, 1)
-        header_row.addWidget(self.stale)
-        layout.addWidget(header)
+        layout.addWidget(self.meta)
         self.stack = QStackedWidget()
         empty = label(
             "Waiting for a new roll to compare."
@@ -392,7 +387,11 @@ class RollCard(QFrame):
         self.setMinimumHeight(round(164 * scale))
 
     def show_card(self, card, catalog, preferences):
-        variant = catalog.variant(card, preferences["gradeVariants"]) if card else None
+        variant = (
+            catalog.grading_variant(card, preferences["gradeVariants"])
+            if card
+            else None
+        )
         rank = grading_rank(card, preferences) if card else None
         signature = repr(
             (
@@ -407,7 +406,6 @@ class RollCard(QFrame):
                 preferences["rankMode"],
             )
         )
-        self.stale.setVisible(bool(card and card.get("displayStale")))
         if signature == self._signature:
             return
         self._signature = signature
@@ -449,7 +447,10 @@ class RollCard(QFrame):
                     rank,
                 )
                 if variant
-                else {"unknown": True, "message": "Variant unreadable: see Settings"}
+                else {
+                    "unknown": True,
+                    "message": "Waiting for the Fits In weapon variant. Keep its caption visible.",
+                }
             )
             if result.get("grade"):
                 grade = result["grade"]
@@ -466,9 +467,18 @@ class RollCard(QFrame):
                     )
                     or "Relative to the mean"
                 )
+                if variant["source"] == "shared":
+                    tip += " All compatible variants share these ranges; the exact variant is still being read."
             else:
+                missing = (
+                    "Variant?"
+                    if variant is None
+                    else "Rank?"
+                    if rank is None
+                    else "Check"
+                )
                 grade_label.setText(
-                    '<span style="color:#ffbd69;font-weight:600">Check</span>'
+                    f'<span style="color:#ffbd69;font-weight:600">{missing}</span>'
                 )
                 tip = result["message"]
             grade_label.setToolTip(tip)

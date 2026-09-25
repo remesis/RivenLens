@@ -64,6 +64,7 @@ class SettingsDialog(QDialog):
         self.state = window.state
         self.sound_combos = {}
         self.setWindowTitle("RivenLens settings")
+        self.setModal(True)
         # Settings stays comfortably readable when the companion is made smaller.
         self.setStyleSheet(
             theme_for(1.08)

@@ -6,18 +6,22 @@
 
 import asyncio
 import copy
+import sys
 import threading
 import time
+import traceback
 
 import mss
 from PIL import ImageOps
 from PySide6.QtCore import QThread, Signal
 
-from capture import DesktopCapture, monitor_identity
+from capture import CapturePending, CaptureUnavailable, DesktopCapture, monitor_token
 from ocr_engine import LocalOCR
+from ocr_budget import FrameBudget
 from reader import read_frame, reset_layout
 from tracker import RollTracker
 from preferences import capture_settings
+from catalog import Catalog
 
 
 def enumerate_monitors():
@@ -37,14 +41,36 @@ class CaptureWorker(QThread):
         self._revision = 0
         self._stop = threading.Event()
         self._wake = threading.Event()
+        self._monitors = []
+        self._reported_errors = set()
 
     def configure(self, settings, running):
         with self._guard:
             self._config = {**capture_settings(settings), "running": bool(running)}
+            if self._monitors:
+                self._resolve_monitor(self._monitors)
             self._revision += 1
             revision = self._revision
         self._wake.set()
         return revision
+
+    def _resolve_monitor(self, monitors):
+        """Called under the configuration lock; UI indices never override identity."""
+        token = self._config["monitorId"]
+        index = self._config["monitor"] - 1
+        if not token and 0 <= index < len(self._monitors):
+            token = monitor_token(self._monitors[index])
+        if token:
+            matches = [i for i, m in enumerate(monitors) if monitor_token(m) == token]
+        else:
+            matches = [index] if 0 <= index < len(monitors) else []
+        if len(matches) != 1:
+            self._config.update(monitor=1, monitorId="", running=False)
+        else:
+            index = matches[0]
+            self._config.update(
+                monitor=index + 1, monitorId=monitor_token(monitors[index])
+            )
 
     def shutdown(self):
         self._stop.set()
@@ -60,10 +86,24 @@ class CaptureWorker(QThread):
                 return
         self.updated.emit({"revision": revision, **copy.deepcopy(state)})
 
+    def _record_error(self, stage, exc):
+        """Keep bounded local diagnostics, never captured images or OCR readings."""
+        identity = (stage, type(exc).__name__, str(exc)[:500])
+        if identity in self._reported_errors or len(self._reported_errors) >= 20:
+            return
+        self._reported_errors.add(identity)
+        if sys.stderr is not None:
+            details = "".join(traceback.format_exception(exc, limit=8))
+            print(
+                f"{time.strftime('%Y-%m-%d %H:%M:%S')} {stage} failure\n{details[:8000]}",
+                file=sys.stderr,
+            )
+
     def run(self):
         try:
             asyncio.run(self._loop())
         except Exception as exc:
+            self._record_error("worker", exc)
             _, revision = self._snapshot()
             self._publish(
                 revision, status="error", cards=[], newRollWarning=None, error=str(exc)
@@ -73,6 +113,7 @@ class CaptureWorker(QThread):
         engine = camera = None
         monitors, prior_revision = [], -1
         tracker = RollTracker()
+        catalog = Catalog()
         check_at = retry_at = 0
         last_cards = []
         try:
@@ -84,10 +125,12 @@ class CaptureWorker(QThread):
                         try:
                             refreshed = enumerate_monitors()
                         except Exception as exc:
+                            self._record_error("capture", exc)
                             self._publish(
                                 revision,
                                 status="error",
                                 error=str(exc),
+                                errorKind="capture",
                                 newRollWarning=None,
                                 cards=[
                                     {**card, "snapshot": True, "displayStale": True}
@@ -98,37 +141,15 @@ class CaptureWorker(QThread):
                             self._wake.clear()
                             continue
                         if refreshed != monitors:
-                            if monitors:
-                                index = config["monitor"] - 1
-                                identity = (
-                                    monitor_identity(monitors[index])
-                                    if index < len(monitors)
-                                    else None
-                                )
-                                matches = [
-                                    i + 1
-                                    for i, m in enumerate(refreshed)
-                                    if monitor_identity(m) == identity
-                                ]
-                                with self._guard:
-                                    if revision == self._revision:
-                                        self._config["monitor"] = (
-                                            matches[0] if len(matches) == 1 else 1
-                                        )
-                                        if len(matches) != 1:
-                                            self._config["running"] = False
-                                        self._revision += 1
+                            with self._guard:
+                                self._resolve_monitor(refreshed)
+                                if self._monitors:
+                                    self._revision += 1
+                                self._monitors = copy.deepcopy(refreshed)
                             monitors = refreshed
                             config, revision = self._snapshot()
-                            if config["monitor"] > len(monitors):
-                                revision = self.configure(
-                                    {**config, "monitor": 1}, False
-                                )
-                                config, revision = self._snapshot()
-                            self.displays.emit(
-                                monitors, {**config, "revision": revision}
-                            )
                     if revision != prior_revision:
+                        self.displays.emit(monitors, {**config, "revision": revision})
                         if camera:
                             camera.close()
                             camera = None
@@ -148,9 +169,11 @@ class CaptureWorker(QThread):
                         self._wake.clear()
                         continue
                     started = time.monotonic()
+                    stage = "ocr"
                     try:
                         if engine is None:
                             engine = LocalOCR()
+                        stage = "capture"
                         if camera is None:
                             camera = DesktopCapture(
                                 screen,
@@ -158,6 +181,7 @@ class CaptureWorker(QThread):
                                 config["backend"],
                             )
                         image = camera.grab(config["region"])
+                        stage = "ocr"
                         rank_image = image
                         if config["contrast"]:
                             image = ImageOps.autocontrast(ImageOps.grayscale(image))
@@ -167,6 +191,10 @@ class CaptureWorker(QThread):
                             focus=True,
                             require_current=tracker.needs_current(time.monotonic()),
                             rank_image=rank_image,
+                            budget=FrameBudget(),
+                            previous_new=tracker.pending_new_key(),
+                            variant_mismatch=catalog.variant_mismatch,
+                            validate_stats=catalog.plausible_stats,
                         )
                         tracked = tracker.update(parsed, time.monotonic())
                         if tracked["newRollWarning"]:
@@ -183,11 +211,30 @@ class CaptureWorker(QThread):
                             scanMs=round((time.monotonic() - started) * 1000),
                         )
                         del image, rank_image
+                    except CapturePending as exc:
+                        # Keep the new duplicator alive long enough to receive
+                        # its first frame. No pixels means no OCR observation.
+                        retry_at = time.monotonic() + 0.05
+                        self._publish(
+                            revision,
+                            status="waiting",
+                            error=str(exc),
+                            errorKind="capture",
+                            newRollWarning=None,
+                            cards=[
+                                {**card, "snapshot": True, "displayStale": True}
+                                for card in last_cards
+                            ],
+                        )
                     except Exception as exc:
+                        self._record_error(stage, exc)
                         if camera:
                             camera.close()
                             camera = None
-                        tracker = RollTracker()
+                        if isinstance(exc, CaptureUnavailable):
+                            tracker.interrupt()
+                        else:
+                            tracker = RollTracker(tracker.stat_warning)
                         if engine:
                             reset_layout(engine)
                         retry_at, check_at = time.monotonic() + 1, 0
@@ -195,6 +242,7 @@ class CaptureWorker(QThread):
                             revision,
                             status="error",
                             error=str(exc),
+                            errorKind=stage,
                             newRollWarning=None,
                             cards=[
                                 {**card, "snapshot": True, "displayStale": True}

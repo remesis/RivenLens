@@ -49,7 +49,7 @@ def clean_text(text):
                 {
                     "−": "-",
                     "–": "-",
-                    "—": "-",
+                    "\u2014": "-",
                     "‐": "-",
                     "‑": "-",
                     "﹣": "-",
@@ -224,6 +224,7 @@ def card_headers(lines):
             joined = {
                 **joined,
                 "text": joined["text"] + " " + following["text"],
+                "fontHeight": line["h"],
                 "x": min(joined["x"], following["x"]),
                 "h": following["y"] + following["h"] - joined["y"],
             }
@@ -266,6 +267,7 @@ def parse_cards(lines, width, height):
     for header, name in headers:
         center = header["x"] + header["w"] / 2
         half_width = max(header["w"] * 0.85, header["h"] * 5)
+        font_height = header.get("fontHeight", header["h"])
         # Four long, locked stats can wrap onto substantially more than 8 lines.
         lower_limit = min(height, header["y"] + header["h"] * 14)
         neighbor = next(
@@ -289,12 +291,20 @@ def parse_cards(lines, width, height):
                 if header["y"] + header["h"] * 0.6 < line["y"] < lower_limit
                 and abs(line["x"] + line["w"] / 2 - center) < half_width
                 and left_boundary < line["x"] + line["w"] / 2 < right_boundary
+                # Small neighboring UI labels are not card text. Keep centered
+                # fragments and footers even when OCR gives them short boxes.
+                and (
+                    line["h"] >= font_height * 0.4
+                    or abs(line["x"] + line["w"] / 2 - center) < font_height * 1.5
+                    or line.get("footerBounds")
+                )
             ],
             key=lambda line: line["y"],
         )
         stats, pending, footer, invalid = [], None, False, False
         footer_bounds = None
         unreadable = []
+        text_rows = [header]
 
         def finish():
             nonlocal pending, invalid
@@ -367,10 +377,15 @@ def parse_cards(lines, width, height):
 
         for line in candidates:
             text = clean_text(line["text"])
+            # A nearby companion's planner can enter the wide recovery crop.
+            # Its roll counts are UI labels, not malformed Riven stat lines.
+            if re.fullmatch(r"\W*\d[\d,.]*\s+(?:avg\s+)?rolls\W*", text, re.I):
+                continue
             if re.match(r"^(?:CONFIRM|CYCLE\s+FOR|Remaining Kuva)", text, re.I):
                 finish()
                 break
-            if FOOTER.search(text):
+            text_rows.append(line)
+            if FOOTER.search(text) or line.get("footerBounds"):
                 footer = True
                 footer_bounds = line.get("footerBounds") or {
                     key: line[key] for key in ("x", "y", "w", "h")
@@ -452,6 +467,8 @@ def parse_cards(lines, width, height):
             and len({s["id"] for s in stats}) == len(stats)
             and (len(stats) == 4 or footer)
         )
+        text_left = min(row["x"] for row in text_rows)
+        text_right = max(row["x"] + row["w"] for row in text_rows)
         cards.append(
             {
                 "weapon": name,
@@ -462,6 +479,12 @@ def parse_cards(lines, width, height):
                 "unreadable": unreadable,
                 "footerBounds": footer_bounds,
                 "titleBounds": {key: header[key] for key in ("x", "y", "w", "h")},
+                "textBounds": {
+                    "x": text_left,
+                    "y": header["y"],
+                    "w": text_right - text_left,
+                    "h": lower_limit - header["y"],
+                },
                 "bounds": {
                     "x": max(0, int(center - half_width)),
                     "y": int(header["y"]),

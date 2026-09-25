@@ -24,13 +24,15 @@ The app makes one startup check for releases from `remesis/RivenLens` on GitHub
 over HTTPS. This sends an ordinary public release request, not
 screenshots, card readings, settings, account tokens or personal identifiers
 added by the app. GitHub receives normal connection information such as your
-IP address. With an empty repository setting, no update request is made.
+IP address. Git checkouts and copies with an empty repository or asset setting
+do not make update requests.
 
 A newer stable release offers **Yes, update** or **No**. Yes authorizes downloading
 and installing that release, then reopening RivenLens. The updater validates and
 stages the archive locally before closing the app. If dependencies changed, it
 prepares a separate Python environment using the configured package index.
-Only the RivenLens installation is replaced; it does not interact with Warframe.
+Only verified, release-managed files are replaced. Local modifications and file
+collisions stop installation; unrelated files are preserved. It does not interact with Warframe.
 Failed or cancelled downloads are not treated as completed updates.
 
 The footer links open their external sites only when clicked. Installing
@@ -48,6 +50,12 @@ Downloaded updates, installation logs and source backups stay in the `updates`
 subfolder of that same app-data directory. Python dependencies live in
 `native/.venv` or `native/.runtimes`, separate from preferences. Existing runtimes
 are kept intact so installation failures can restore the previous version.
+
+Launch failures and unexpected application errors are logged locally in
+`logs/application.log`. Routine diagnostic output is capped at 2 MB; a full log is
+rotated on the next launch when it is no longer in use. Repeated callback errors
+are throttled and show one warning per session. These logs are not uploaded and
+are not a recording of your screen or OCR results.
 
 These are implementation boundaries, not an endorsement or a guarantee about
 third-party platform rules or enforcement.

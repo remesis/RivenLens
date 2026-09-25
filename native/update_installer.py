@@ -4,15 +4,17 @@
 
 """Separate update worker. Its files and log live outside the installation."""
 
-import ctypes
 import json
 import os
+import re
 import subprocess
 import sys
 import time
-from ctypes import wintypes
 from pathlib import Path
+from contextlib import contextmanager
 
+from dependencies import INSTALL_FLAGS, locked_packages
+from instance import InstallationLease
 from releases import ReleaseConfig
 from update_package import (
     UpdateError,
@@ -20,11 +22,66 @@ from update_package import (
     backup_installation,
     contained_file,
     extract_release,
+    ensure_installable,
+    installed_files,
+    validate_targets,
     restore_release,
     write_json,
+    checksum,
 )
 
 HIDDEN = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
+
+
+class UpdateBusy(UpdateError):
+    pass
+
+
+@contextmanager
+def job_guard(job):
+    """Installation and recovery may never replace files at the same time."""
+    import msvcrt
+
+    with (job / "helper.lock").open("a+b") as lock:
+        if lock.tell() == 0:
+            lock.write(b"\0")
+            lock.flush()
+        lock.seek(0)
+        try:
+            msvcrt.locking(lock.fileno(), msvcrt.LK_NBLCK, 1)
+        except OSError as exc:
+            raise UpdateBusy(
+                "This update is still running. Wait for it to finish before recovery."
+            ) from exc
+        try:
+            yield
+        finally:
+            lock.seek(0)
+            msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)
+
+
+def clear_pending(root, job):
+    marker = contained_file(root, "native/update-pending.json")
+    if not marker.exists():
+        return
+    saved = json.loads(marker.read_text(encoding="utf-8"))
+    if not isinstance(saved, dict) or saved.get("job") != str(job):
+        raise UpdateError(
+            "The pending update belongs to another job. Its marker was left untouched."
+        )
+    marker.unlink()
+
+
+def claim_pending(root, job):
+    """Exclusively claim this installation, including across different update jobs."""
+    marker = contained_file(root, "native/update-pending.json")
+    try:
+        with marker.open("x", encoding="utf-8") as stream:
+            json.dump({"job": str(job)}, stream)
+            stream.flush()
+            os.fsync(stream.fileno())
+    except FileExistsError as exc:
+        raise UpdateError("Another update is already in progress.") from exc
 
 
 def status(job, state, message):
@@ -65,36 +122,28 @@ def run_command(command, job, timeout=600, cwd=None):
                 process.wait(timeout=15)
 
 
-def wait_for_app(pid, job, timeout=60):
-    """Wait on this RivenLens PID only. Never terminate the running application."""
-    kernel = ctypes.WinDLL("kernel32", use_last_error=True)
-    kernel.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
-    kernel.OpenProcess.restype = wintypes.HANDLE
-    kernel.WaitForSingleObject.argtypes = [wintypes.HANDLE, wintypes.DWORD]
-    kernel.WaitForSingleObject.restype = wintypes.DWORD
-    kernel.CloseHandle.argtypes = [wintypes.HANDLE]
-    handle = kernel.OpenProcess(0x00100000, False, pid)
-    if not handle:
-        if ctypes.get_last_error() == 87:
-            return
-        raise UpdateError(
-            "Could not wait for RivenLens to close. No files were replaced."
-        )
+def wait_for_app(root, job, timeout=60):
+    """Acquire RivenLens' file lease, without inspecting any running process."""
+    lease = InstallationLease(root)
     try:
         deadline = time.monotonic() + timeout
-        while time.monotonic() < deadline:
-            cancelled(job)
-            result = kernel.WaitForSingleObject(handle, 200)
-            if result == 0:
-                return
-            if result != 258:
-                break
-        raise UpdateError("RivenLens did not finish closing. No files were replaced.")
-    finally:
-        kernel.CloseHandle(handle)
+        while True:
+            if timeout:
+                cancelled(job)
+            if lease.acquire():
+                return lease
+            if time.monotonic() >= deadline:
+                raise UpdateBusy(
+                    "RivenLens is still open or being updated. No files were replaced."
+                )
+            time.sleep(0.2)
+    except BaseException:
+        lease.close()
+        raise
 
 
 def runtime_for_update(root, stage, spec, job):
+    locked_packages(stage / "requirements.txt")
     current = Path(spec["python"]).resolve(strict=True)
     native = root / "native"
     if not current.is_relative_to(native) or current.name.lower() not in (
@@ -122,8 +171,7 @@ def runtime_for_update(root, stage, spec, job):
                 "-m",
                 "pip",
                 "install",
-                "--disable-pip-version-check",
-                "--only-binary=:all:",
+                *INSTALL_FLAGS,
                 "-r",
                 str(stage / "requirements.txt"),
             ],
@@ -147,7 +195,13 @@ def runtime_for_update(root, stage, spec, job):
 
 def restart(root, python, job):
     return subprocess.Popen(
-        [str(python), "-B", str(root / "native/main.py"), "--update-result", str(job)],
+        [
+            str(python),
+            "-B",
+            str(root / "native/bootstrap.py"),
+            "--update-result",
+            str(job),
+        ],
         cwd=root / "native",
         stdin=subprocess.DEVNULL,
         stdout=subprocess.DEVNULL,
@@ -158,13 +212,29 @@ def restart(root, python, job):
 
 def install(job):
     job = Path(job).resolve(strict=True)
+    try:
+        with job_guard(job):
+            return _install(job)
+    except UpdateBusy:
+        return 1  # The active helper owns the status file as well as the lock.
+    except Exception as exc:
+        status(job, "failed", f"The update could not start: {exc}")
+        return 1
+
+
+def _install(job):
+    job = Path(job).resolve(strict=True)
     spec = json.loads((job / "job.json").read_text(encoding="utf-8"))
     root = Path(spec["root"]).resolve(strict=True)
     stage, backup = job / "release", job / "backup"
     journal = None
     replacing = False
     app_closed = False
+    lease = None
+    committed = False
     try:
+        ensure_installable(root)
+        installed_files(root)
         if (
             not (root / "native/main.py").is_file()
             or not (root / "Start Riven Lens.cmd").is_file()
@@ -180,25 +250,49 @@ def install(job):
             )
         cancelled(job)
         status(job, "preparing", "Checking and preparing the update…")
+        digest, size = spec.get("sha256"), spec.get("size")
+        archive = job / "download.zip"
+        if (
+            not isinstance(digest, str)
+            or not re.fullmatch(r"[0-9a-f]{64}", digest)
+            or type(size) is not int
+            or not 0 < size <= 256 * 1024 * 1024
+            or archive.stat().st_size != size
+            or checksum(archive) != digest
+        ):
+            raise UpdateError(
+                "The downloaded release failed its integrity check. No files were replaced."
+            )
         files = extract_release(job / "download.zip", stage, config, spec["version"])
+        validate_targets(root, files)
         runtime = runtime_for_update(root, stage, spec, job)
         cancelled(job)
         # The marker makes the normal launcher stop instead of opening halfway
         # through a replacement. It also points to the recovery journal.
-        marker = contained_file(root, "native/update-pending.json")
-        if marker.exists():
-            raise UpdateError("Another update is already in progress.")
-        write_json(marker, {"job": str(job)})
+        claim_pending(root, job)
         status(job, "ready", "Ready. Closing RivenLens to install the update…")
-        wait_for_app(spec["pid"], job)
+        lease = wait_for_app(root, job)
         app_closed = True
-        status(job, "installing", "Installing the update…")
+        status(job, "backing_up", "Saving the current version…")
         journal = backup_installation(root, stage, files, backup)
+        status(job, "installing", "Installing the update…")
         replacing = True
         apply_release(root, stage, journal, runtime)
         status(job, "complete", f"RivenLens {spec['version']} was installed.")
+        committed = True
+        clear_pending(root, job)
+        lease.close()
+        lease = None
         restart(root, root / "native" / runtime / "Scripts/pythonw.exe", job)
     except Exception as exc:
+        if committed:
+            # A completed replacement is never undone for a cleanup/restart error.
+            status(
+                job,
+                "complete",
+                f"RivenLens {spec['version']} was installed. Reopen it with the launcher. {exc}",
+            )
+            return 1
         message = str(exc) or "The update could not be installed."
         if replacing:
             try:
@@ -211,25 +305,95 @@ def install(job):
                     f"Automatic recovery needs attention: {restore_error}. Backup: {backup}",
                 )
                 return 1
-        marker = root / "native/update-pending.json"
-        if marker.is_file():
-            saved = json.loads(marker.read_text(encoding="utf-8"))
-            if saved.get("job") == str(job):
-                marker.unlink()
+        try:
+            clear_pending(root, job)
+        except (OSError, ValueError, UpdateError) as marker_error:
+            message += f" The pending marker needs attention: {marker_error}. Recovery folder: {job}"
         status(job, "failed", message)
         if app_closed:
+            if lease is not None:
+                lease.close()
+                lease = None
             try:
                 restart(root, spec["python"], job)
             except OSError:
                 pass
         return 1
-    # Cleanup must never roll back code after the updated app has been launched.
-    try:
-        marker.unlink(missing_ok=True)
-    except OSError:
-        pass
+    finally:
+        if lease is not None:
+            lease.close()
     return 0
 
 
+def recover(job, expected_root, *, inspect_only=False):
+    """Explicit launcher recovery, using only this installation's verified journal."""
+    job = Path(job).resolve(strict=True)
+    root = Path(expected_root).resolve(strict=True)
+    with job_guard(job):
+        spec = json.loads((job / "job.json").read_text(encoding="utf-8"))
+        if Path(spec["root"]).resolve(strict=True) != root:
+            raise UpdateError("This recovery job belongs to another installation.")
+        ensure_installable(root)
+        marker = contained_file(root, "native/update-pending.json")
+        saved = json.loads(marker.read_text(encoding="utf-8"))
+        if not isinstance(saved, dict) or saved.get("job") != str(job):
+            raise UpdateError("The pending marker does not identify this recovery job.")
+        lease = wait_for_app(root, job, timeout=0)
+        try:
+            state = json.loads((job / "status.json").read_text(encoding="utf-8"))[
+                "state"
+            ]
+            if state == "complete":
+                verify_version(root, spec, "version")
+                clear_pending(root, job)
+                return 0
+            if inspect_only:
+                return 2  # Recovery needs the user's confirmation.
+            backup = job / "backup"
+            if (backup / "journal.json").is_file():
+                journal = json.loads(
+                    (backup / "journal.json").read_text(encoding="utf-8")
+                )
+                restore_release(root, backup, journal)
+            else:
+                if state not in ("preparing", "ready", "backing_up", "failed"):
+                    raise UpdateError(
+                        "The backup journal is missing. Leave the recovery folder intact."
+                    )
+                verify_version(root, spec, "current_version")
+            clear_pending(root, job)
+            status(
+                job,
+                "failed",
+                "The interrupted update was recovered. Your previous version is ready.",
+            )
+        finally:
+            lease.close()
+    return 0
+
+
+def verify_version(root, spec, version_key):
+    installed_files(root)
+    config = ReleaseConfig.load(root / "native/data/release.json")
+    if (
+        config.version != spec[version_key]
+        or config.repository.casefold() != spec["repository"].casefold()
+    ):
+        raise UpdateError("The installed version no longer matches this recovery job.")
+
+
 if __name__ == "__main__":
-    sys.exit(install(Path(sys.argv[1])))
+    try:
+        result = (
+            recover(
+                Path(sys.argv[2]),
+                Path(sys.argv[3]),
+                inspect_only=sys.argv[1] == "--inspect",
+            )
+            if sys.argv[1] in ("--recover", "--inspect")
+            else install(Path(sys.argv[1]))
+        )
+    except Exception as exc:
+        print(f"RivenLens update: {exc}", file=sys.stderr)
+        result = 1
+    sys.exit(result)

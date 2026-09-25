@@ -5,7 +5,6 @@
 """Launch and observe a per-update helper without blocking or owning its lifetime."""
 
 import json
-import os
 import shutil
 import subprocess
 import sys
@@ -27,16 +26,23 @@ class InstallSession:
         self.handed_off = False
         self.spec = {
             "root": str(NATIVE.parent),
-            "pid": os.getpid(),
             "python": str(Path(sys.executable).with_name("pythonw.exe")),
             "base_python": str(Path(sys.base_prefix) / "python.exe"),
             "current_version": config.version,
             "repository": config.repository,
             "version": release.version,
+            "sha256": release.sha256,
+            "size": release.size,
         }
 
     def start(self):
-        for filename in ("update_installer.py", "update_package.py", "releases.py"):
+        for filename in (
+            "update_installer.py",
+            "update_package.py",
+            "releases.py",
+            "dependencies.py",
+            "instance.py",
+        ):
             shutil.copy2(NATIVE / filename, self.job / filename)
         write_json(self.job / "job.json", self.spec)
         write_json(
@@ -71,7 +77,7 @@ class InstallSession:
         ):
             return {
                 "state": "failed",
-                "message": "The update helper stopped unexpectedly. Your existing version has not been replaced.",
+                "message": f"The update helper stopped unexpectedly. Keep the backup and log in: {self.job}",
             }
         return result
 

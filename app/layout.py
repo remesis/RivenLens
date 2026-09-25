@@ -74,13 +74,22 @@ def tile_boxes(image, side=1200, overlap=400):
     ]
 
 
-async def read_tiles(engine, image):
+async def read_tiles(engine, image, *, cursor=None):
+    from ocr_budget import allow_retry
+
     lines = []
-    for box in tile_boxes(image):
+    boxes = tile_boxes(image)
+    start = getattr(engine, cursor, 0) if cursor else 0
+    for index in range(start, len(boxes)):
+        box = boxes[index]
         # Empty desktop margins do not need OCR, particularly on large canvases.
         extrema = image.crop(box).convert("L").getextrema()
         if extrema[1] - extrema[0] < 3:
             continue
+        if cursor and not allow_retry(engine):
+            setattr(engine, cursor, index)
+            setattr(engine, cursor + "_pending", True)
+            return lines
         for candidate in await read_region(engine, image, box):
             duplicate = next(
                 (
@@ -98,6 +107,9 @@ async def read_tiles(engine, image):
             )
             if duplicate is None:
                 lines.append(candidate)
+    if cursor:
+        setattr(engine, cursor, 0)
+        setattr(engine, cursor + "_pending", False)
     return lines
 
 
@@ -124,7 +136,7 @@ def action_line(lines, mode):
     )
 
 
-def card_region(image, cards, action=None):
+def card_region(image, cards, action=None, previous=None):
     """Learn a text region with room for both the centered and comparison cards."""
     titles = [card["titleBounds"] for card in cards if card.get("titleBounds")]
     if not titles:
@@ -138,12 +150,34 @@ def card_region(image, cards, action=None):
     if action:
         center = action["x"] + action["w"] / 2
         bottom = max(bottom, action["y"] + action["h"] * 2)
-    return clipped_box(
+    region = clipped_box(
         image,
         (
             min(left - width * 0.7, center - width * 2),
             top - height * 5,
-            center + width * 1.2,
+            max(
+                center + width * 1.2,
+                max(card["bounds"]["x"] + card["bounds"]["w"] for card in cards),
+            ),
             bottom + height * 2,
         ),
     )
+    # Small OCR box differences must not change the resampling grid every frame.
+    # Keep the padded crop stable, but follow actual movement or scale changes.
+    tolerance = max(2, height)
+    if previous and all(abs(a - b) <= tolerance for a, b in zip(region, previous)):
+        return previous
+    if previous:
+        # The centered card and the new comparison card occupy the same area.
+        # Do not change a working OCR scale just to add more empty padding when
+        # the existing crop already contains every detected card and the button.
+        anchors = [card["bounds"] for card in cards] + ([action] if action else [])
+        if all(
+            previous[0] <= box["x"]
+            and previous[1] <= box["y"] - height
+            and previous[2] >= box["x"] + box["w"]
+            and previous[3] >= box["y"] + box["h"] + height
+            for box in anchors
+        ):
+            return previous
+    return region

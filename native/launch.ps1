@@ -5,12 +5,28 @@
 $ErrorActionPreference = 'Stop'
 $pending = Join-Path $PSScriptRoot 'update-pending.json'
 if (Test-Path -LiteralPath $pending) {
-    $updateJob = (Get-Content -LiteralPath $pending -Raw | ConvertFrom-Json).job
-    $updateStatus = Join-Path $updateJob 'status.json'
-    if ((Test-Path -LiteralPath $updateStatus) -and (Get-Content -LiteralPath $updateStatus -Raw | ConvertFrom-Json).state -eq 'complete') {
-        Remove-Item -LiteralPath $pending
-    } else {
-        throw "An update is still in progress or needs recovery. Its backup and log are in: $updateJob"
+    try {
+        $updateJob = (Get-Content -LiteralPath $pending -Raw | ConvertFrom-Json).job
+        if ([string]::IsNullOrWhiteSpace($updateJob)) { throw 'Missing recovery folder.' }
+    } catch {
+        throw "The pending update marker is damaged. No files were changed. Keep the recovery folders in: $env:LOCALAPPDATA\Arbitrations\RivenLens Native\updates"
+    }
+    $updatesDirectory = [IO.Path]::GetFullPath((Join-Path $env:LOCALAPPDATA 'Arbitrations\RivenLens Native\updates'))
+    $resolvedJob = [IO.Path]::GetFullPath($updateJob)
+    if ((Split-Path -Parent $resolvedJob) -ne $updatesDirectory -or (Split-Path -Leaf $resolvedJob) -notlike 'update-*') {
+        throw 'The update recovery path is invalid. No files were changed.'
+    }
+    $recoveryHelper = Join-Path $resolvedJob 'update_installer.py'
+    if (-not (Test-Path -LiteralPath $recoveryHelper)) { throw "Recovery helper missing. Keep the backup in: $resolvedJob" }
+    py -3.13 -B $recoveryHelper --inspect $resolvedJob (Split-Path -Parent $PSScriptRoot)
+    if ($LASTEXITCODE -eq 2) {
+        Add-Type -AssemblyName System.Windows.Forms
+        $choice = [System.Windows.Forms.MessageBox]::Show('An update needs attention. Choose Yes to recover the previous version. Your settings and sounds will stay in place.', 'RivenLens recovery', 'YesNo', 'Warning', 'Button2')
+        if ($choice -ne 'Yes') { exit 0 }
+        py -3.13 -B $recoveryHelper --recover $resolvedJob (Split-Path -Parent $PSScriptRoot)
+        if ($LASTEXITCODE -ne 0) { throw "Recovery could not finish. Keep the backup and log in: $resolvedJob" }
+    } elseif ($LASTEXITCODE -ne 0) {
+        throw "The update is still active or needs attention. Close RivenLens and retry the launcher. Keep the backup and log in: $resolvedJob"
     }
 }
 $runtime = '.venv'
@@ -28,20 +44,9 @@ if (-not (Test-Path -LiteralPath $nativePython)) {
     if ($LASTEXITCODE -ne 0) { throw 'Install Python 3.13 for Windows, then try again.' }
 }
 $requirements = Join-Path (Split-Path -Parent $PSScriptRoot) 'requirements.txt'
-$dependencyProbe = @'
-import importlib.metadata as metadata
-from pathlib import Path
-import sys
-try:
-    rows = [line.strip().split('==') for line in Path(sys.argv[1]).read_text().splitlines() if line.strip() and not line.startswith('#')]
-    ready = all(len(row) == 2 and metadata.version(row[0]) == row[1] for row in rows)
-except (metadata.PackageNotFoundError, ValueError):
-    ready = False
-sys.exit(0 if ready else 1)
-'@
-& $nativePython -B -c $dependencyProbe $requirements
+& $nativePython -B (Join-Path $PSScriptRoot 'dependencies.py') $requirements
 if ($LASTEXITCODE -ne 0) {
-    & $nativePython -m pip install -r $requirements
+    & $nativePython -m pip install --disable-pip-version-check --no-input --only-binary=:all: --require-hashes -r $requirements
     if ($LASTEXITCODE -ne 0) { throw 'Dependency setup failed. Check your connection and try again.' }
 }
-Start-Process -FilePath $nativeWindowPython -ArgumentList @('-B', ('"' + (Join-Path $PSScriptRoot 'main.py') + '"')) -WorkingDirectory $PSScriptRoot -WindowStyle Hidden
+Start-Process -FilePath $nativeWindowPython -ArgumentList @('-B', ('"' + (Join-Path $PSScriptRoot 'bootstrap.py') + '"')) -WorkingDirectory $PSScriptRoot -WindowStyle Hidden

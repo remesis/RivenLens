@@ -115,8 +115,10 @@ class GithubTransfer(QObject):
         status = reply.attribute(QNetworkRequest.Attribute.HttpStatusCodeAttribute)
         target = reply.attribute(QNetworkRequest.Attribute.RedirectionTargetAttribute)
         if status in (301, 302, 303, 307, 308) and target:
-            url = reply.url().resolved(target).toString(
-                QUrl.ComponentFormattingOption.FullyEncoded
+            url = (
+                reply.url()
+                .resolved(target)
+                .toString(QUrl.ComponentFormattingOption.FullyEncoded)
             )
             self.release_reply()
             self.redirects += 1

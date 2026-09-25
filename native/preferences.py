@@ -37,6 +37,7 @@ DEFAULTS = {
     "ocrWarningAudio": {"soundId": "soft-fall", "soundVolume": 35},
     "capture": {
         "monitor": 1,
+        "monitorId": "",
         "interval": 0.1,
         "backend": "auto",
         "contrast": False,
@@ -51,6 +52,8 @@ def capture_settings(value):
     result = {**DEFAULTS["capture"], **(value if isinstance(value, dict) else {})}
     if type(result["monitor"]) is not int or result["monitor"] < 1:
         result["monitor"] = 1
+    if not isinstance(result["monitorId"], str) or len(result["monitorId"]) > 1024:
+        result["monitorId"] = ""
     if (
         type(result["interval"]) not in (float, int)
         or not 0.1 <= result["interval"] <= 5

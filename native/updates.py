@@ -5,6 +5,7 @@
 """One startup check and a user-approved download, install and restart flow."""
 
 import json
+from pathlib import Path
 from PySide6.QtCore import QObject, Qt, QTimer
 from PySide6.QtWidgets import (
     QDialog,
@@ -17,12 +18,31 @@ from PySide6.QtWidgets import (
 from appearance import theme_for
 from releases import ReleaseConfig, newer_release
 from update_network import GithubTransfer
+from update_package import UpdateError, installed_files
 from update_session import InstallSession
 from widgets import label
 
 
+def source_checkout():
+    return (Path(__file__).resolve().parent.parent / ".git").exists()
+
+
+def installation_issue():
+    if source_checkout():
+        return "This is a Git checkout. Update it through Git."
+    try:
+        installed_files(Path(__file__).resolve().parent.parent)
+    except (UpdateError, OSError):
+        return (
+            "Automatic updates are unavailable for source downloads or modified "
+            "copies. Download RivenLens.zip and extract it into a new folder. "
+            "Your settings and sounds will stay in place."
+        )
+    return None
+
+
 class UpdateDialog(QDialog):
-    def __init__(self, window, config, release):
+    def __init__(self, window, config, release, issue=None):
         super().__init__(window)
         self.owner = window
         self.config = config
@@ -43,7 +63,8 @@ class UpdateDialog(QDialog):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(18, 16, 18, 16)
         layout.setSpacing(14)
-        layout.addWidget(label("Update available", "heading"))
+        self.heading = label("Update available", "heading")
+        layout.addWidget(self.heading)
         self.message = label(
             f"RivenLens {release.version} is available. You have {config.version}.\n\nWould you like to download and install the latest version?",
             wrap=True,
@@ -76,8 +97,30 @@ class UpdateDialog(QDialog):
         self.transfer.progress.connect(self.show_progress)
         self.transfer.completed.connect(self.prepare_install)
         self.transfer.failed.connect(self.failed)
+        if issue:
+            self.manual_update(issue)
+
+    def manual_update(self, message):
+        self.heading.setText("Manual update needed")
+        self.message.setText(
+            f"RivenLens {self.release.version} is available.\n\n{message}"
+        )
+        self.note.setText(
+            f'<a style="color: #7bd6ff;" href="https://github.com/{self.config.repository}/releases/latest">Open the release page</a>'
+        )
+        self.note.setTextFormat(Qt.TextFormat.RichText)
+        self.note.setOpenExternalLinks(True)
+        self.progress.hide()
+        self.yes.hide()
+        self.no.setText("Close")
+        self.ensurePolished()
+        self.setMinimumHeight(self.layout().totalHeightForWidth(self.width()))
 
     def download(self):
+        issue = installation_issue()
+        if issue:
+            self.manual_update(issue)
+            return
         try:
             if self.session is not None:
                 self.session.cancel()
@@ -161,11 +204,16 @@ class StartupUpdates(QObject):
         self.timer.timeout.connect(self.check)
 
     def schedule(self):
-        if self.config.enabled and not self.checked and not self.stopped:
+        if (
+            self.config.enabled
+            and not self.checked
+            and not self.stopped
+            and not source_checkout()
+        ):
             self.timer.start(900)
 
     def check(self):
-        if self.checked or self.stopped or not self.config.enabled:
+        if self.checked or self.stopped or not self.config.enabled or source_checkout():
             return
         self.checked = True
         self.transfer.start(self.config.api_url)
@@ -178,7 +226,9 @@ class StartupUpdates(QObject):
         except (ValueError, TypeError, UnicodeError):
             return
         if release is not None:
-            self.dialog = UpdateDialog(self.window, self.config, release)
+            self.dialog = UpdateDialog(
+                self.window, self.config, release, installation_issue()
+            )
             self.dialog.finished.connect(self.clear_dialog)
             self.dialog.show()
 

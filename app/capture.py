@@ -4,7 +4,22 @@
 
 """Monitor pixels through Windows desktop APIs, with no application handles."""
 
+import time
+
 from PIL import Image
+
+
+class CaptureUnavailable(RuntimeError):
+    """A temporary loss of desktop pixels, not a failed OCR observation."""
+
+
+class CapturePending(CaptureUnavailable):
+    """The desktop camera is starting; retain it for the next short retry."""
+
+
+def monitor_token(monitor):
+    identity = monitor_identity(monitor)
+    return "id:" + identity if isinstance(identity, str) else "bounds:" + repr(identity)
 
 
 def capture_box(monitor, region):
@@ -83,6 +98,8 @@ class DesktopCapture:
         self.camera = None
         self.backend = "gdi"
         self.fallback = False
+        self.allow_fallback = backend == "auto"
+        self.pending_since = None
         if backend != "gdi":
             try:
                 self.camera = create_desktop_camera(monitor)
@@ -108,21 +125,56 @@ class DesktopCapture:
         if self.camera is not None:
             # Desktop duplication includes fullscreen surfaces. These are Windows'
             # monitor pixels, not a game hook, game process or game texture read.
-            frame = self.camera.grab(new_frame_only=False)
+            try:
+                frame = self.camera.grab(new_frame_only=False)
+            except Exception as exc:
+                raise CaptureUnavailable(
+                    "Desktop pixels are temporarily unavailable."
+                ) from exc
             if frame is None:
-                raise RuntimeError("Waiting for display pixels after a mode change.")
+                # A newly created duplicator may not have its first frame yet.
+                # Recreating it here can keep restarting that wait indefinitely.
+                if self.pending_since is None:
+                    self.pending_since = time.monotonic()
+                if self.allow_fallback:
+                    try:
+                        image = self._grab_gdi(box)
+                    except CaptureUnavailable:
+                        pass
+                    else:
+                        self.backend = "gdi"
+                        return image
+                if time.monotonic() - self.pending_since < 2:
+                    raise CapturePending("Waiting for the first desktop frame.")
+                raise CaptureUnavailable("Desktop capture did not provide a frame.")
             if frame.shape[:2] != (self.monitor["height"], self.monitor["width"]):
-                raise RuntimeError("Display size changed. Refreshing capture.")
+                raise CaptureUnavailable("Display size changed. Refreshing capture.")
             left = box["left"] - self.monitor["left"]
             top = box["top"] - self.monitor["top"]
             image = Image.fromarray(frame).crop(
                 (left, top, left + box["width"], top + box["height"])
             )
+            self.backend = "dxgi"
+            self.pending_since = None
         else:
+            return self._grab_gdi(box)
+        return self._validate(image)
+
+    def _grab_gdi(self, box):
+        try:
             shot = self.screen.grab(box)
-            image = Image.frombytes("RGB", shot.size, shot.bgra, "raw", "BGRX")
+        except Exception as exc:
+            raise CaptureUnavailable(
+                "Desktop pixels are temporarily unavailable."
+            ) from exc
+        return self._validate(
+            Image.frombytes("RGB", shot.size, shot.bgra, "raw", "BGRX")
+        )
+
+    @staticmethod
+    def _validate(image):
         if max(image.size) > 16 and max(high for _, high in image.getextrema()) < 5:
-            raise RuntimeError(
+            raise CaptureUnavailable(
                 "Capture is black. Check the selected monitor or try another capture method."
             )
         return image

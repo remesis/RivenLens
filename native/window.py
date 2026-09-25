@@ -4,8 +4,6 @@
 
 """RivenLens desktop window. No embedded browser, HTTP server or web socket."""
 
-from pathlib import Path
-
 from PySide6.QtCore import QByteArray, Qt, QTimer, QUrl
 from PySide6.QtGui import QAction, QDesktopServices, QIcon, QPixmap
 from PySide6.QtWidgets import (
@@ -22,6 +20,8 @@ from alerts import History, find_matches
 from appearance import theme_for, window_scale
 from audio import SoundChannel
 from catalog import Catalog
+from capture import monitor_token
+from desktop import ICON
 from planner_view import PlannerView
 from settings_view import SettingsDialog
 from widgets import (
@@ -37,7 +37,6 @@ from widgets import (
 )
 from worker import CaptureWorker
 
-ICON = Path(__file__).resolve().parent / "data" / "arbi-logo.png"
 DEFAULT_WINDOW_SIZE = (550, 750)
 WINDOW_LAYOUT_VERSION = 1
 
@@ -51,6 +50,7 @@ class MainWindow(QWidget):
         self.preferences, self.state = preferences, preferences.state
         self.catalog = Catalog()
         self.cards = []
+        self.monitors = []
         self.running = False
         self.revision = 0
         self._closing = False
@@ -328,7 +328,12 @@ class MainWindow(QWidget):
             return
         self.revision = config["revision"]
         self.running = config["running"]
+        self.monitors = monitors
         self.state["capture"]["monitor"] = config["monitor"]
+        index = config["monitor"] - 1
+        self.state["capture"]["monitorId"] = (
+            monitor_token(monitors[index]) if 0 <= index < len(monitors) else ""
+        )
         options(
             self.monitor,
             (
@@ -342,6 +347,12 @@ class MainWindow(QWidget):
 
     def monitor_changed(self):
         self.state["capture"]["monitor"] = self.monitor.currentData()
+        index = self.monitor.currentData() - 1
+        self.state["capture"]["monitorId"] = (
+            monitor_token(self.monitors[index])
+            if 0 <= index < len(self.monitors)
+            else ""
+        )
         self.apply_capture()
         self.persist()
 
@@ -395,7 +406,9 @@ class MainWindow(QWidget):
                 self.warning_sound.stop()
                 self.good_sound.play()
         text = (
-            "OCR unavailable"
+            "Capture reconnecting"
+            if state.get("error") and state.get("errorKind") == "capture"
+            else "OCR unavailable"
             if state.get("error")
             else "Check new roll stats"
             if warning
@@ -403,6 +416,8 @@ class MainWindow(QWidget):
             if not self.running
             else "Watching for rolls"
             if self.cards
+            else "Reading Riven stats"
+            if state.get("located")
             else "Waiting for a Riven"
         )
         self.status.setText(text)
@@ -426,15 +441,20 @@ class MainWindow(QWidget):
         )
 
     def refresh_grades(self):
-        current = self.cards[0] if self.cards else None
-        new = self.cards[1] if len(self.cards) > 1 else None
+        slots = {
+            card.get("slot", "current" if index == 0 else "new"): card
+            for index, card in enumerate(self.cards)
+        }
+        current, new = slots.get("current"), slots.get("new")
         self.current_card.show_card(current, self.catalog, self.state)
         self.new_card.show_card(new, self.catalog, self.state)
         card = new or current
         variant = (
             self.catalog.variant(card, self.state["gradeVariants"]) if card else None
         )
-        self.variant_label.setText(variant["name"] if variant else "")
+        self.variant_label.setText(
+            variant["name"] if variant else "Reading variant..." if card else ""
+        )
         self.variant_label.setToolTip(
             f"{variant['source']} · disposition {variant['disposition']}"
             if variant

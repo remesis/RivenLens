@@ -1,49 +1,60 @@
 # Release updates
 
-The startup checker uses [remesis/RivenLens](https://github.com/remesis/RivenLens).
-Release settings live in `native/data/release.json`:
+Release copies check [remesis/RivenLens](https://github.com/remesis/RivenLens)
+once at startup. A newer stable release prompts the user. **No** dismisses it for
+that launch. **Yes, update** downloads, installs and reopens RivenLens with
+capture paused and saved settings unchanged. Git checkouts update through Git.
 
-- `version`: this copy's stable version, such as `0.1.0`.
-- `repository`: `remesis/RivenLens`. Empty disables update requests.
-- `asset_name`: optional exact ZIP asset name, such as `RivenLens.zip`.
-  Leave empty to download GitHub's source ZIP for the release tag.
+Versions 0.1.0 and 0.1.1 used GitHub's generated source archive, which has no
+managed-file manifest. For those versions, download **RivenLens.zip** once and
+extract it into a new folder. Settings and sounds remain available. This gives
+future updates the verified file list required by the current installer.
 
-Create a published, non-prerelease [GitHub Release](https://docs.github.com/en/rest/releases/releases#get-the-latest-release)
-with a tag such as `v0.1.1`. Update the bundled version to match in each release.
-A newer tag alone is not enough; it must have a release. If an asset name is
-configured, attach that ZIP to every release. Missing assets are ignored.
+## Publishing
 
-Checks run once after startup without blocking the interface. Offline, missing
-repository, rate-limit and malformed-response errors are silent. Only a newer
-stable version prompts the user. **No** dismisses it for that launch.
+1. Set `version`, `repository` and the exact `asset_name` (`RivenLens.zip`) in
+   `native/data/release.json`. An empty repository or asset name disables checks.
+2. Review and commit the release. From the clean checkout, run
+   `python docs/build_release.py C:\release-output\RivenLens.zip`, choosing an
+   existing output folder outside the checkout.
+3. Publish a non-prerelease GitHub Release with the matching `vX.Y.Z` tag and
+   attach that ZIP. The builder includes committed application files and a
+   checksum manifest, excluding local environments, settings and caches. It reads
+   Git's committed archive, not checkout bytes, and fixes ZIP timestamps so local
+   line-ending settings and file dates do not change the package.
 
-**Yes, update** downloads, installs and reopens RivenLens automatically. No save
-dialog or manual extraction is needed. Cancel is available during download and
-preparation. Once replacement starts, let the updater finish.
+The checker requires the named asset, a positive size and GitHub's SHA-256 digest.
+It does not fall back to GitHub's generated source ZIP. Source downloads and copies
+with modified application files show a manual-install notice instead of offering
+an unusable download. Extract `RivenLens.zip` into a new folder; saved settings and
+sounds stay available.
 
-The app restricts HTTPS downloads and redirects to GitHub hosts, bounds response
-sizes and timeouts, and verifies an asset's size and SHA-256 when supplied.
-Archives are checked for unsafe paths, duplicate filenames, links, missing files,
-invalid Python syntax and mismatched versions or repositories before installation.
+## Protection and recovery
 
-The helper stages the release outside the installation. If requirements changed,
-it builds a separate environment at a stable path under `native/.runtimes` without
-altering the working environment. It checks dependencies and imports, then waits
-for its own RivenLens process to close normally. It does not force-close the app.
-The old source is backed up before replacement. Installation failures restore
-that backup and reopen the previous version where possible. Successfully installed
-releases reopen automatically with capture paused and saved settings unchanged.
+Downloads use approved GitHub HTTPS hosts with size and timeout limits. The
+installer verifies the archive's size and hash again before extraction, then
+checks its paths, manifest, Python syntax, version and repository. These hashes
+detect corruption; they are not an independent publisher signature.
 
-Update files, logs and backups are in
-`%LOCALAPPDATA%\Arbitrations\RivenLens Native\updates`. They are not published.
-If power loss or a filesystem error interrupts replacement, the launcher blocks
-startup instead of opening a partially installed app and identifies the recovery
-folder. That folder contains `backup/journal.json` and the previous source files.
-Do not remove it until recovery is complete. Backups and previous runtimes are
-retained, not automatically purged.
+Only files listed in the installed manifest can be replaced or removed. Modified
+application files, Git checkouts and collisions with unrelated local files stop
+the update. Other local files are left alone. Dependencies are fully pinned with
+wheel hashes in `requirements.txt`; changed requirements get a separate runtime
+without altering the working one. Dependency and import checks run before the app
+closes normally. The updater never force-closes RivenLens.
 
-Publish source and required assets only. Do not include `native/.venv`,
-`native/.runtimes`, `native/runtime.json`, `native/update-pending.json`, Python
-caches, preferences, personal sounds or development material. The updater ignores
-bundled runtime directories and machine-specific state. Keep dependencies pinned
-in root `requirements.txt`; automatic dependency updates require binary wheels.
+Cancel is available during download and preparation. Once replacement starts,
+let it finish. Installation failures restore the verified backup where possible.
+The app and installer share an OS-released file lock. No saved process number is
+used to decide whether RivenLens is open. The backup journal is saved before any
+replacement begins.
+
+After an interrupted update, the launcher offers recovery before starting the app.
+Recovery refuses an active update or missing, damaged or mismatched recovery data.
+A completed update is verified and never rolled back just because its pending
+marker remains. A malformed marker is reported rather than guessed or deleted.
+
+Update logs and backups are kept in
+`%LOCALAPPDATA%\Arbitrations\RivenLens Native\updates`. Keep the indicated recovery
+folder until recovery is complete. Backups and previous runtimes are retained,
+not automatically purged. Nothing in this process accesses Warframe.

@@ -24,9 +24,10 @@ def missing_known_stats(card, known_cards):
 
 
 class NewRollStatWarning:
-    """Warn once per sustained failure while a comparison is visibly present."""
+    """Show sustained stat failures, sounding once for each proposed roll."""
 
-    SETTLE_SECONDS = 0.75
+    SETTLE_SECONDS = 1.25
+    MIN_BAD_READS = 4
 
     def __init__(self):
         self.serial = 0
@@ -38,6 +39,8 @@ class NewRollStatWarning:
         self.good_reads = 0
         self.last_stats = None
         self.warning = None
+        self.roll_stats = None
+        self.warning_id = None
 
     def update(self, raw, mode, now, known_cards=()):
         if mode in ("current", "transition"):
@@ -66,13 +69,27 @@ class NewRollStatWarning:
                     for s in candidate["stats"]
                 ),
             )
+            recovering = self.last_stats is None
             self.good_reads = self.good_reads + 1 if identity == self.last_stats else 1
             self.last_stats = identity
             if self.good_reads >= 2:
+                if self.roll_stats is not None and identity != self.roll_stats:
+                    # A different verified roll also rearms when the intervening
+                    # confirmation/animation was missed between captures.
+                    self.warning_id = None
+                self.roll_stats = identity
                 self.since = None
                 self.bad_reads = 0
                 self.warning = None
                 return None
+            if recovering:
+                # A clear read breaks a run of occlusions. Keep an existing
+                # warning until confirmation, but do not combine separate mouse
+                # passes into one sustained failure. Alternating numeric reads
+                # still accumulate below until the values agree twice.
+                self.since = None
+                self.bad_reads = 0
+                return self.warning
         else:
             self.good_reads = 0
             self.last_stats = None
@@ -81,12 +98,14 @@ class NewRollStatWarning:
             self.since = now
         if (
             self.warning is None
-            and self.bad_reads >= 2
+            and self.bad_reads >= self.MIN_BAD_READS
             and now - self.since >= self.SETTLE_SECONDS
         ):
-            self.serial += 1
+            if self.warning_id is None:
+                self.serial += 1
+                self.warning_id = self.serial
             self.warning = {
-                "id": self.serial,
+                "id": self.warning_id,
                 "message": "New roll stat lines could not be reliably read. Check the card before rolling again.",
             }
         return self.warning

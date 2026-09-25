@@ -5,18 +5,20 @@
 """RivenLens native entry point. Capture remains paused until explicitly started."""
 
 import argparse
-import hashlib
 import sys
+import traceback
 from pathlib import Path
 
 NATIVE = Path(__file__).resolve().parent
 sys.path.insert(0, str(NATIVE.parent / "app"))
 
-from PySide6.QtCore import QLockFile, QStandardPaths, QTimer  # noqa: E402
-from PySide6.QtGui import QColor, QFont, QPalette  # noqa: E402
+from PySide6.QtCore import QStandardPaths, QTimer  # noqa: E402
+from PySide6.QtGui import QColor, QFont, QIcon, QPalette  # noqa: E402
 from PySide6.QtWidgets import QApplication, QMessageBox  # noqa: E402
 
 from appearance import theme_for  # noqa: E402
+from desktop import ICON, set_taskbar_identity  # noqa: E402
+from instance import InstallationLease  # noqa: E402
 from preferences import Preferences  # noqa: E402
 from releases import ReleaseConfig  # noqa: E402
 from updates import StartupUpdates  # noqa: E402
@@ -28,9 +30,12 @@ def main():
     arguments = argparse.ArgumentParser(add_help=False)
     arguments.add_argument("--update-result")
     options, _ = arguments.parse_known_args()
+    set_taskbar_identity()
     app = QApplication(sys.argv)
     app.setOrganizationName("Arbitrations")
     app.setApplicationName("RivenLens Native")
+    app.setApplicationDisplayName("RivenLens")
+    app.setWindowIcon(QIcon(str(ICON)))
     release = ReleaseConfig.load()
     app.setApplicationVersion(release.version)
     app.setStyle("Fusion")
@@ -53,21 +58,34 @@ def main():
             QStandardPaths.StandardLocation.AppLocalDataLocation
         )
     )
-    locks = directory / "locks"
-    locks.mkdir(parents=True, exist_ok=True)
-    identity = hashlib.sha256(str(NATIVE.parent).casefold().encode()).hexdigest()[:24]
-    instance = QLockFile(str(locks / (identity + ".lock")))
-    instance.setStaleLockTime(0)
-    if not instance.tryLock(0):
+    instance = InstallationLease(NATIVE.parent, directory / "locks")
+    if not instance.acquire():
         QMessageBox.information(
-            None, "RivenLens", "This copy of RivenLens is already open."
+            None,
+            "RivenLens",
+            "This copy of RivenLens is already open or being updated.",
         )
         return 0
     try:
+        if (NATIVE / "update-pending.json").exists():
+            QMessageBox.warning(
+                None,
+                "RivenLens update",
+                "An update needs attention. Reopen RivenLens with its launcher to finish or recover it.",
+            )
+            return 0
+        return run_window(app, directory, release, options)
+    finally:
+        instance.close()
+
+
+def run_window(app, directory, release, options):
+    try:
         window = MainWindow(Preferences(directory))
     except Exception as exc:
+        traceback.print_exc()
         QMessageBox.critical(None, "RivenLens could not start", str(exc))
-        return 1
+        return 0  # Already reported; avoid a second supervisor dialog.
     window.show()
     window.updates = StartupUpdates(window, release)
     app.aboutToQuit.connect(window.updates.shutdown)

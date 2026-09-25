@@ -21,9 +21,10 @@ choice.
 
 ## Getting started
 
-You'll need **Windows, Python 3.13 and Windows' English OCR language feature**.
+You'll need **64-bit Windows, 64-bit Python 3.13 and Windows' English OCR language
+feature**. Use Warframe's English interface.
 Download the [latest release](https://github.com/remesis/RivenLens/releases/latest)
-and extract the ZIP into a folder you can keep.
+and extract **RivenLens.zip** into a folder you can keep.
 Double-click **Start Riven Lens.cmd**. The first launch installs the required
 Python packages into its own environment.
 
@@ -43,8 +44,8 @@ closing the window or choosing **Quit** exits the app.
 ## A few things to know
 
 Keep the stat text, rank pips and bottom-right **Fits In** label visible. Small
-text, animations and covered cards can confuse OCR. **LAST READ** means retained
-grades, not a fresh reading. If capture is blank, try another capture method.
+text, animations and covered cards can confuse OCR. Previous grades stay visible
+during brief interruptions. If capture is blank, try another capture method.
 
 **Double-check important rolls before discarding them.** The warning covers
 incomplete new-roll stat lines, not unreadable rank pips or variant labels.
@@ -52,13 +53,16 @@ Silence does not guarantee a correct read. Grades use bundled reference values;
 planner odds are estimates, not guarantees.
 
 Images and readings stay in memory and are not uploaded or automatically saved.
-Only settings and chosen sound copies are saved locally. Optional startup update
+Settings, chosen sound copies and diagnostic logs are saved locally. Startup update
 checks contact GitHub, never Warframe. Choose **Yes, update** to download, install
 and reopen RivenLens automatically. Settings and custom sounds are preserved,
 and the previous version is backed up. [Privacy details](docs/PRIVACY.md).
 
 Updates come from [remesis/RivenLens](https://github.com/remesis/RivenLens/releases).
 Only newer published releases prompt for an update. [Release configuration](docs/UPDATES.md).
+Git checkouts are updated through Git instead of the automatic installer.
+For copies from 0.1.0 or 0.1.1, download **RivenLens.zip** once and extract it into
+a new folder to enable the updated installer. Your saved settings stay available.
 
 ## License
 
