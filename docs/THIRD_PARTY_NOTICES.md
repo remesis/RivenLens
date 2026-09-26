@@ -36,6 +36,14 @@ stores numerical values and names in its own catalog format. Wiki baseline links
 are retained in `native/data/reference.json`; unknown values and assumptions are
 identified separately. These are reference data, not a guarantee of game behavior.
 
+The catalog includes the weapons from [Update 44: Iceblade of Narin](https://www.warframe.com/en/patch-notes/pc/44-0-0)
+and DE's [September 2026 disposition changes](https://forums.warframe.com/topic/1523355-september-2026-riven-dispositions/).
+New weapons start at 0.50. Nunchasa uses Rifle ranges; Aksondol uses Pistol ranges.
+Their Puncture/Cold damage profiles are cross-checked against
+[Nunchasa](https://overframe.gg/items/arsenal/8051/nunchasa/) and
+[Aksondol](https://overframe.gg/items/arsenal/8050/aksondol/) reference entries.
+Existing weapon pools, vintage flags and stat baselines are otherwise unchanged.
+
 The Arbitrations logo is supplied by the Arbitrations project. Warframe and its
 associated names and trademarks belong to Digital Extremes. No trademark rights,
 Digital Extremes endorsement or ownership of third-party content are implied by
