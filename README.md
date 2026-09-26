@@ -14,7 +14,8 @@ data through Overwolf. [WFHelper](https://github.com/WFHelper/WFHelper#inventory
 offers several inventory sources; its recommended
 [helper](https://github.com/Sainan/warframe-api-helper/blob/senpai/main.cpp)
 reads session credentials from game memory to request inventory from Warframe's
-servers.
+servers. Although, WFHelper's Riven scanner does work without these integrations
+or a connected account.
 
 RivenLens uses **local Optical Character Recognition (OCR)** to read the text
 already on your screen. It does not read game memory, obtain account tokens,
