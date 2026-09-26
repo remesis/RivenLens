@@ -7,7 +7,7 @@
 import copy
 import json
 
-from PySide6.QtCore import QIODevice, QSaveFile
+from PySide6.QtCore import QIODevice, QLockFile, QSaveFile
 
 from catalog import SPLICE_IDS
 from grading import FORMATS, GRADE_NAMES
@@ -45,6 +45,7 @@ DEFAULTS = {
     },
     "geometry": "",
     "windowPosition": [],
+    "windowSize": [],
     "windowLayoutVersion": 0,
 }
 
@@ -103,6 +104,9 @@ def sanitize(saved):
         type(value) is not int or not -(2**30) <= value < 2**30 for value in position
     ):
         state["windowPosition"] = []
+    size = state["windowSize"]
+    if len(size) != 2 or any(type(n) is not int or not 1 <= n <= 32768 for n in size):
+        state["windowSize"] = []
     for audio in (state, state["ocrWarningAudio"]):
         volume = audio.get("soundVolume", 50)
         audio["soundVolume"] = (
@@ -126,15 +130,49 @@ class Preferences:
             saved = {}
             self.error = "Saved settings could not be read. Defaults are in use."
         self.state = sanitize(saved)
+        self._saved = copy.deepcopy(self.state)
 
     def save(self):
         self.directory.mkdir(parents=True, exist_ok=True)
         data = {key: self.state[key] for key in DEFAULTS}
+        lock = QLockFile(str(self.directory / "preferences.lock"))
+        if not lock.tryLock(1000):
+            raise OSError("Settings are being saved by another copy. Please retry.")
+        try:
+            self._save_changed(data)
+        finally:
+            lock.unlock()
+
+    def _save_changed(self, data):
+        try:
+            saved = (
+                json.loads(self.path.read_text(encoding="utf-8"))
+                if self.path.exists()
+                else {}
+            )
+            if not isinstance(saved, dict):
+                raise ValueError("Invalid settings")
+        except (OSError, ValueError) as exc:
+            raise OSError(
+                "Saved settings could not be read. The existing file was left untouched."
+            ) from exc
+        merged = sanitize(saved)
+        changed = {key for key in DEFAULTS if data[key] != self._saved[key]}
+        # Keep a planner selection internally consistent across simultaneous copies.
+        target = {"weapon", "variant", "format", "positives", "negative", "lock"}
+        if changed & target:
+            changed |= target
+        for key in changed:
+            merged[key] = data[key]
         file = QSaveFile(str(self.path))
         if not file.open(QIODevice.OpenModeFlag.WriteOnly):
             raise OSError("Could not open local settings")
         content = json.dumps(
-            {"schemaVersion": 1, **data}, ensure_ascii=False, allow_nan=False, indent=2
+            {"schemaVersion": 1, **merged},
+            ensure_ascii=False,
+            allow_nan=False,
+            indent=2,
         ).encode("utf-8")
         if file.write(content) != len(content) or not file.commit():
             raise OSError("Could not save local settings")
+        self._saved = copy.deepcopy(data)

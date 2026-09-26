@@ -200,11 +200,13 @@ class MainWindow(QWidget):
                 )
             )
         self._initial_size_pending = (
-            not restored or self.state["windowLayoutVersion"] < WINDOW_LAYOUT_VERSION
-        )
+            not restored and not self.state["windowSize"]
+        ) or self.state["windowLayoutVersion"] < WINDOW_LAYOUT_VERSION
         if self._initial_size_pending:
             self.setWindowState(Qt.WindowState.WindowNoState)
             self.resize(*DEFAULT_WINDOW_SIZE)
+        elif self.state["windowSize"] and not self.isMaximized():
+            self.resize(*self.state["windowSize"])
         self.state["windowLayoutVersion"] = WINDOW_LAYOUT_VERSION
         self.keep_on_screen()
         self.setWindowFlag(
@@ -243,11 +245,20 @@ class MainWindow(QWidget):
             and not (self.isMinimized() or self.isMaximized() or self.isFullScreen())
         ):
             self.state["windowPosition"] = [self.x(), self.y()]
+            self.state["windowSize"] = [self.width(), self.height()]
+
+    def remember_window(self):
+        if self._position_ready and self.isVisible() and not self._closing:
+            self.remember_position()
+            self.state["geometry"] = bytes(self.saveGeometry().toBase64()).decode(
+                "ascii"
+            )
+            self.persist()
 
     def moveEvent(self, event):
         super().moveEvent(event)
         if hasattr(self, "_position_ready"):
-            self.remember_position()
+            self.remember_window()
 
     def set_initial_size(self):
         # Keep the initial outer size consistent, including the native title bar.
@@ -263,6 +274,7 @@ class MainWindow(QWidget):
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
+        self.remember_window()
         # Coalesce layout work during a drag without waiting for the drag to end.
         if not self._resize_timer.isActive():
             self._resize_timer.start()
@@ -526,14 +538,12 @@ class MainWindow(QWidget):
         self.show()
         # Changing the owner's native flags must not take focus from Settings.
         if self._settings is not None:
-            self._settings.raise_()
-            self._settings.activateWindow()
+            self._settings.bring_to_front()
 
     def open_settings(self):
         if self._settings is not None or self._closing:
             return
         dialog = SettingsDialog(self)
-        dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         self._settings = dialog
         try:
             dialog.exec()

@@ -3,9 +3,21 @@
 # See LICENSE in the project root for the license and warranty disclaimer.
 
 $ErrorActionPreference = 'Stop'
+$pythonSetup = Join-Path $PSScriptRoot 'python_setup.ps1'
+if (Test-Path -LiteralPath $pythonSetup) { . $pythonSetup }
+$setupPython = $null
 $pending = Join-Path $PSScriptRoot 'update-pending.json'
 if (Test-Path -LiteralPath $pending) {
-    $dataDirectoryJson = py -3.13 -B (Join-Path $PSScriptRoot 'instance.py') --data-directory
+    if (Get-Command Get-RivenSetupPython -ErrorAction SilentlyContinue) {
+        $setupPython = Get-RivenSetupPython
+    } else {
+        # An interrupted upgrade may not have copied the new setup helper yet.
+        # Previous releases required py.exe, so keep their recovery route usable.
+        $setupPython = py -3.13 -I -B -c 'import sys; print(sys.executable)'
+        if ($LASTEXITCODE -ne 0) { throw 'Python is unavailable for update recovery. Reinstall Python 3.13, then retry.' }
+    }
+    if (-not $setupPython) { exit 0 }
+    $dataDirectoryJson = & $setupPython -B (Join-Path $PSScriptRoot 'instance.py') --data-directory
     if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($dataDirectoryJson)) {
         throw 'The RivenLens data folder could not be located. No files were changed.'
     }
@@ -26,12 +38,12 @@ if (Test-Path -LiteralPath $pending) {
     }
     $recoveryHelper = Join-Path $resolvedJob 'update_installer.py'
     if (-not (Test-Path -LiteralPath $recoveryHelper)) { throw "Recovery helper missing. Keep the backup in: $resolvedJob" }
-    py -3.13 -B $recoveryHelper --inspect $resolvedJob (Split-Path -Parent $PSScriptRoot)
+    & $setupPython -B $recoveryHelper --inspect $resolvedJob (Split-Path -Parent $PSScriptRoot)
     if ($LASTEXITCODE -eq 2) {
         Add-Type -AssemblyName System.Windows.Forms
         $choice = [System.Windows.Forms.MessageBox]::Show('An update needs attention. Choose Yes to recover the previous version. Your settings and sounds will stay in place.', 'RivenLens recovery', 'YesNo', 'Warning', 'Button2')
         if ($choice -ne 'Yes') { exit 0 }
-        py -3.13 -B $recoveryHelper --recover $resolvedJob (Split-Path -Parent $PSScriptRoot)
+        & $setupPython -B $recoveryHelper --recover $resolvedJob (Split-Path -Parent $PSScriptRoot)
         if ($LASTEXITCODE -ne 0) { throw "Recovery could not finish. Keep the backup and log in: $resolvedJob" }
     } elseif ($LASTEXITCODE -ne 0) {
         throw "The update is still active or needs attention. Close RivenLens and retry the launcher. Keep the backup and log in: $resolvedJob"
@@ -47,9 +59,14 @@ $runtimeDirectory = Join-Path $PSScriptRoot $runtime
 $nativePython = Join-Path $runtimeDirectory 'Scripts\python.exe'
 $nativeWindowPython = Join-Path $runtimeDirectory 'Scripts\pythonw.exe'
 if (-not (Test-Path -LiteralPath $nativePython)) {
+    if (-not (Get-Command Get-RivenSetupPython -ErrorAction SilentlyContinue)) {
+        throw 'Python setup files are missing. Extract RivenLens.zip into a new folder and retry.'
+    }
+    if (-not $setupPython) { $setupPython = Get-RivenSetupPython }
+    if (-not $setupPython) { exit 0 }
     Write-Host 'Setting up RivenLens. This first launch downloads its Python dependencies.'
-    py -3.13 -m venv $runtimeDirectory
-    if ($LASTEXITCODE -ne 0) { throw 'Install Python 3.13 for Windows, then try again.' }
+    & $setupPython -I -m venv $runtimeDirectory
+    if ($LASTEXITCODE -ne 0) { throw 'Could not create the Python environment. Check folder permissions and try again.' }
 }
 $requirements = Join-Path (Split-Path -Parent $PSScriptRoot) 'requirements.txt'
 & $nativePython -B (Join-Path $PSScriptRoot 'dependencies.py') $requirements

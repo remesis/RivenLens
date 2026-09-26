@@ -7,7 +7,6 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QCheckBox,
-    QDialog,
     QDoubleSpinBox,
     QFileDialog,
     QFrame,
@@ -23,6 +22,7 @@ from PySide6.QtWidgets import (
 
 from appearance import theme_for
 from catalog import variant_label
+from dialogs import ModalDialog
 from widgets import Combo, box, label, options
 
 
@@ -57,7 +57,7 @@ def field_row(caption, control, width=250):
     return row
 
 
-class SettingsDialog(QDialog):
+class SettingsDialog(ModalDialog):
     def __init__(self, window):
         super().__init__(window)
         self.owner = window

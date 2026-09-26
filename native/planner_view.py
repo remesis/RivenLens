@@ -12,8 +12,6 @@ import threading
 from PySide6.QtCore import QThread, Qt, Signal
 from PySide6.QtWidgets import (
     QCheckBox,
-    QCompleter,
-    QDialog,
     QFrame,
     QGridLayout,
     QHBoxLayout,
@@ -24,9 +22,11 @@ from PySide6.QtWidgets import (
 )
 
 from catalog import SPLICES, SPLICE_IDS, splices_for, variant_label
+from dialogs import ModalDialog
 from grading import FORMATS, GRADE_NAMES, format_range
 from odds import attempts_for
 from planner import Planner
+from search_combo import SearchCombo
 from widgets import (
     Combo,
     LockButton,
@@ -117,9 +117,8 @@ class PlannerView(Section):
         grid = QGridLayout(fields)
         grid.setContentsMargins(0, 0, 0, 0)
         grid.setSpacing(5)
-        self.category, self.format, self.weapon, self.variant = (
-            Combo() for _ in range(4)
-        )
+        self.category, self.format, self.variant = (Combo() for _ in range(3))
+        self.weapon = SearchCombo()
         for caption, field, row, col in (
             ("Category", self.category, 0, 0),
             ("Format", self.format, 0, 1),
@@ -128,14 +127,6 @@ class PlannerView(Section):
         ):
             grid.addWidget(label(caption, "muted"), row, col)
             grid.addWidget(field, row + 1, col)
-        self.weapon.setEditable(True)
-        self.weapon.setInsertPolicy(Combo.InsertPolicy.NoInsert)
-        self.weapon.completer().setCompletionMode(
-            QCompleter.CompletionMode.PopupCompletion
-        )
-        self.weapon.completer().setFilterMode(Qt.MatchFlag.MatchContains)
-        self.weapon.completer().setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        self.weapon.lineEdit().editingFinished.connect(self.choose_weapon)
         self.weapon.activated.connect(self.choose_weapon)
         self.category.activated.connect(self.choose_category)
         self.variant.activated.connect(
@@ -646,7 +637,7 @@ class PlannerView(Section):
         self.stages["final"].set_summary(odds_text(probability))
 
     def watch_dialog(self):
-        dialog = QDialog(self)
+        dialog = ModalDialog(self)
         dialog.setWindowTitle("Watch splice ingredients")
         dialog.resize(440, 540)
         layout = QVBoxLayout(dialog)
