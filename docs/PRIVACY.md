@@ -39,10 +39,10 @@ The footer links open their external sites only when clicked. Installing
 dependencies uses the configured Python package index. These services have
 their own privacy practices.
 
-If compatible Python 3.13 is missing, the launcher asks before downloading a
-pinned official installer from python.org. It checks the published SHA-256 before
-running it for the current Windows account, without requesting administrator
-access or changing PATH and file associations. Compatible existing installs are
+If standard 64-bit Python 3.13 or 3.14 is missing, the launcher asks before
+downloading a pinned official Python 3.13 installer from python.org. It checks
+the published SHA-256 before running it for the current Windows account, without
+requesting administrator access or changing PATH and file associations. Compatible existing installs are
 reused. Setup logs remain in the app-data `setup` folder; the downloaded installer
 is removed after the attempt.
 

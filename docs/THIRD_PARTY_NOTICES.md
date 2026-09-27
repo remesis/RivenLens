@@ -9,8 +9,9 @@ It does not grant rights to third-party trademarks or content.
 The source release does not bundle Python, Qt libraries, third-party wheels or
 a virtual environment. The launcher installs dependencies separately. Their
 copyright and license notices remain with their packages and upstream sources.
-If Python 3.13 is missing, the launcher can download its official installer with
-permission. Python remains covered by the [PSF license](https://docs.python.org/3/license.html).
+If standard 64-bit Python 3.13 or 3.14 is missing, the launcher can download the
+official Python 3.13 installer with permission. Python remains covered by the
+[PSF license](https://docs.python.org/3/license.html).
 
 | Component | License | Upstream source |
 | --- | --- | --- |

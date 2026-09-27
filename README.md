@@ -35,10 +35,10 @@ You'll need **64-bit Windows and Windows' English OCR language feature**.
 Use Warframe's English interface.
 Download the [latest release](https://github.com/remesis/RivenLens/releases/latest)
 and extract **RivenLens.zip** into a folder you can keep.
-Double-click **Start Riven Lens.cmd**. If a compatible Python 3.13 install is
-missing, the launcher offers to download and install it for you. Existing
-compatible installs are left alone. The first launch then installs the required
-packages into RivenLens' own environment.
+Double-click **Start Riven Lens.cmd**. If a standard 64-bit Python 3.13 or 3.14
+install is missing, the launcher offers to download and install Python 3.13 for
+you. Existing compatible installs are left alone. The first launch then installs
+the required packages into RivenLens' own environment.
 
 Choose your monitor and press **Start OCR**. Put RivenLens beside the cards or
 on a second monitor. Capture always starts paused. **Pause OCR** stops scanning;

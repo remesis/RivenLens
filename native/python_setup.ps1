@@ -8,7 +8,7 @@
 function Test-RivenPython {
     param([string]$Executable, [string]$Prefix = '')
     if (-not (Test-Path -LiteralPath $Executable -PathType Leaf)) { return $null }
-    $probe = 'import sys, sysconfig, venv, ensurepip; ok = sys.version_info[:2] == (3, 13) and sysconfig.get_platform() == ''win-amd64'' and not sysconfig.get_config_var(''Py_GIL_DISABLED''); print(sys.executable) if ok else sys.exit(1)'
+    $probe = 'import sys, sysconfig, venv, ensurepip; ok = sys.version_info[:2] in ((3, 13), (3, 14)) and sysconfig.get_platform() == ''win-amd64'' and not sysconfig.get_config_var(''Py_GIL_DISABLED''); print(sys.executable) if ok else sys.exit(1)'
     $start = New-Object System.Diagnostics.ProcessStartInfo
     $start.FileName = $Executable
     $start.Arguments = "$Prefix -I -B -X utf8 -c `"$probe`""
@@ -45,7 +45,7 @@ function Test-RivenPython {
 function Find-RivenPython {
     # Registry discovery also works without py.exe or Python on PATH.
     foreach ($root in @('HKCU:', 'HKLM:')) {
-        foreach ($tag in @('3.13', '3.13-64')) {
+        foreach ($tag in @('3.13', '3.13-64', '3.14', '3.14-64')) {
             $key = Get-Item -LiteralPath "$root\Software\Python\PythonCore\$tag\InstallPath" -ErrorAction SilentlyContinue
             if ($null -ne $key) {
                 $candidate = $key.GetValue('ExecutablePath')
@@ -59,10 +59,12 @@ function Find-RivenPython {
     }
     $launcher = Get-Command py.exe -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
     if ($launcher) {
-        $found = Test-RivenPython $launcher.Source '-3.13'
-        if ($found) { return $found }
+        foreach ($version in @('-3.13', '-3.14')) {
+            $found = Test-RivenPython $launcher.Source $version
+            if ($found) { return $found }
+        }
     }
-    foreach ($name in @('python3.13.exe', 'python.exe')) {
+    foreach ($name in @('python3.13.exe', 'python3.14.exe', 'python.exe')) {
         foreach ($command in @(Get-Command $name -CommandType Application -All -ErrorAction SilentlyContinue)) {
             # Store placeholders can open a storefront instead of running Python.
             if ($command.Source -match '\\Microsoft\\WindowsApps\\[^\\]+$') { continue }
@@ -75,7 +77,7 @@ function Find-RivenPython {
 
 function Confirm-RivenPythonInstall {
     Add-Type -AssemblyName System.Windows.Forms
-    $message = 'RivenLens needs 64-bit Python 3.13, and a working copy was not found. Download the official installer from python.org and install it for your Windows account? No administrator access or PATH changes are requested.'
+    $message = 'RivenLens needs standard 64-bit Python 3.13 or 3.14, and a working copy was not found. Download the official Python 3.13 installer from python.org and install it for your Windows account? No administrator access or PATH changes are requested.'
     return [System.Windows.Forms.MessageBox]::Show($message, 'RivenLens setup', 'YesNo', 'Question', 'Button2') -eq 'Yes'
 }
 
