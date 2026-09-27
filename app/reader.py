@@ -354,7 +354,19 @@ async def refine_card(engine, image, card, force=False):
     title = card.get("titleBounds")
     validate = getattr(engine, "_validate_stats", None)
     plausible = validate is None or validate(card)
-    if not title or card["complete"] and plausible and title["h"] >= 22 and not force:
+    if card["complete"] and card.get("normalizedPercent") and validate and plausible:
+        # Only the unit glyph was restored, using the known display precision.
+        # Known stat ranges must fit one whole-card rank/variant combination. The
+        # tracker still requires two complete agreeing observations before it
+        # publishes a new roll; a partial read cannot confirm this candidate.
+        return card
+    if not title or (
+        card["complete"]
+        and plausible
+        and title["h"] >= 22
+        and not force
+        and not card.get("normalizedPercent")
+    ):
         return card
     bounds = card.get("textBounds") or card["bounds"]
     # Follow the detected text, not a fixed fraction of the card. Large margins

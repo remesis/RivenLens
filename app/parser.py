@@ -280,7 +280,11 @@ def parse_cards(lines, width, height):
     companion_labels = [
         line
         for line in lines
-        if re.search(r"\b(?:CURRENT|NEW)\s+ROLL.*\b[23]p[01]n\b", line["text"], re.I)
+        if re.search(
+            r"\bROLL\b|\b(?:CURRENT|NEW)\s+RO(?:U|LI|L1|IL|L)\b",
+            line["text"],
+            re.I,
+        )
     ]
     headers = [
         (header, name)
@@ -338,12 +342,13 @@ def parse_cards(lines, width, height):
             key=lambda line: line["y"],
         )
         stats, pending, footer, invalid = [], None, False, False
+        normalized_percent = False
         footer_bounds = None
         unreadable = []
         text_rows = [header]
 
         def finish():
-            nonlocal pending, invalid
+            nonlocal pending, invalid, normalized_percent
             if pending is None:
                 return
             trait = identify_trait(pending["label"])
@@ -370,6 +375,18 @@ def parse_cards(lines, width, height):
                 expected_unit = definition["unit"] if definition else None
                 if expected_unit is None and len(TRAIT_UNITS.get(trait_id, ())) == 1:
                     expected_unit = next(iter(TRAIT_UNITS[trait_id]))
+                # Percentage rolls display at most one decimal. Windows OCR can
+                # fuse the percent glyph into a trailing 70 or 96. Only restore
+                # that exact shape for a known percentage trait with no unit;
+                # never truncate ordinary values or touch faction multipliers.
+                percent = re.fullmatch(
+                    r"([+-]?\d+[.,]\d)(?:70|96)", pending.get("valueText", "")
+                )
+                if not pending["unit"] and expected_unit == "%" and percent:
+                    pending["value"] = float(percent[1].replace(",", "."))
+                    pending["valueText"] = percent[1]
+                    pending["unit"] = "%"
+                    normalized_percent = True
                 # The game omits the suffix for e.g. "+2 Punch Through".
                 # Its unit comes from the exact recognized trait, not a guess.
                 if not pending["unit"] and expected_unit in ("m", "s"):
@@ -382,7 +399,12 @@ def parse_cards(lines, width, height):
                     and expected_unit is None
                     and pending["unit"] in ("%", "x", "m", "s", "°", "")
                 )
-                if not valid_unit:
+                precision = {"%": 1, "x": 2}.get(pending["unit"])
+                decimal = re.search(r"[.,](\d+)$", pending.get("valueText", ""))
+                valid_precision = (
+                    precision is None or decimal is None or len(decimal[1]) <= precision
+                )
+                if not valid_unit or not valid_precision:
                     invalid = True
                     unreadable.append(pending["raw"])
                     pending = None
@@ -446,6 +468,7 @@ def parse_cards(lines, width, height):
                 value_text = multiplier.group("prefix") or multiplier.group("suffix")
                 pending = {
                     "value": float(re.sub(r"\s", "", value_text).replace(",", ".")),
+                    "valueText": re.sub(r"\s", "", value_text),
                     "unit": "x",
                     "label": text[multiplier.end() :],
                     "raw": line["text"],
@@ -467,6 +490,7 @@ def parse_cards(lines, width, height):
                 unit = (groups.get("unit") or "").lower().replace("×", "x")
                 pending = {
                     "value": value,
+                    "valueText": groups["sign"] + re.sub(r"\s", "", value_text),
                     "negative": groups["sign"] == "-",
                     "unit": unit,
                     "label": text[match.end() :],
@@ -487,7 +511,9 @@ def parse_cards(lines, width, height):
             elif pending is not None and re.search(r"[a-zA-Z]{3}", text):
                 invalid = True
                 unreadable.append(text)
-            elif re.search(r"\d", text) and re.search(r"[a-zA-Z]{3}", text):
+            elif identify_trait(text) or (
+                re.search(r"\d", text) and re.search(r"[a-zA-Z]{3}", text)
+            ):
                 # Never silently drop an unparsed stat and infer a smaller format.
                 invalid = True
                 unreadable.append(text)
@@ -512,6 +538,7 @@ def parse_cards(lines, width, height):
                 "stats": stats,
                 "format": f"{positives}p{negatives}n",
                 "complete": complete,
+                "normalizedPercent": normalized_percent,
                 "unreadable": unreadable,
                 "footerBounds": footer_bounds,
                 "titleBounds": {key: header[key] for key in ("x", "y", "w", "h")},
