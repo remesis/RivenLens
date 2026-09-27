@@ -33,7 +33,13 @@ QComboBox, QLineEdit, QSpinBox, QDoubleSpinBox {
 QComboBox:hover, QLineEdit:hover { border-color: #547c99; }
 QComboBox:focus, QLineEdit:focus { border-color: #7dceff; }
 QComboBox::drop-down { border: none; width: 20px; }
+QComboBox#footerLanguagePicker {
+    font-size: 10px; min-height: 0px; padding: 0px 4px; border-radius: 3px;
+}
+QComboBox#footerLanguagePicker::drop-down { width: 14px; }
+QComboBox#footerLanguagePicker QAbstractItemView { font-size: 12px; }
 QComboBox::down-arrow { image: url(__ARROW__); width: 10px; height: 7px; }
+QComboBox#footerLanguagePicker::down-arrow { width: 8px; height: 5px; }
 QAbstractSpinBox::up-button { subcontrol-origin: border; subcontrol-position: top right; width: 18px; border: none; }
 QAbstractSpinBox::down-button { subcontrol-origin: border; subcontrol-position: bottom right; width: 18px; border: none; }
 QAbstractSpinBox::up-arrow { image: url(__UP__); width: 8px; height: 5px; }

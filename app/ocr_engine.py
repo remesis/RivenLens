@@ -13,15 +13,69 @@ from winrt.windows.globalization import Language
 from winrt.windows.graphics.imaging import BitmapPixelFormat, SoftwareBitmap
 from winrt.windows.media.ocr import OcrEngine
 from winrt.windows.storage.streams import DataWriter
+from localization import LANGUAGES, adapt_lines, profile
+
+
+def available_languages():
+    """Report exact installed recognizers, without installing or changing Windows."""
+    return {
+        language.language_tag.casefold()
+        for language in OcrEngine.available_recognizer_languages
+    }
+
+
+def recognizer_tag(language, available):
+    requested = LANGUAGES[language]["recognizer"]
+    if requested.casefold() in available:
+        return requested
+    # Some Windows models expose a neutral BCP-47 tag (notably Russian's ru).
+    # Chinese script and Brazilian Portuguese distinctions must remain explicit.
+    alternatives = {
+        "zh": ("zh-hans-cn", "zh-hans"),
+        "tc": ("zh-hant-tw", "zh-hant"),
+        "pt": (),
+    }.get(language, (requested.split("-")[0].casefold(),))
+    if match := next((tag for tag in alternatives if tag in available), None):
+        return match
+    # English spelling varies but the game text does not. Other game locales
+    # (including Brazil/Portugal and Simplified/Traditional Chinese) stay exact.
+    if language == "en":
+        return next((tag for tag in sorted(available) if tag.startswith("en-")), None)
+    return None
 
 
 class LocalOCR:
-    def __init__(self):
-        self.engine = OcrEngine.try_create_from_language(Language("en-US"))
+    def __init__(self, language="en"):
+        if language not in LANGUAGES:
+            raise ValueError("Unsupported game language")
+        self.language = language
+        tag = recognizer_tag(language, available_languages())
+        self.engine = OcrEngine.try_create_from_language(Language(tag)) if tag else None
         if self.engine is None:
             raise RuntimeError(
-                "Windows English OCR is not installed. Add English language OCR in Windows Settings."
+                f"Windows OCR for {LANGUAGES[language]['label']} is not installed. "
+                "Add this language's Basic typing and Optical character recognition "
+                "features in Windows Settings > Time & language > Language options, "
+                "then restart OCR. Your Windows display language can stay unchanged."
             )
+
+    async def read_ui_fallback(self, image):
+        """Optional Latin-font fallback for tiny action captions, not stat values.
+
+        Some Windows language models systematically misread the game's uppercase
+        CONFIRMAR font. A second installed recognizer can read those same pixels;
+        the result must still match the chosen game's exact localized UI wording.
+        """
+        if self.language not in ("de", "fr", "it", "pl", "es", "pt", "tr"):
+            return []
+        if not hasattr(self, "_ui_reader"):
+            try:
+                self._ui_reader = LocalOCR("en")
+            except RuntimeError:
+                self._ui_reader = None
+        if self._ui_reader is None:
+            return []
+        return adapt_lines(await self._ui_reader.read(image), self.language)
 
     async def read(self, image):
         original_size = image.size
@@ -91,8 +145,25 @@ class LocalOCR:
                     entry["footerBounds"] = original_box(
                         rect.x, rect.y, rect.width, rect.height
                     )
+                if self.language != "en":
+                    footer = profile(self.language).footer_bounds(
+                        [
+                            {
+                                "text": word.text,
+                                **original_box(
+                                    word.bounding_rect.x,
+                                    word.bounding_rect.y,
+                                    word.bounding_rect.width,
+                                    word.bounding_rect.height,
+                                ),
+                            }
+                            for word in words
+                        ]
+                    )
+                    if footer:
+                        entry["footerBounds"] = footer
                 lines.append(entry)
-            return lines
+            return adapt_lines(lines, self.language)
         finally:
             bitmap.close()
             writer.close()

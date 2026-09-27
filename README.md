@@ -31,8 +31,9 @@ https://forums.warframe.com/topic/1320042-third-party-software-and-you/
 
 ## Getting started
 
-You'll need **64-bit Windows and Windows' English OCR language feature**.
-Use Warframe's English interface.
+You'll need **64-bit Windows and Windows' OCR feature for your game's language**.
+See [Language support](#language-support) below for supported languages and setup.
+
 Download the [latest release](https://github.com/remesis/RivenLens/releases/latest)
 and extract **RivenLens.zip** into a folder you can keep.
 Double-click **Start Riven Lens.cmd**. If a standard 64-bit Python 3.13 or 3.14
@@ -52,6 +53,36 @@ closing the window or choosing **Quit** exits the app.
 - Remembered targets, sounds, collapsed sections and window placement.
 - **Always on top** in Settings for an overlay-style window. Use windowed or
   borderless play; exclusive fullscreen may cover it.
+
+## Language support
+
+Select your game's language in the **bottom-center language picker**.
+This changes OCR and the RivenLens interface together. The first
+launch follows your Windows language when supported; your saved choice takes
+priority afterward.
+
+| Language | Warframe support | RivenLens support |
+| --- | :---: | --- |
+| English | ✅ | ✅ |
+| French | ✅ | ✅ |
+| Italian | ✅ | ✅ |
+| German | ✅ | ✅ |
+| Spanish - Spain | ✅ | ✅ |
+| Portuguese - Brazil | ✅ | ✅ |
+| Russian | ✅ | ✅ |
+| Polish | ✅ | ✅ |
+| Ukrainian | ✅ | ❌ No Windows OCR support at this time |
+| Turkish | ✅ | ✅ |
+| Japanese | ✅ | ✅ |
+| Simplified Chinese | ✅ | ✅ |
+| Traditional Chinese | ✅ | ✅ |
+| Korean | ✅ | ✅ |
+| Thai | ✅ | ❌ No Windows OCR support at this time |
+
+If the matching Windows OCR feature is missing, RivenLens offers to download and
+install it. This needs your approval, Windows administrator permission and an
+internet connection; your display language and keyboard stay unchanged.
+Support does not guarantee every roll will be read correctly.
 
 ## A few things to know
 

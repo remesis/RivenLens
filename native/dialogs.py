@@ -5,7 +5,8 @@
 """Owned modal windows that stay above the companion while open."""
 
 from PySide6.QtCore import QEvent, Qt, QTimer
-from PySide6.QtWidgets import QApplication, QDialog
+from PySide6.QtWidgets import QApplication
+from ui_text import QDialog
 
 
 class ModalDialog(QDialog):

@@ -8,10 +8,8 @@ import json
 from pathlib import Path
 from PySide6.QtCore import QObject, Qt, QTimer
 from PySide6.QtWidgets import (
-    QDialog,
     QHBoxLayout,
     QProgressBar,
-    QPushButton,
     QVBoxLayout,
 )
 
@@ -21,6 +19,7 @@ from update_network import GithubTransfer
 from update_package import UpdateError, installed_files
 from update_session import InstallSession
 from widgets import label
+from ui_text import QDialog, QPushButton
 
 
 def source_checkout():

@@ -57,6 +57,29 @@ def caption_variant(lines):
     def match(text):
         return NAME_KEYS.get(re.sub(r"\s*\[\d+\]$", "", text).casefold())
 
+    languages = {line.get("language", "en") for line in lines}
+    if len(languages) == 1 and "en" not in languages:
+        from localization import profile
+
+        locale = profile(next(iter(languages)))
+        originals = [
+            line.get("displayText", line["text"])
+            for line in lines
+            if line["y"] > marker["y"] + marker["h"]
+            and (
+                "x" not in marker
+                or "x" not in line
+                or abs(line["x"] + line["w"] / 2 - marker["x"] - marker["w"] / 2)
+                <= marker["h"] * 10
+            )
+        ]
+        combined = locale.weapon(" ".join(originals))
+        if combined:
+            return combined
+        candidates = {name for text in originals if (name := locale.weapon(text))}
+        if len(candidates) == 1:
+            return next(iter(candidates))
+
     combined = match(" ".join(captions))
     if combined:
         return combined
@@ -91,6 +114,8 @@ def defer_variant_search(engine):
 async def variant_hint(engine, image, *, discover=True):
     """Read only the visible Fits In panel, without game/window introspection."""
     marker = getattr(engine, "_fits_marker", None)
+    localized = getattr(engine, "language", "en") != "en"
+    treatment_count = 4 if localized else 3
     boxes = (
         [
             clipped_box(
@@ -109,13 +134,17 @@ async def variant_hint(engine, image, *, discover=True):
             clipped_box(
                 image,
                 (
-                    image.width * 0.82,
+                    image.width * (0.72 if localized else 0.82),
                     image.height * top,
-                    image.width * 0.97,
+                    image.width * (0.99 if localized else 0.97),
                     image.height * bottom,
                 ),
             )
-            for top, bottom in ((0.65, 0.71), (0.835, 0.895))
+            for top, bottom in (
+                ((0.60, 0.75), (0.78, 0.94))
+                if localized
+                else ((0.65, 0.71), (0.835, 0.895))
+            )
         ]
     )
     # Exclude the illustration, which can confuse the OCR text-angle detector.
@@ -125,10 +154,33 @@ async def variant_hint(engine, image, *, discover=True):
     )
     area.paste(strips[0], (0, 0))
     area.paste(strips[1], (0, strips[0].height + 20))
+    mask_box = (
+        (
+            (boxes[0][0], boxes[0][1], boxes[1][2], boxes[1][3])
+            if marker
+            else clipped_box(
+                image,
+                (
+                    image.width * 0.82,
+                    image.height * 0.63,
+                    image.width * 0.97,
+                    image.height * 0.90,
+                ),
+            )
+        )
+        if localized
+        else None
+    )
+    masked_panel = image.crop(mask_box) if mask_box else None
     identity = (
         area.size,
         area.mode,
         hashlib.blake2b(area.tobytes(), digest_size=16).digest(),
+        # The additional mask also reads the space between the strips. Include
+        # those pixels so a caption there cannot reuse a stale variant result.
+        hashlib.blake2b(masked_panel.tobytes(), digest_size=16).digest()
+        if masked_panel is not None
+        else None,
     )
     cached = getattr(engine, "_variant_hint_cache", None)
     same_pixels = cached and cached[0] == identity
@@ -139,25 +191,53 @@ async def variant_hint(engine, image, *, discover=True):
     attempted = False
     if (
         same_pixels
-        and attempt == 3
+        and attempt == treatment_count
         and time.monotonic() >= getattr(engine, "_next_variant_retry", 0)
     ):
         attempt, label_seen = 0, False
-    while attempt < 3:
+    # Localized headings can be much wider than the initial strip. Leave one
+    # bounded pass for discovery instead of spending it all on that same crop.
+    while attempt < treatment_count and (not localized or not attempted):
         # Changed pixels get one fast local read. Extra treatments back off even
         # when animation or a cursor keeps changing an unreadable caption.
         if attempt and time.monotonic() < getattr(engine, "_next_variant_retry", 0):
             break
         if not allow_retry(engine):
             return None
-        if attempt == 0:
+        treatment = (
+            getattr(engine, "_localized_variant_treatment", 0) if localized else attempt
+        )
+        if localized:
+            engine._localized_variant_treatment = (treatment + 1) % treatment_count
+        panel_box = None
+        if treatment == 0:
             sample = area
-        elif attempt == 1:
-            sample = isolate_ui_text(area)
-        else:
+        elif treatment == 1:
+            sample = (
+                ImageOps.autocontrast(area.convert("L"))
+                if localized
+                else isolate_ui_text(area)
+            )
+            if localized:
+                sample = sample.resize(
+                    (area.width * 2, area.height * 2), Image.Resampling.LANCZOS
+                )
+        elif treatment == 2:
             scale = min(1.5, 1800 / max(area.size))
             sample = area.resize(
                 (round(area.width * scale), round(area.height * scale)),
+                Image.Resampling.LANCZOS,
+            )
+        else:
+            # Complex captions can merge with the animated purple background.
+            # A compact warm-text mask provides another exact-pixel read, not a
+            # guessed heading. Keep it in the existing bounded rotation.
+            panel_box = mask_box
+            sample = isolate_ui_text(masked_panel).resize(
+                (
+                    max(1, round(masked_panel.width * 0.75)),
+                    max(1, round(masked_panel.height * 0.75)),
+                ),
                 Image.Resampling.LANCZOS,
             )
         lines = await engine.read(sample)
@@ -171,6 +251,19 @@ async def variant_hint(engine, image, *, discover=True):
             engine._variant_search_phase = 0
             return hint
         if located and all(key in located for key in ("x", "y", "w", "h")):
+            if panel_box:
+                remember_marker(
+                    engine,
+                    map_lines(
+                        [located],
+                        panel_box[:2],
+                        (
+                            sample.width / (panel_box[2] - panel_box[0]),
+                            sample.height / (panel_box[3] - panel_box[1]),
+                        ),
+                    )[0],
+                )
+                continue
             sx, sy = sample.width / area.width, sample.height / area.height
             # The quick strips can contain the heading while clipping the name.
             # Locate that heading in source pixels before treating the panel as
@@ -182,7 +275,7 @@ async def variant_hint(engine, image, *, discover=True):
                 # Finish any affordable treatments of this crop first. If they
                 # fail, the next scan uses the heading-relative panel instead.
                 remember_marker(engine, mapped)
-    if attempt == 3 and attempted:
+    if attempt == treatment_count and attempted:
         engine._next_variant_retry = time.monotonic() + 1
     if label_seen:
         # The panel is already located. A missing weapon name does not justify
@@ -200,18 +293,32 @@ async def variant_hint(engine, image, *, discover=True):
                 if not allow_retry(engine):
                     return None
                 lines = await engine.read(
-                    image if phase == 0 else isolate_ui_text(image)
+                    image
+                    if phase == 0
+                    else (
+                        ImageOps.autocontrast(image.convert("L"))
+                        if localized
+                        else isolate_ui_text(image)
+                    )
                 )
             phase += 1
         else:
             lines = await read_tiles(
-                engine, isolate_ui_text(image), cursor="_variant_tile_cursor"
+                engine,
+                ImageOps.autocontrast(image.convert("L"))
+                if localized
+                else isolate_ui_text(image),
+                cursor="_variant_tile_cursor",
             )
             if not getattr(engine, "_variant_tile_cursor_pending", False):
                 phase += 1
         engine._variant_search_phase = phase
         located = fits_marker(lines)
         if located and "x" in located:
+            if localized and (hint := caption_variant(lines)):
+                remember_marker(engine, located)
+                defer_variant_search(engine)
+                return hint
             moved = remember_marker(engine, located)
             defer_variant_search(engine)
             if moved:
@@ -417,9 +524,16 @@ def recovery_text_sample(image, card, treatment):
 async def refine_card(engine, image, card, force=False):
     """Read small or incomplete text in place, requiring agreement for repairs."""
     title = card.get("titleBounds")
+    cjk = getattr(engine, "language", "en") in ("ja", "ko", "zh", "tc")
     validate = getattr(engine, "_validate_stats", None)
     plausible = validate is None or validate(card)
-    if card["complete"] and card.get("normalizedPercent") and validate and plausible:
+    if (
+        card["complete"]
+        and card.get("normalizedPercent")
+        and validate
+        and plausible
+        and not cjk
+    ):
         # Only the unit glyph was restored, using the known display precision.
         # Known stat ranges must fit one whole-card rank/variant combination. The
         # tracker still requires two complete agreeing observations before it
@@ -430,6 +544,7 @@ async def refine_card(engine, image, card, force=False):
         and plausible
         and title["h"] >= 22
         and not force
+        and not cjk
         and not card.get("normalizedPercent")
     ):
         return card
@@ -437,14 +552,18 @@ async def refine_card(engine, image, card, force=False):
     # Follow the detected text, not a fixed fraction of the card. Large margins
     # include the changing illustration above the title and animated lower trim.
     margin = max(3, title["h"] * 0.15)
+    # CJK OCR can truncate a final decimal digit even across multiple scales
+    # when the row is tight to the crop edge. Preserve breathing room around
+    # the full text block without including more of the animated artwork above.
+    horizontal_margin = max(margin, title["h"] * 0.8) if cjk else margin
     footer = card.get("footerBounds")
     bottom = footer["y"] + footer["h"] if footer else bounds["y"] + bounds["h"]
     box = clipped_box(
         image,
         (
-            bounds["x"] - margin,
+            bounds["x"] - horizontal_margin,
             bounds["y"] - margin,
-            bounds["x"] + bounds["w"] + margin,
+            bounds["x"] + bounds["w"] + horizontal_margin,
             bottom + margin,
         ),
     )
@@ -495,10 +614,35 @@ async def refine_card(engine, image, card, force=False):
         (3, "contrast"),
         (3, "purple"),
     )
+    language = getattr(engine, "language", "en")
+    cjk = language in ("ja", "ko", "zh", "tc")
+    if card["complete"] and language != "en":
+        # The confirming read needs the same help as an incomplete translated
+        # card: clean, enlarged glyphs, including compact CJK lettering. This
+        # changes only the retry order, never the agreement requirement.
+        treatments = (
+            ((2, "original"), (2, "smooth-roomy"))
+            if cjk
+            else ((2, "smooth-wide"), (2, "smooth-roomy"))
+        ) + tuple(item for item in treatments if not (cjk and item == (2, "original")))
     if not card["complete"]:
         recovery = tuple((mode[0], name) for name, mode in _RECOVERY_MODES.items())
+        if getattr(engine, "language", "en") != "en":
+            # Several localized models lose numeric prefixes at normal glyph
+            # widths. Try the existing pixel-only wide treatment early, while
+            # retaining the same full-read agreement and numeric safeguards.
+            recovery = tuple(
+                sorted(
+                    recovery,
+                    key=lambda item: item[1] != ("smooth" if cjk else "smooth-wide"),
+                )
+            )
         # Smooth tiny glyphs first; larger text keeps its faster normal retries.
-        treatments = recovery + treatments if title["h"] < 22 else treatments + recovery
+        treatments = (
+            recovery + treatments
+            if title["h"] < 22 or getattr(engine, "language", "en") != "en"
+            else treatments + recovery
+        )
     # Scheduling is only a hint, not OCR evidence. Animated artwork and borders
     # change crop pixels even when the text is stationary. Keep moving through
     # treatments across those frames instead of retrying the first failure forever.
@@ -678,6 +822,9 @@ def reset_layout(engine):
     engine._last_located_at = 0
     engine._next_variant_search = 0
     engine._next_variant_retry = 0
+    engine._next_action_retry = 0
+    engine._action_retry_phase = 0
+    engine._localized_variant_treatment = 0
     engine._variant_pending = False
     engine._next_variant_priority = 0
     engine._next_variant_check = 0
@@ -891,7 +1038,12 @@ async def read_cards(
         )
         engine._frame_region = box
         area = image.crop(box)
-        scale = min(1.5, (1800 if wide else 2700) / area.width)
+        # CJK recognizers often drop whole rows when already-large glyphs are
+        # enlarged. Start with native pixels; local recovery still tries scales.
+        preferred_scale = (
+            1 if getattr(engine, "language", "en") in ("ja", "ko", "zh", "tc") else 1.5
+        )
+        scale = min(preferred_scale, (1800 if wide else 2700) / area.width)
         area = area.resize(
             (round(area.width * scale), round(area.height * scale)),
             Image.Resampling.LANCZOS,
@@ -910,6 +1062,9 @@ async def read_cards(
             result["mode"] == "comparison"
             and len(result["cards"]) < 2
             and (require_current or not result["complete"])
+            and not (
+                getattr(engine, "language", "en") != "en" and previous_new is not None
+            )
         )
         for index in reversed(range(len(result["cards"]))):
             if new_ready or discover_comparison:
@@ -952,6 +1107,17 @@ async def read_cards(
         if new_ready:
             # The tracker already has a current card. Publish the newly verified
             # candidate now; resume old-card recovery after this roll is accepted.
+            return result
+        if (
+            getattr(engine, "language", "en") != "en"
+            and previous_new is not None
+            and result["mode"] == "comparison"
+            and len(result["cards"]) == 1
+            and result["complete"]
+        ):
+            # A dim translated old card must not block a verified visible roll.
+            # The tracker already knows the current roll and still uses its
+            # identity and observed position, never title text, to assign it.
             return result
         initial_comparison_missing_card = (
             require_current
@@ -1092,7 +1258,15 @@ async def read_action_mode(engine, image):
         hashlib.blake2b(area.tobytes(), digest_size=16).digest(),
     )
     cached = getattr(engine, "_action_mode_cache", None)
-    if cached and cached[0] == identity:
+    if (
+        cached
+        and cached[0] == identity
+        and (
+            cached[1] != "unknown"
+            or getattr(engine, "language", "en") == "en"
+            or time.monotonic() < getattr(engine, "_next_action_retry", 0)
+        )
+    ):
         engine._frame_action = cached[2]
         return cached[1]
     lines = await primary_read(engine, ImageOps.autocontrast(area.convert("L")))
@@ -1100,7 +1274,36 @@ async def read_action_mode(engine, image):
         map_lines(lines, box[:2]) if all("x" in line for line in lines) else lines
     )
     mode = observe_mode(engine, positioned)
+    if (
+        mode == "unknown"
+        and getattr(engine, "language", "en") != "en"
+        and allow_retry(engine)
+    ):
+        # One optional caption pass per frame leaves room for card discovery.
+        # Rotate treatments instead of repeatedly spending every spare retry on
+        # the same small button. Each read still needs exact localized wording.
+        phase = getattr(engine, "_action_retry_phase", 0)
+        engine._action_retry_phase = (phase + 1) % 3
+        ui_fallback = getattr(engine, "read_ui_fallback", None)
+        if phase == 0:
+            sample = isolate_ui_text(area)
+            lines = await engine.read(sample)
+        elif phase == 1 and ui_fallback:
+            sample = ImageOps.autocontrast(area.convert("L"))
+            lines = await ui_fallback(sample)
+        else:
+            scale = min(2, 2200 / max(area.size))
+            sample = ImageOps.autocontrast(area.convert("L")).resize(
+                (round(area.width * scale), round(area.height * scale)),
+                Image.Resampling.LANCZOS,
+            )
+            lines = await engine.read(sample)
+        positioned = map_lines(
+            lines, box[:2], (sample.width / area.width, sample.height / area.height)
+        )
+        mode = observe_mode(engine, positioned)
     engine._action_mode_cache = (identity, mode, getattr(engine, "_frame_action", None))
+    engine._next_action_retry = time.monotonic() + 0.5
     return mode
 
 

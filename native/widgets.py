@@ -12,20 +12,26 @@ from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtGui import QBrush, QColor, QIcon, QPalette
 from PySide6.QtWidgets import (
     QComboBox,
-    QFrame,
     QHBoxLayout,
-    QLabel,
-    QPushButton,
     QSizePolicy,
     QStackedWidget,
     QStyledItemDelegate,
-    QToolButton,
     QVBoxLayout,
     QWidget,
 )
 
 from grading import GRADE_COLORS, grade_stat, grading_rank
 from appearance import scaled_pixels
+from ui_text import (
+    QLabel,
+    QPushButton,
+    QToolButton,
+    QFrame,
+    TranslationMixin,
+    translate,
+)
+
+SOURCE_TEXT_ROLE = int(Qt.ItemDataRole.UserRole) + 23
 
 
 def label(text="", name="", wrap=False):
@@ -182,7 +188,10 @@ def box(vertical=True, margin=0, spacing=6):
 
 def options(combo, rows, selected):
     rows = list(rows)
-    before = [(combo.itemText(i), combo.itemData(i)) for i in range(combo.count())]
+    before = [
+        (combo.itemData(i, SOURCE_TEXT_ROLE), combo.itemData(i))
+        for i in range(combo.count())
+    ]
     combo.blockSignals(True)
     if before != rows:
         combo.clear()
@@ -193,7 +202,7 @@ def options(combo, rows, selected):
     combo.blockSignals(False)
 
 
-class Combo(QComboBox):
+class Combo(TranslationMixin, QComboBox):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
@@ -203,6 +212,21 @@ class Combo(QComboBox):
         )
         self.setMinimumContentsLength(1)
         self.setMaxVisibleItems(18)
+
+    def addItem(self, text, value=None):
+        super().addItem(translate(text), value)
+        self.setItemData(self.count() - 1, text, SOURCE_TEXT_ROLE)
+
+    def retranslate(self):
+        super().retranslate()
+        blocked = self.blockSignals(True)
+        try:
+            for index in range(self.count()):
+                source = self.itemData(index, SOURCE_TEXT_ROLE)
+                if isinstance(source, str):
+                    self.setItemText(index, translate(source))
+        finally:
+            self.blockSignals(blocked)
 
     def wheelEvent(self, event):
         # Scrolling a settings panel must not silently change a selected stat.
@@ -406,6 +430,7 @@ class RollCard(QFrame):
                 variant,
                 rank,
                 preferences["rankMode"],
+                preferences["capture"]["language"],
             )
         )
         if signature == self._signature:

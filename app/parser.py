@@ -170,7 +170,14 @@ def weapon_title(text):
         if text.startswith(name + " "):
             suffix = text[len(name) :].strip()
             # A card has a generated suffix, not just the weapon's FITS IN label.
-            if re.fullmatch(r"[A-Za-z][A-Za-z\-\s\u2010-\u2014]{2,}", suffix):
+            if (
+                len(suffix) >= 3
+                and suffix[0].isalpha()
+                and all(
+                    c.isalpha() or unicodedata.category(c).startswith("M") or c in " -"
+                    for c in suffix
+                )
+            ):
                 return canonical
     return None
 
@@ -209,6 +216,15 @@ def join_title_lines(first, following):
     return {
         **first,
         "text": text + separator + clean_text(following["text"]),
+        **(
+            {
+                "displayText": clean_text(first["displayText"])
+                + ("" if clean_text(first["displayText"]).endswith("-") else " ")
+                + clean_text(following.get("displayText", following["text"]))
+            }
+            if "displayText" in first
+            else {}
+        ),
         "fontHeight": first.get("fontHeight", first["h"]),
         "x": left,
         "w": right - left,
@@ -234,7 +250,15 @@ def complete_title(header, lines):
             break
         following = min(nearby, key=lambda line: line["y"])
         text = clean_text(following["text"])
-        if not re.fullmatch(r"[A-Za-z][A-Za-z-]*", text) or identify_trait(text):
+        if (
+            not text
+            or not text[0].isalpha()
+            or not all(
+                c.isalpha() or unicodedata.category(c).startswith("M") or c == "-"
+                for c in text
+            )
+            or identify_trait(text)
+        ):
             break
         joined = join_title_lines(header, {**following, "text": text})
         if not weapon_title(joined["text"]):
@@ -242,7 +266,11 @@ def complete_title(header, lines):
         header = joined
     # A continuation completes the display name, not the title's font size.
     # Keep the existing anchor so stat crops and card positions do not expand.
-    return {**anchor, "text": header["text"]}
+    return {
+        **anchor,
+        "text": header["text"],
+        **({"displayText": header["displayText"]} if "displayText" in header else {}),
+    }
 
 
 def card_headers(lines):
@@ -277,7 +305,7 @@ def card_headers(lines):
     return headers
 
 
-def parse_cards(lines, width, height):
+def game_card_headers(lines):
     headers = card_headers(lines)
     # If the companion was left on the captured monitor, do not re-read its
     # own displayed card titles as additional game cards (pixels only).
@@ -301,6 +329,11 @@ def parse_cards(lines, width, height):
         )
     ]
     headers.sort(key=lambda entry: entry[0]["x"])
+    return headers
+
+
+def parse_cards(lines, width, height):
+    headers = game_card_headers(lines)
     if not 1 <= len(headers) <= 2:
         return {
             "cards": [],
@@ -455,6 +488,14 @@ def parse_cards(lines, width, height):
                 lower_limit = min(lower_limit, line["y"] + line["h"] + header["h"])
                 finish()
                 break
+            if line.get("localizedUnreadable"):
+                finish()
+                invalid = True
+                unreadable.append(line.get("displayText", text))
+                continue
+            normalized_percent = normalized_percent or line.get(
+                "localizedPercentRepair", False
+            )
             # Percent glyphs are sometimes decoded as 0/0. Do not alter digits
             # or guess a missing decimal; just restore this recognizable symbol.
             text = re.sub(r"[0Oo]\s*/\s*[0Oo]", "%", text)
@@ -545,7 +586,7 @@ def parse_cards(lines, width, height):
         cards.append(
             {
                 "weapon": name,
-                "title": header["text"],
+                "title": header.get("displayText", header["text"]),
                 "stats": stats,
                 "format": f"{positives}p{negatives}n",
                 "complete": complete,

@@ -11,6 +11,8 @@ from PySide6.QtCore import QIODevice, QLockFile, QSaveFile
 
 from catalog import SPLICE_IDS
 from grading import FORMATS, GRADE_NAMES
+from localization import LANGUAGES
+from ui_text import default_language
 
 DEFAULTS = {
     "weapon": "sobek-shotgun-primary",
@@ -36,6 +38,7 @@ DEFAULTS = {
     "soundVolume": 50,
     "ocrWarningAudio": {"soundId": "soft-fall", "soundVolume": 35},
     "capture": {
+        "language": "en",
         "monitor": 1,
         "monitorId": "",
         "interval": 0.1,
@@ -52,6 +55,8 @@ DEFAULTS = {
 
 def capture_settings(value):
     result = {**DEFAULTS["capture"], **(value if isinstance(value, dict) else {})}
+    if not isinstance(result["language"], str) or result["language"] not in LANGUAGES:
+        result["language"] = "en"
     if type(result["monitor"]) is not int or result["monitor"] < 1:
         result["monitor"] = 1
     if not isinstance(result["monitorId"], str) or len(result["monitorId"]) > 1024:
@@ -131,6 +136,11 @@ class Preferences:
             self.error = "Saved settings could not be read. Defaults are in use."
         self.state = sanitize(saved)
         self._saved = copy.deepcopy(self.state)
+        # A saved choice wins on every later launch/update. Default only when
+        # this preference did not exist; never track live keyboard changes.
+        capture = saved.get("capture", {}) if isinstance(saved, dict) else {}
+        if not isinstance(capture, dict) or "language" not in capture:
+            self.state["capture"]["language"] = default_language()
 
     def save(self):
         self.directory.mkdir(parents=True, exist_ok=True)

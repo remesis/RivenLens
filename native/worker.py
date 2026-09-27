@@ -155,6 +155,8 @@ class CaptureWorker(QThread):
                             camera = None
                         if engine:
                             reset_layout(engine)
+                            if engine.language != config["language"]:
+                                engine = None
                         tracker, last_cards = RollTracker(), []
                         prior_revision, retry_at = revision, 0
                         self._publish(
@@ -172,7 +174,7 @@ class CaptureWorker(QThread):
                     stage = "ocr"
                     try:
                         if engine is None:
-                            engine = LocalOCR()
+                            engine = LocalOCR(config["language"])
                         stage = "capture"
                         if camera is None:
                             camera = DesktopCapture(

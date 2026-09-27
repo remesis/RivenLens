@@ -3,7 +3,8 @@
 ## Screen pixels only
 
 RivenLens captures the selected monitor or region through Windows desktop
-capture. Windows' installed English OCR engine reads those images locally.
+capture. Windows' installed OCR engine for the selected game language reads
+those images locally.
 It does not read game memory, inspect game files, obtain account credentials,
 send game input, attach to the game or contact Warframe servers.
 
@@ -45,6 +46,15 @@ the published SHA-256 before running it for the current Windows account, without
 requesting administrator access or changing PATH and file associations. Compatible existing installs are
 reused. Setup logs remain in the app-data `setup` folder; the downloaded installer
 is removed after the attempt.
+
+When a selected Windows OCR language is missing, RivenLens offers an optional
+installation. Only after you choose **Install OCR language** does it request
+Windows administrator approval and ask Windows Update to install that language's
+Basic typing and OCR capabilities. No external script is downloaded, and neither
+the display language nor keyboard settings are changed. Windows' normal update
+policies and privacy practices apply. Windows records servicing diagnostics in
+its standard DISM logs. Closing RivenLens does not interrupt an already-approved
+Windows feature installation; it does not restart Windows automatically.
 
 ## Local storage
 

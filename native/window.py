@@ -5,11 +5,11 @@
 """RivenLens desktop window. No embedded browser, HTTP server or web socket."""
 
 from PySide6.QtCore import QByteArray, Qt, QTimer, QUrl
-from PySide6.QtGui import QAction, QDesktopServices, QIcon, QPixmap, QRegion
+from PySide6.QtGui import QDesktopServices, QIcon, QPixmap, QRegion
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QMenu,
-    QPushButton,
+    QGridLayout,
     QScrollArea,
     QSystemTrayIcon,
     QVBoxLayout,
@@ -36,6 +36,9 @@ from widgets import (
     rich,
 )
 from worker import CaptureWorker
+from ui_text import QAction, QPushButton, language
+from language_picker import LanguagePicker
+from ocr_setup import OCRSetup
 
 DEFAULT_WINDOW_SIZE = (550, 750)
 WINDOW_LAYOUT_VERSION = 1
@@ -48,6 +51,7 @@ class MainWindow(QWidget):
         self.setWindowTitle("RivenLens")
         self.setWindowIcon(QIcon(str(ICON)))
         self.preferences, self.state = preferences, preferences.state
+        language.set(self.state["capture"]["language"])
         self.catalog = Catalog()
         self.cards = []
         self.monitors = []
@@ -137,18 +141,35 @@ class MainWindow(QWidget):
         scroll.setWidget(wrapper)
         layout.addWidget(scroll, 2)
         self.planner_scroll = scroll
-        footer = QHBoxLayout()
-        for caption, url in (
-            ("discord.gg/Arbitrations", "https://discord.gg/Arbitrations"),
-            ("https://arbi.guide/", "https://arbi.guide/"),
+        footer = QGridLayout()
+        footer.setContentsMargins(0, 0, 0, 0)
+        self.language_picker = LanguagePicker(self.state["capture"]["language"])
+        self.language_picker.selected.connect(self.set_language)
+        footer.addWidget(self.language_picker, 0, 1, Qt.AlignmentFlag.AlignCenter)
+        footer.setColumnStretch(0, 1)
+        footer.setColumnStretch(2, 1)
+        self.footer_links = []
+        for column, (caption, url) in zip(
+            (0, 2),
+            (
+                ("discord.gg/Arbitrations", "https://discord.gg/Arbitrations"),
+                ("https://arbi.guide/", "https://arbi.guide/"),
+            ),
         ):
             link = Hyperlink(caption, url)
             link.linkActivated.connect(
                 lambda _, target=url: QDesktopServices.openUrl(QUrl(target))
             )
-            footer.addWidget(link)
-            if caption.startswith("discord"):
-                footer.addStretch()
+            footer.addWidget(
+                link,
+                0,
+                column,
+                Qt.AlignmentFlag.AlignLeft
+                if column == 0
+                else Qt.AlignmentFlag.AlignRight,
+            )
+            self.footer_links.append(link)
+        self.footer_layout = footer
         layout.addLayout(footer)
         self.good_sound = SoundChannel(
             self.state, preferences.directory / "sounds", parent=self
@@ -164,6 +185,10 @@ class MainWindow(QWidget):
         self.good_sound.custom_loaded.connect(self.persist)
         self.warning_sound.custom_loaded.connect(self.persist)
         self.worker = worker_factory(self.state["capture"], self)
+        self.ocr_setup = OCRSetup(self)
+        self.ocr_setup.busy_changed.connect(self.ocr_setup_busy)
+        self.ocr_setup.ready.connect(self.ocr_language_ready)
+        self.ocr_setup.message_changed.connect(self.ocr_setup_message)
         self.worker.updated.connect(self.receive)
         self.worker.displays.connect(self.displays_changed)
         self.worker.finished.connect(self.try_close)
@@ -310,6 +335,12 @@ class MainWindow(QWidget):
                     widget.set_ui_scale(scale)
             self.card_area.setFixedHeight(round(208 * scale))
             self.card_area.layout().setSpacing(round(9 * scale))
+            self.language_picker.set_ui_scale(
+                scale, max(link.sizeHint().height() for link in self.footer_links)
+            )
+            side = max(link.sizeHint().width() for link in self.footer_links)
+            self.footer_layout.setColumnMinimumWidth(0, side)
+            self.footer_layout.setColumnMinimumWidth(2, side)
         finally:
             self.setUpdatesEnabled(True)
         self.schedule_balance()
@@ -398,7 +429,7 @@ class MainWindow(QWidget):
             ),
             config["monitor"],
         )
-        self.start.setEnabled(bool(monitors))
+        self.start.setEnabled(bool(monitors) and not self.ocr_setup.busy)
         self.update_start()
 
     def monitor_changed(self):
@@ -415,6 +446,10 @@ class MainWindow(QWidget):
     def toggle_capture(self):
         if self._closing or not self.start.isEnabled():
             return
+        if not self.running and not self.ocr_setup.ensure(
+            self.state["capture"]["language"], resume=True
+        ):
+            return
         self.running = not self.running
         self.apply_capture()
 
@@ -426,6 +461,40 @@ class MainWindow(QWidget):
         self.new_card.set_warning(False)
         self.status.setText("Waiting for a Riven" if self.running else "Capture paused")
         self.update_start()
+
+    def set_language(self, code):
+        if self.ocr_setup.busy:
+            self.language_picker.set_language(self.state["capture"]["language"])
+            return
+        if code == self.state["capture"]["language"]:
+            return
+        was_running = self.running
+        self.running = False
+        self.state["capture"]["language"] = code
+        language.set(code)
+        self.language_picker.set_language(code)
+        self.planner.render()
+        self.apply_capture()
+        self.persist()
+        self.schedule_balance()
+        if self.ocr_setup.ensure(code, resume=was_running) and was_running:
+            self.running = True
+            self.apply_capture()
+
+    def ocr_setup_busy(self, busy):
+        self.language_picker.setEnabled(not busy)
+        self.start.setEnabled(bool(self.monitors) and not busy)
+
+    def ocr_setup_message(self, message):
+        self.status.setText(
+            "Installing OCR language…" if self.ocr_setup.busy else "Capture paused"
+        )
+        self.status.setToolTip(message)
+
+    def ocr_language_ready(self, code, resume):
+        if not self._closing and code == self.state["capture"]["language"]:
+            self.running = resume and bool(self.monitors)
+            self.apply_capture()
 
     def update_start(self):
         self.start.setText("Pause OCR" if self.running else "Start OCR")
@@ -462,7 +531,9 @@ class MainWindow(QWidget):
                 self.warning_sound.stop()
                 self.good_sound.play()
         text = (
-            "Capture reconnecting"
+            "Installing OCR language…"
+            if self.ocr_setup.busy
+            else "Capture reconnecting"
             if state.get("error") and state.get("errorKind") == "capture"
             else "OCR unavailable"
             if state.get("error")
@@ -561,6 +632,7 @@ class MainWindow(QWidget):
     def closeEvent(self, event):
         if not self._closing:
             self._closing = True
+            self.ocr_setup.shutdown()
             if self._settings is not None:
                 self._settings.reject()
             if hasattr(self, "updates"):

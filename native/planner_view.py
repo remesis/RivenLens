@@ -11,11 +11,8 @@ import threading
 
 from PySide6.QtCore import QThread, Qt, Signal
 from PySide6.QtWidgets import (
-    QCheckBox,
-    QFrame,
     QGridLayout,
     QHBoxLayout,
-    QPushButton,
     QScrollArea,
     QVBoxLayout,
     QWidget,
@@ -27,6 +24,7 @@ from grading import FORMATS, GRADE_NAMES, format_range
 from odds import attempts_for
 from planner import Planner
 from search_combo import SearchCombo
+from ui_text import QCheckBox, QFrame, QPushButton, language
 from widgets import (
     Combo,
     LockButton,
@@ -369,7 +367,9 @@ class PlannerView(Section):
                 w
                 for w in self.catalog.weapons
                 if w["category"] == self.category.currentData()
-                and w["name"].lower() == self.weapon.currentText().strip().lower()
+                and w["id"] == self.weapon.currentData()
+                and self.weapon.currentText()
+                == self.weapon.itemText(self.weapon.currentIndex())
             ),
             None,
         )
@@ -377,7 +377,7 @@ class PlannerView(Section):
             if self.state["weapon"] != match["id"]:
                 self.save_value("weapon", match["id"])
         else:
-            self.weapon.setEditText(self.model.weapon["name"])
+            self.weapon.setEditText(self.weapon.itemText(self.weapon.currentIndex()))
 
     def choose_positive(self, index):
         identity = self.positives[index].currentData()
@@ -529,10 +529,12 @@ class PlannerView(Section):
         self.error.setVisible(bool(self.error.text()))
         setup = result["splice"]
         if setup and setup["available"]:
+            # Longer localized units need their own line at compact widths.
+            unit_separator = " " if language.code == "en" else "<br>"
             self.splice_metrics.setText(
                 f'<table width="100%"><tr><td>1a. Find ≥{s["spliceGrade"]} ingredient</td><td>1b. Find its partner</td></tr>'
-                f'<tr><td><b style="font-size:22px;color:#80d4fc">{interval(setup["first"])}</b> <span style="color:#8dabc0">avg rolls</span></td>'
-                f'<td><b style="font-size:22px;color:#80d4fc">{interval(setup["additional"])}</b> <span style="color:#8dabc0">extra</span></td></tr></table>'
+                f'<tr><td><b style="font-size:22px;color:#80d4fc">{interval(setup["first"])}</b>{unit_separator}<span style="color:#8dabc0">avg rolls</span></td>'
+                f'<td><b style="font-size:22px;color:#80d4fc">{interval(setup["additional"])}</b>{unit_separator}<span style="color:#8dabc0">extra</span></td></tr></table>'
             )
             self.splice_metrics.setToolTip(
                 f"Already together on {interval({k: v * 100 for k, v in setup['ready'].items()}, 2)}% of qualifying finds. Otherwise lock the positive: {interval(setup['ifMissing'])} rolls on average to find a partner."

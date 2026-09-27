@@ -6,13 +6,10 @@
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
-    QCheckBox,
     QDoubleSpinBox,
     QFileDialog,
-    QFrame,
     QGridLayout,
     QHBoxLayout,
-    QPushButton,
     QScrollArea,
     QSizePolicy,
     QSlider,
@@ -24,6 +21,7 @@ from appearance import theme_for
 from catalog import variant_label
 from dialogs import ModalDialog
 from widgets import Combo, box, label, options
+from ui_text import QCheckBox, QFrame, QPushButton, translate
 
 
 class SettingsCard(QFrame):
@@ -263,7 +261,7 @@ class SettingsDialog(ModalDialog):
     def choose_audio(self, channel):
         path, _ = QFileDialog.getOpenFileName(
             self,
-            "Choose an alert sound",
+            translate("Choose an alert sound"),
             "",
             "Audio (*.wav *.mp3 *.ogg *.flac *.m4a *.aac);;All files (*)",
         )

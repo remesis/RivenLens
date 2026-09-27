@@ -8,6 +8,7 @@ from PySide6.QtCore import QEvent, Qt
 from PySide6.QtWidgets import QCompleter
 
 from widgets import Combo
+from ui_text import language, translate
 
 
 class SearchCombo(Combo):
@@ -25,10 +26,15 @@ class SearchCombo(Combo):
         self.search.setMaxVisibleItems(18)
         self.search.activated[str].connect(self.select_match)
         self.lineEdit().setPlaceholderText("Search weapons...")
+        language.changed.connect(self.translate_prompt)
+        self.translate_prompt()
         self.lineEdit().textEdited.connect(self.filter_matches)
         self.lineEdit().editingFinished.connect(self.finish_search)
         self.lineEdit().installEventFilter(self)
         self.search.popup().installEventFilter(self)
+
+    def translate_prompt(self):
+        self.lineEdit().setPlaceholderText(translate("Search weapons..."))
 
     def showPopup(self):
         self._searching = True
