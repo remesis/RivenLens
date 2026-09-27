@@ -9,7 +9,7 @@ import re
 import time
 from copy import deepcopy
 
-from PIL import Image, ImageChops, ImageOps
+from PIL import Image, ImageChops, ImageFilter, ImageOps
 
 from parser import CATALOG, NAME_KEYS, FOOTER, clean_text, fingerprint, parse_cards
 from rank_reader import detect_rank
@@ -349,6 +349,71 @@ async def recover_card(engine, image, card):
     return recovered
 
 
+_RECOVERY_MODES = {
+    # Scale, horizontal margin in title heights, glyph stretch, tone treatment.
+    "smooth": (2, 0.5, 1, "gray"),
+    "smooth-roomy": (2, 1.5, 1, "gray"),
+    "color-roomy": (2, 1.5, 1, "color"),
+    "color": (2, 0.5, 1, "color"),
+    "denoise": (2, 0.5, 1.5, "median"),
+    "denoise-inverse": (2, 0.5, 1.5, "median-inverse"),
+    "smooth-wide": (2, 0.5, 1.5, "gray"),
+    "smooth-wider": (2.5, 1, 1.6, "gray"),
+}
+
+
+def recovery_text_box(image, card, margin):
+    """Include unread numeric prefixes without expanding into the illustration."""
+    bounds = card.get("textBounds") or card["bounds"]
+    height = card["titleBounds"]["h"]
+    footer = card.get("footerBounds")
+    bottom = footer["y"] + footer["h"] if footer else bounds["y"] + bounds["h"]
+    return clipped_box(
+        image,
+        (
+            bounds["x"] - height * margin,
+            bounds["y"] - height * 0.3,
+            bounds["x"] + bounds["w"] + height * margin,
+            bottom + height * 0.3,
+        ),
+    )
+
+
+def recovery_text_sample(image, card, treatment):
+    """Smooth small glyphs and keep a quiet border around the OCR input."""
+    factor, margin, stretch, tone = _RECOVERY_MODES[treatment]
+    box = recovery_text_box(image, card, margin)
+    area = image.crop(box)
+    denoise = tone.startswith("median")
+    if denoise:
+        area = area.convert("L")
+    elif tone == "gray":
+        area = ImageOps.autocontrast(area.convert("L"))
+    scale = min(factor, 2400 / max(area.width * stretch, area.height))
+    area = area.resize(
+        (
+            max(1, round(area.width * scale * stretch)),
+            max(1, round(area.height * scale)),
+        ),
+        Image.Resampling.BILINEAR,
+    )
+    if denoise:
+        # Smooth checkerboard/compression noise after enlarging the tiny glyphs.
+        # Clipping the histogram tails keeps bright trim from drowning dim text.
+        area = ImageOps.autocontrast(
+            area.filter(ImageFilter.MedianFilter(3)), cutoff=10
+        )
+        if tone == "median-inverse":
+            area = ImageOps.invert(area)
+    sx, sy = area.width / (box[2] - box[0]), area.height / (box[3] - box[1])
+    padding = 12
+    fill = (255 if tone == "median-inverse" else 0) if denoise else 15
+    if area.mode != "L":
+        fill = (fill, fill, fill)
+    area = ImageOps.expand(area, border=padding, fill=fill)
+    return area, (box[0] - padding / sx, box[1] - padding / sy), (sx, sy)
+
+
 async def refine_card(engine, image, card, force=False):
     """Read small or incomplete text in place, requiring agreement for repairs."""
     title = card.get("titleBounds")
@@ -384,13 +449,26 @@ async def refine_card(engine, image, card, force=False):
         ),
     )
     crop = image.crop(box)
+    # Missing numeric prefixes can lie outside the recognized text bounds. Retry
+    # those pixels with modest horizontal room and a smooth grayscale scale;
+    # changing only the original tight crop can repeatedly omit the same value.
+    cache_box = box
+    if not card["complete"]:
+        recovery_box = recovery_text_box(image, card, 1.5)
+        cache_box = (
+            min(box[0], recovery_box[0]),
+            min(box[1], recovery_box[1]),
+            max(box[2], recovery_box[2]),
+            max(box[3], recovery_box[3]),
+        )
     cache = getattr(engine, "_refine_cache", None) or {}
     cache_key = (
         box,
+        cache_box,
         image.mode,
         fingerprint({"cards": [card]}),
         card["complete"],
-        hashlib.blake2b(crop.tobytes(), digest_size=16).digest(),
+        hashlib.blake2b(image.crop(cache_box).tobytes(), digest_size=16).digest(),
     )
     if cache_key in cache:
         return deepcopy(cache[cache_key])
@@ -417,6 +495,10 @@ async def refine_card(engine, image, card, force=False):
         (3, "contrast"),
         (3, "purple"),
     )
+    if not card["complete"]:
+        recovery = tuple((mode[0], name) for name, mode in _RECOVERY_MODES.items())
+        # Smooth tiny glyphs first; larger text keeps its faster normal retries.
+        treatments = recovery + treatments if title["h"] < 22 else treatments + recovery
     # Scheduling is only a hint, not OCR evidence. Animated artwork and borders
     # change crop pixels even when the text is stationary. Keep moving through
     # treatments across those frames instead of retrying the first failure forever.
@@ -426,7 +508,8 @@ async def refine_card(engine, image, card, force=False):
         round((title["x"] + title["w"] / 2) * 8 / image.width),
         round(title["h"] / 8),
     )
-    cursor = schedule.get(location, 0)
+    preferred = schedule.get(location)
+    cursor = treatments.index(preferred) if preferred in treatments else 0
     order = tuple(
         (cursor + offset) % len(treatments) for offset in range(len(treatments))
     )
@@ -453,20 +536,27 @@ async def refine_card(engine, image, card, force=False):
                 ],
             }
         factor, treatment = treatments[index]
-        area = (
-            isolate_card_text(crop)
-            if treatment == "purple"
-            else ImageOps.autocontrast(crop.convert("L"))
-            if treatment == "contrast"
-            else crop
-        )
-        scale = min(factor, 2400 / max(area.size))
-        area = area.resize(
-            (max(1, round(area.width * scale)), max(1, round(area.height * scale))),
-            Image.Resampling.LANCZOS,
-        )
+        if treatment in _RECOVERY_MODES:
+            area, sample_offset, sample_scale = recovery_text_sample(
+                image, card, treatment
+            )
+        else:
+            area = (
+                isolate_card_text(crop)
+                if treatment == "purple"
+                else ImageOps.autocontrast(crop.convert("L"))
+                if treatment == "contrast"
+                else crop
+            )
+            scale = min(factor, 2400 / max(area.size))
+            area = area.resize(
+                (max(1, round(area.width * scale)), max(1, round(area.height * scale))),
+                Image.Resampling.LANCZOS,
+            )
+            sample_offset = box[:2]
+            sample_scale = (area.width / crop.width, area.height / crop.height)
         parsed = parse_cards(await engine.read(area), area.width, area.height)
-        schedule[location] = (index + 1) % len(treatments)
+        schedule[location] = treatments[(index + 1) % len(treatments)]
         if not parsed["complete"] or len(parsed["cards"]) != 1:
             continue
         recovered = parsed["cards"][0]
@@ -486,7 +576,11 @@ async def refine_card(engine, image, card, force=False):
         identity = fingerprint(parsed)
         candidates[identity] = candidates.get(identity, 0) + 1
         fresh_agreement = confirms_fresh_stats(
-            engine, card, recovered, location, (treatment, round(scale, 3))
+            engine,
+            card,
+            recovered,
+            location,
+            (treatment, *(round(value, 3) for value in sample_scale)),
         )
         if (
             card["complete"]
@@ -495,12 +589,12 @@ async def refine_card(engine, image, card, force=False):
             or fresh_agreement
         ):
             # Try the successful text scale first next time, on fresh pixels.
-            schedule[location] = index
+            schedule[location] = treatments[index]
             return remember(
                 source_coordinates(
                     parsed,
-                    box[:2],
-                    (area.width / crop.width, area.height / crop.height),
+                    sample_offset,
+                    sample_scale,
                 )["cards"][0]
             )
         conflict = conflict or identity != original
