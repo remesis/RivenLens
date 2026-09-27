@@ -152,6 +152,10 @@ MULTIPLIER = re.compile(
     r"(?:[x×]\s*(?P<prefix>\d+(?:\s*[.,]\s*\d+)?)|(?P<suffix>\d+(?:\s*[.,]\s*\d+)?)\s*[x×])\s*",
     re.I,
 )
+MULTIPLIER_NOTE = re.compile(r"\(\s*(?:[x×]\s*2|2\s*[x×])\s+for[^)]*\)", re.I)
+OPEN_MULTIPLIER_NOTE = re.compile(
+    r"\(\s*(?:[x×](?:\s*2)?|2(?:\s*[x×])?)(?=\s|$)[^)]*$", re.I
+)
 FOOTER = re.compile(r"^[\W_]*M\s*R\s*[0-9IOil]+(?:\s|$)", re.I)
 
 
@@ -174,7 +178,7 @@ def weapon_title(text):
 @lru_cache(maxsize=2048)
 def identify_trait(text):
     text = clean_text(text)
-    text = re.sub(r"\(\s*(?:[x×]2|2[x×])\s+for[^)]*\)", "", text, flags=re.I)
+    text = MULTIPLIER_NOTE.sub("", text)
     key = normalize(text)
     if key in TRAITS:
         return TRAITS[key]
@@ -456,13 +460,19 @@ def parse_cards(lines, width, height):
             text = re.sub(r"[0Oo]\s*/\s*[0Oo]", "%", text)
             text = re.sub(r"([x×])\s*[lI|]\s*(?=[.,])", r"\g<1>1", text)
             # A bow/heavy-attack multiplier note is not a separate trait value.
-            if re.match(r"^\(?\s*(?:[x×]\s*2|2\s*[x×])\s+for\b", text, re.I):
+            # It can begin after a wrapped label ("Critical" / "Chance (x2 for
+            # Heavy" / "Attacks)"). Keep that unfinished note with the pending
+            # label rather than treating its x2 as a new faction multiplier.
+            note_continuation = pending is not None and bool(
+                OPEN_MULTIPLIER_NOTE.search(pending["label"] + " " + text)
+            )
+            if not note_continuation and re.match(
+                r"^\(?\s*(?:[x×]\s*2|2\s*[x×])\s+for\b", text, re.I
+            ):
                 continue
-            text = re.sub(
-                r"\(\s*(?:[x×]2|2[x×])\s+for[^)]*\)", "", text, flags=re.I
-            ).strip()
+            text = MULTIPLIER_NOTE.sub("", text).strip()
             match = VALUE.search(text)
-            multiplier = None if match else MULTIPLIER.search(text)
+            multiplier = None if match or note_continuation else MULTIPLIER.search(text)
             if multiplier:
                 finish()
                 value_text = multiplier.group("prefix") or multiplier.group("suffix")
@@ -497,7 +507,8 @@ def parse_cards(lines, width, height):
                     "raw": text,
                 }
             elif pending is not None and (
-                identify_trait(pending["label"]) is None
+                note_continuation
+                or identify_trait(pending["label"]) is None
                 or identify_trait(pending["label"] + " " + text) is not None
                 or any(
                     label.startswith(normalize(pending["label"] + " " + text))
