@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "snapshot": {
-    "date": "2026-09-23"
+    "date": "2026-09-28"
   },
   "rangeModel": {
     "maxRank": 8,
@@ -1598,6 +1598,17 @@
         "rounding": "RM_ROUND",
         "positive": true,
         "negative": true
+      },
+      {
+        "id": "zoom",
+        "name": "Zoom",
+        "value": 0.0046660001,
+        "unit": "%",
+        "reverse": false,
+        "roundTo": 0.1,
+        "rounding": "RM_ROUND",
+        "positive": true,
+        "negative": true
       }
     ],
     "Zaw": [
@@ -1884,42 +1895,33 @@
     "104044111144444444444131",
     "140044111144444444444131",
     "0441141040414444144444",
-    "04411410404144440144444",
     "104444111144444444444131",
     "044114144441444401444444",
     "044114104041044401944449",
-    "04411414404144444144444",
     "188844111144444444444131",
     "144044111144444400400001",
-    "04411414444144440144444",
     "444114194941444441444444",
-    "44411414444144444144444",
     "444114104041044401944449",
     "444114144041444441444444",
     "100044111144444444444131",
     "044114104441444441444444",
     "140444111144444444444131",
     "844114184841444481444444",
-    "44411410404144444144444",
     "944114144941444441444444",
     "144444111144444444444131",
-    "04411410444144440144444",
     "144044111144444444444131",
     "0441141440414444144444",
     "044114144041044441944449",
     "4441141444414444144444",
     "104044111144444400400001",
     "044114104441044401944449",
-    "04411410444144444144444",
     "944114194441444441444444",
-    "44411410444144444144444",
-    "0441141044414444144444",
     "444114104441444441444444",
+    "0441141044414444144444",
     "844114184841444491444444",
     "4441141040414444144444",
     "044114104041094441404440",
     "444114194041444441444444",
-    "44411410404144440144444",
     "944114104941444441444444",
     "444114144041444401444444",
     "104444111144444400400001",
@@ -1930,11 +1932,9 @@
     "044114194441444441444444",
     "044114194941444441444444",
     "444114104441444491444444",
-    "44411414444144440144444",
     "044114144041444491444444",
-    "04411414404144449144444",
     "044114104041044441944449",
-    "04411414404104440194444",
+    "044114144041044401944440",
     "844114184841444441444444",
     "044114104041944401944449",
     "044114104041044401044440"
@@ -2088,7 +2088,7 @@
     [
       "Arca Plasmor",
       "Shotgun",
-      16
+      12
     ],
     [
       "Arca Scisco",
@@ -2098,7 +2098,7 @@
     [
       "Arca Titron",
       "Melee",
-      17
+      16
     ],
     [
       "Argo & Vel",
@@ -2108,12 +2108,12 @@
     [
       "Argonak",
       "Rifle",
-      18
+      17
     ],
     [
       "Artax",
       "Rifle",
-      19
+      18
     ],
     [
       "Arum Spinosa",
@@ -2123,7 +2123,7 @@
     [
       "Astilla",
       "Shotgun",
-      20
+      1
     ],
     [
       "Athodai",
@@ -2153,12 +2153,12 @@
     [
       "Azothane",
       "Melee",
-      17
+      16
     ],
     [
       "Balla",
       "Zaw",
-      21
+      19
     ],
     [
       "Ballistica",
@@ -2173,7 +2173,7 @@
     [
       "Batoten",
       "Melee",
-      22
+      20
     ],
     [
       "Battacor",
@@ -2193,7 +2193,7 @@
     [
       "Boar",
       "Shotgun",
-      23
+      17
     ],
     [
       "Boltace",
@@ -2208,7 +2208,7 @@
     [
       "Boltor",
       "Rifle",
-      24
+      21
     ],
     [
       "Brakk",
@@ -2238,12 +2238,12 @@
     [
       "Bubonico",
       "Shotgun",
-      25
+      5
     ],
     [
       "Burst Laser",
       "Pistol",
-      26
+      22
     ],
     [
       "Burston",
@@ -2253,22 +2253,22 @@
     [
       "Buzlok",
       "Rifle",
-      27
+      23
     ],
     [
       "Cadus",
       "Melee",
-      28
+      24
     ],
     [
       "Cantare",
       "Pistol",
-      29
+      25
     ],
     [
       "Cassowar",
       "Melee",
-      30
+      26
     ],
     [
       "Castanas",
@@ -2283,17 +2283,17 @@
     [
       "Catchmoon",
       "Kitgun",
-      31
+      27
     ],
     [
       "Caustacyst",
       "Melee",
-      28
+      24
     ],
     [
       "Cedo",
       "Shotgun",
-      32
+      6
     ],
     [
       "Ceramic Dagger",
@@ -2303,12 +2303,12 @@
     [
       "Cerata",
       "Melee",
-      28
+      24
     ],
     [
       "Cernos",
       "Rifle",
-      33
+      28
     ],
     [
       "Cestra",
@@ -2328,22 +2328,22 @@
     [
       "Coda Bassocyst",
       "Shotgun",
-      16
+      12
     ],
     [
       "Coda Motovore",
       "Melee",
-      34
+      29
     ],
     [
       "Convectrix",
       "Shotgun",
-      35
+      9
     ],
     [
       "Corinth",
       "Shotgun",
-      25
+      5
     ],
     [
       "Cortege",
@@ -2353,22 +2353,22 @@
     [
       "Corufell",
       "Melee",
-      36
+      30
     ],
     [
       "Corvas",
       "Archgun",
-      37
+      31
     ],
     [
       "Cronus",
       "Melee",
-      17
+      16
     ],
     [
       "Cryotra",
       "Rifle",
-      38
+      32
     ],
     [
       "Cyanex",
@@ -2378,7 +2378,7 @@
     [
       "Cyath",
       "Zaw",
-      21
+      19
     ],
     [
       "Cycron",
@@ -2388,7 +2388,7 @@
     [
       "Cyngas",
       "Archgun",
-      39
+      33
     ],
     [
       "Daikyu",
@@ -2403,27 +2403,27 @@
     [
       "Dark Dagger",
       "Melee",
-      28
+      24
     ],
     [
       "Dark Split-Sword",
       "Melee",
-      21
+      19
     ],
     [
       "Dark Sword",
       "Melee",
-      28
+      24
     ],
     [
       "Deconstructor",
       "Melee",
-      40
+      34
     ],
     [
       "Dehtat",
       "Zaw",
-      21
+      19
     ],
     [
       "Dera",
@@ -2443,7 +2443,7 @@
     [
       "Deth Machine Rifle",
       "Rifle",
-      41
+      35
     ],
     [
       "Detron",
@@ -2458,7 +2458,7 @@
     [
       "Dokrahm",
       "Zaw",
-      21
+      19
     ],
     [
       "Dorrclave",
@@ -2473,12 +2473,12 @@
     [
       "Drakgoon",
       "Shotgun",
-      42
+      25
     ],
     [
       "Dread",
       "Rifle",
-      43
+      36
     ],
     [
       "Dual Cestra",
@@ -2498,7 +2498,7 @@
     [
       "Dual Decurion",
       "Archgun",
-      39
+      33
     ],
     [
       "Dual Ether",
@@ -2513,7 +2513,7 @@
     [
       "Dual Ichor",
       "Melee",
-      28
+      24
     ],
     [
       "Dual Kamas",
@@ -2523,7 +2523,7 @@
     [
       "Dual Keres",
       "Melee",
-      30
+      26
     ],
     [
       "Dual Raza",
@@ -2543,7 +2543,7 @@
     [
       "Dual Viciss",
       "Melee",
-      28
+      24
     ],
     [
       "Dual Zoren",
@@ -2563,7 +2563,7 @@
     [
       "Edun",
       "Melee",
-      30
+      26
     ],
     [
       "Ekhein",
@@ -2613,17 +2613,17 @@
     [
       "Evensong",
       "Rifle",
-      29
+      25
     ],
     [
       "Exergis",
       "Shotgun",
-      25
+      5
     ],
     [
       "Falcor",
       "Melee",
-      34
+      29
     ],
     [
       "Fang",
@@ -2633,7 +2633,7 @@
     [
       "Felarx",
       "Shotgun",
-      44
+      37
     ],
     [
       "Ferrox",
@@ -2643,7 +2643,7 @@
     [
       "Fluctus",
       "Archgun",
-      45
+      38
     ],
     [
       "Flux Rifle",
@@ -2673,12 +2673,12 @@
     [
       "Fusilai",
       "Pistol",
-      46
+      37
     ],
     [
       "Galariak Prime",
       "Melee",
-      34
+      29
     ],
     [
       "Galatine",
@@ -2688,7 +2688,7 @@
     [
       "Galvacord",
       "Melee",
-      28
+      24
     ],
     [
       "Gammacor",
@@ -2703,7 +2703,7 @@
     [
       "Gaze",
       "Kitgun",
-      47
+      39
     ],
     [
       "Ghoulsaw",
@@ -2743,17 +2743,17 @@
     [
       "Grattler",
       "Archgun",
-      48
+      40
     ],
     [
       "Grimoire",
       "Pistol",
-      49
+      41
     ],
     [
       "Grinlok",
       "Rifle",
-      18
+      17
     ],
     [
       "Guandao",
@@ -2783,7 +2783,7 @@
     [
       "Harpak",
       "Rifle",
-      50
+      42
     ],
     [
       "Hate",
@@ -2793,7 +2793,7 @@
     [
       "Heat Dagger",
       "Melee",
-      34
+      29
     ],
     [
       "Heat Sword",
@@ -2803,7 +2803,7 @@
     [
       "Hek",
       "Shotgun",
-      51
+      0
     ],
     [
       "Heliocor",
@@ -2813,22 +2813,22 @@
     [
       "Helstrum",
       "Rifle",
-      38
+      32
     ],
     [
       "Hema",
       "Rifle",
-      52
+      43
     ],
     [
       "Hespar",
       "Melee",
-      17
+      16
     ],
     [
       "Higasa",
       "Rifle",
-      46
+      37
     ],
     [
       "Hikou",
@@ -2858,12 +2858,12 @@
     [
       "Imperator",
       "Archgun",
-      39
+      33
     ],
     [
       "Innodem",
       "Melee",
-      30
+      26
     ],
     [
       "Jat Kittag",
@@ -2873,7 +2873,7 @@
     [
       "Jat Kusar",
       "Melee",
-      28
+      24
     ],
     [
       "Javlok",
@@ -2898,17 +2898,17 @@
     [
       "Karyst",
       "Melee",
-      28
+      24
     ],
     [
       "Keratinos",
       "Melee",
-      34
+      29
     ],
     [
       "Kesheg",
       "Melee",
-      17
+      16
     ],
     [
       "Kestrel",
@@ -2918,7 +2918,7 @@
     [
       "Knell",
       "Pistol",
-      53
+      44
     ],
     [
       "Kogake",
@@ -2928,17 +2928,17 @@
     [
       "Kohm",
       "Shotgun",
-      35
+      9
     ],
     [
       "Kohmak",
       "Pistol",
-      29
+      25
     ],
     [
       "Komorex",
       "Rifle",
-      46
+      37
     ],
     [
       "Kompressa",
@@ -2948,12 +2948,12 @@
     [
       "Korrudo",
       "Melee",
-      17
+      16
     ],
     [
       "Korumm",
       "Melee",
-      30
+      26
     ],
     [
       "Kraken",
@@ -2963,7 +2963,7 @@
     [
       "Kreska",
       "Melee",
-      34
+      29
     ],
     [
       "Krohkur",
@@ -2978,7 +2978,7 @@
     [
       "Kronsh",
       "Zaw",
-      21
+      19
     ],
     [
       "Kulstar",
@@ -2993,7 +2993,7 @@
     [
       "Kuva Ayanga",
       "Archgun",
-      37
+      31
     ],
     [
       "Kuva Bramma",
@@ -3008,22 +3008,22 @@
     [
       "Kuva Shildeg",
       "Melee",
-      36
+      30
     ],
     [
       "Kuva Twin Stubbas",
       "Pistol",
-      18
+      17
     ],
     [
       "Lacera",
       "Melee",
-      28
+      24
     ],
     [
       "Lacerten",
       "Melee",
-      54
+      45
     ],
     [
       "Laetum",
@@ -3033,17 +3033,17 @@
     [
       "Lanka",
       "Rifle",
-      55
+      46
     ],
     [
       "Larkspur",
       "Archgun",
-      39
+      33
     ],
     [
       "Laser Rifle",
       "Rifle",
-      56
+      47
     ],
     [
       "Lato",
@@ -3058,7 +3058,7 @@
     [
       "Lecta",
       "Melee",
-      28
+      24
     ],
     [
       "Lenz",
@@ -3098,47 +3098,47 @@
     [
       "Marelok",
       "Pistol",
-      18
+      17
     ],
     [
       "Masseter",
       "Melee",
-      17
+      16
     ],
     [
       "Mausolon",
       "Archgun",
-      39
+      33
     ],
     [
       "Mewan",
       "Zaw",
-      21
+      19
     ],
     [
       "Mios",
       "Melee",
-      34
+      29
     ],
     [
       "Mire",
       "Melee",
-      34
+      29
     ],
     [
       "Miter",
       "Rifle",
-      43
+      36
     ],
     [
       "Morgha",
       "Archgun",
-      37
+      31
     ],
     [
       "Multron",
       "Rifle",
-      57
+      48
     ],
     [
       "Mutalist Cernos",
@@ -3148,12 +3148,12 @@
     [
       "Mutalist Quanta",
       "Rifle",
-      58
+      49
     ],
     [
       "Nagantaka",
       "Rifle",
-      29
+      25
     ],
     [
       "Nami Skyla",
@@ -3173,7 +3173,7 @@
     [
       "Nepheri",
       "Melee",
-      34
+      29
     ],
     [
       "Nikana",
@@ -3183,7 +3183,7 @@
     [
       "Ninkondi",
       "Melee",
-      28
+      24
     ],
     [
       "Nukor",
@@ -3203,17 +3203,17 @@
     [
       "Ogris",
       "Rifle",
-      55
+      46
     ],
     [
       "Ohma",
       "Melee",
-      28
+      24
     ],
     [
       "Okina",
       "Melee",
-      30
+      26
     ],
     [
       "Onos",
@@ -3223,7 +3223,7 @@
     [
       "Ooltha",
       "Zaw",
-      21
+      19
     ],
     [
       "Opticor",
@@ -3253,7 +3253,7 @@
     [
       "Panthera",
       "Rifle",
-      59
+      50
     ],
     [
       "Paracesis",
@@ -3263,17 +3263,17 @@
     [
       "Paracyst",
       "Rifle",
-      60
+      51
     ],
     [
       "Paris",
       "Rifle",
-      24
+      21
     ],
     [
       "Pathocyst",
       "Melee",
-      34
+      29
     ],
     [
       "Pennant",
@@ -3288,42 +3288,42 @@
     [
       "Perigale",
       "Rifle",
-      61
+      52
     ],
     [
       "Phaedra",
       "Archgun",
-      48
+      40
     ],
     [
       "Phage",
       "Shotgun",
-      16
+      12
     ],
     [
       "Phantasma",
       "Shotgun",
-      62
+      10
     ],
     [
       "Phenmor",
       "Rifle",
-      29
+      25
     ],
     [
       "Plague Keewar",
       "Zaw",
-      21
+      19
     ],
     [
       "Plague Kripath",
       "Zaw",
-      21
+      19
     ],
     [
       "Plasma Sword",
       "Melee",
-      28
+      24
     ],
     [
       "Plinx",
@@ -3343,7 +3343,7 @@
     [
       "Pride",
       "Melee",
-      30
+      26
     ],
     [
       "Proboscis Cernos",
@@ -3353,22 +3353,22 @@
     [
       "Prova",
       "Melee",
-      28
+      24
     ],
     [
       "Pulmonars",
       "Melee",
-      28
+      24
     ],
     [
       "Pupacyst",
       "Melee",
-      34
+      29
     ],
     [
       "Purgator 1",
       "Rifle",
-      27
+      23
     ],
     [
       "Pyrana",
@@ -3403,17 +3403,17 @@
     [
       "Rabvee",
       "Zaw",
-      21
+      19
     ],
     [
       "Rattleguts",
       "Kitgun",
-      31
+      27
     ],
     [
       "Rauta",
       "Shotgun",
-      35
+      9
     ],
     [
       "Reaper Prime",
@@ -3423,7 +3423,7 @@
     [
       "Reconifex",
       "Rifle",
-      53
+      44
     ],
     [
       "Redeemer",
@@ -3443,12 +3443,12 @@
     [
       "Rubico",
       "Rifle",
-      63
+      53
     ],
     [
       "Rumblejack",
       "Melee",
-      34
+      29
     ],
     [
       "Ruvox",
@@ -3468,7 +3468,7 @@
     [
       "Sarofang",
       "Melee",
-      17
+      16
     ],
     [
       "Sarpa",
@@ -3503,7 +3503,7 @@
     [
       "Sepfahn",
       "Zaw",
-      21
+      19
     ],
     [
       "Sepulcrum",
@@ -3513,7 +3513,7 @@
     [
       "Serro",
       "Melee",
-      28
+      24
     ],
     [
       "Shaku",
@@ -3533,7 +3533,7 @@
     [
       "Sibear",
       "Melee",
-      28
+      24
     ],
     [
       "Sicarus",
@@ -3548,12 +3548,12 @@
     [
       "Silva & Aegis",
       "Melee",
-      28
+      24
     ],
     [
       "Simulor",
       "Rifle",
-      33
+      28
     ],
     [
       "Skana",
@@ -3568,7 +3568,7 @@
     [
       "Slaytra",
       "Melee",
-      30
+      26
     ],
     [
       "Snipetron",
@@ -3578,7 +3578,7 @@
     [
       "Sobek",
       "Shotgun",
-      64
+      53
     ],
     [
       "Soma",
@@ -3598,7 +3598,7 @@
     [
       "Spinnerex",
       "Melee",
-      28
+      24
     ],
     [
       "Spira",
@@ -3608,7 +3608,7 @@
     [
       "Sporelacer",
       "Kitgun",
-      31
+      27
     ],
     [
       "Sporothrix",
@@ -3618,7 +3618,7 @@
     [
       "Stahlta",
       "Rifle",
-      46
+      37
     ],
     [
       "Staticor",
@@ -3628,12 +3628,12 @@
     [
       "Steflos",
       "Shotgun",
-      20
+      1
     ],
     [
       "Stinger",
       "Rifle",
-      65
+      54
     ],
     [
       "Stradavar",
@@ -3643,17 +3643,17 @@
     [
       "Stropha",
       "Melee",
-      34
+      29
     ],
     [
       "Strun",
       "Shotgun",
-      23
+      17
     ],
     [
       "Stubba",
       "Pistol",
-      18
+      17
     ],
     [
       "Stug",
@@ -3673,12 +3673,12 @@
     [
       "Sweeper",
       "Shotgun",
-      66
+      55
     ],
     [
       "Syam",
       "Melee",
-      30
+      26
     ],
     [
       "Sybaris",
@@ -3708,12 +3708,12 @@
     [
       "Tatsu",
       "Melee",
-      34
+      29
     ],
     [
       "Tazicor",
       "Rifle",
-      19
+      18
     ],
     [
       "Tekko",
@@ -3723,7 +3723,7 @@
     [
       "Tenet Agendus",
       "Melee",
-      34
+      29
     ],
     [
       "Tenet Diplos",
@@ -3738,12 +3738,12 @@
     [
       "Tenet Exec",
       "Melee",
-      17
+      16
     ],
     [
       "Tenet Grigori",
       "Melee",
-      30
+      26
     ],
     [
       "Tenet Livia",
@@ -3763,7 +3763,7 @@
     [
       "Tetra",
       "Rifle",
-      24
+      21
     ],
     [
       "Thalys",
@@ -3783,7 +3783,7 @@
     [
       "Tigris",
       "Shotgun",
-      35
+      9
     ],
     [
       "Tipedo",
@@ -3793,7 +3793,7 @@
     [
       "Tombfinger",
       "Kitgun",
-      67
+      56
     ],
     [
       "Tonbo",
@@ -3808,7 +3808,7 @@
     [
       "Tonkor",
       "Rifle",
-      50
+      42
     ],
     [
       "Torid",
@@ -3823,7 +3823,7 @@
     [
       "Twin Basolk",
       "Melee",
-      28
+      24
     ],
     [
       "Twin Grakatas",
@@ -3848,7 +3848,7 @@
     [
       "Twin Rogga",
       "Pistol",
-      53
+      44
     ],
     [
       "Twin Vipers",
@@ -3898,7 +3898,7 @@
     [
       "Venato",
       "Melee",
-      30
+      26
     ],
     [
       "Venka",
@@ -3908,12 +3908,12 @@
     [
       "Verdilac",
       "Melee",
-      30
+      26
     ],
     [
       "Verglas",
       "Rifle",
-      68
+      57
     ],
     [
       "Vericres",
@@ -3923,12 +3923,12 @@
     [
       "Vermisplicer",
       "Kitgun",
-      31
+      27
     ],
     [
       "Vesper 77",
       "Pistol",
-      53
+      44
     ],
     [
       "Vinquibus",
@@ -3948,17 +3948,17 @@
     [
       "Vitrica",
       "Melee",
-      34
+      29
     ],
     [
       "Volnus",
       "Melee",
-      30
+      26
     ],
     [
       "Vulcax",
       "Rifle",
-      69
+      58
     ],
     [
       "Vulkar",
@@ -3968,17 +3968,17 @@
     [
       "Vulklok",
       "Rifle",
-      65
+      54
     ],
     [
       "War",
       "Melee",
-      17
+      16
     ],
     [
       "Wolf Sledge",
       "Melee",
-      17
+      16
     ],
     [
       "Wrath",
@@ -3988,22 +3988,22 @@
     [
       "Xoris",
       "Melee",
-      30
+      26
     ],
     [
       "Zakti",
       "Pistol",
-      27
+      23
     ],
     [
       "Zarr",
       "Rifle",
-      33
+      28
     ],
     [
       "Zenistar",
       "Melee",
-      28
+      24
     ],
     [
       "Zenith",
@@ -4018,12 +4018,12 @@
     [
       "Zylok",
       "Pistol",
-      18
+      17
     ],
     [
       "Zymos",
       "Pistol",
-      53
+      44
     ],
     [
       "Nunchasa",
