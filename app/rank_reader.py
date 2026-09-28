@@ -14,9 +14,10 @@ def detect_rank(image, card):
 
     Bright cyan marks an upgraded pip; neutral diamonds are unlit. Requiring the
     entire row prevents a cropped or obscured max-rank card becoming rank zero.
-    Geometry is anchored to the OCR footer, not to a monitor or game window.
+    Geometry is anchored to the OCR footer's mastery label or roll counter,
+    not to a monitor or game window. The counter's value does not imply rank.
     """
-    footer = card.get("footerBounds")
+    footer = card.get("footerBounds") or card.get("counterBounds")
     title = card.get("titleBounds")
     if not footer or not title or footer["h"] < 5 or image.mode not in ("RGB", "RGBA"):
         return None

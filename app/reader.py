@@ -230,10 +230,10 @@ async def variant_hint(engine, image, *, discover=True):
             )
         else:
             # Complex captions can merge with the animated purple background.
-            # A compact warm-text mask provides another exact-pixel read, not a
+            # A compact caption-color mask provides another exact-pixel read, not a
             # guessed heading. Keep it in the existing bounded rotation.
             panel_box = mask_box
-            sample = isolate_ui_text(masked_panel).resize(
+            sample = isolate_ui_text(masked_panel, neutral=True).resize(
                 (
                     max(1, round(masked_panel.width * 0.75)),
                     max(1, round(masked_panel.height * 0.75)),
@@ -330,13 +330,24 @@ async def variant_hint(engine, image, *, discover=True):
     return None
 
 
-def isolate_ui_text(image):
-    """Highlight warm UI caption pixels when the illustration obscures OCR."""
+def isolate_ui_text(image, *, neutral=False):
+    """Highlight caption pixels when the illustration obscures OCR."""
     red, green, blue = image.convert("RGB").split()
     orange = ImageChops.darker(
         ImageChops.subtract(red, blue), ImageChops.subtract(green, blue)
     )
-    return orange.point(lambda value: min(255, max(0, (value - 8) * 5)))
+    warm = orange.point(lambda value: min(255, max(0, (value - 8) * 5)))
+    if not neutral:
+        return warm
+    # Neutral UI themes use gray/white captions instead of gold. Suppress the
+    # saturated purple backdrop while retaining their actual visible lettering.
+    minimum = ImageChops.darker(ImageChops.darker(red, green), blue)
+    maximum = ImageChops.lighter(ImageChops.lighter(red, green), blue)
+    achromatic = ImageChops.subtract(maximum, minimum).point(
+        lambda value: min(255, max(0, (30 - value) * 16))
+    )
+    bright = minimum.point(lambda value: min(255, max(0, (value - 65) * 3)))
+    return ImageChops.lighter(warm, ImageChops.multiply(bright, achromatic))
 
 
 def isolate_card_text(image):
@@ -451,7 +462,7 @@ async def recover_card(engine, image, card):
     ):
         return retry_later()
     recovered["bounds"] = card["bounds"]
-    for name in ("footerBounds", "titleBounds", "textBounds"):
+    for name in ("footerBounds", "counterBounds", "titleBounds", "textBounds"):
         recovered[name] = card.get(name)
     return recovered
 
@@ -469,12 +480,26 @@ _RECOVERY_MODES = {
 }
 
 
+def card_text_bottom(image, card):
+    """Exclude background below a footer only when its location is verified."""
+    footer = card.get("footerBounds")
+    if (
+        not footer
+        and card.get("counterBounds")
+        and detect_rank(image, card) is not None
+    ):
+        # A numeric fragment alone cannot shorten the text crop. The complete
+        # pip row confirms that this counter actually belongs to the footer.
+        footer = card["counterBounds"]
+    bounds = card.get("textBounds") or card["bounds"]
+    return footer["y"] + footer["h"] if footer else bounds["y"] + bounds["h"]
+
+
 def recovery_text_box(image, card, margin):
     """Include unread numeric prefixes without expanding into the illustration."""
     bounds = card.get("textBounds") or card["bounds"]
     height = card["titleBounds"]["h"]
-    footer = card.get("footerBounds")
-    bottom = footer["y"] + footer["h"] if footer else bounds["y"] + bounds["h"]
+    bottom = card_text_bottom(image, card)
     return clipped_box(
         image,
         (
@@ -527,9 +552,11 @@ async def refine_card(engine, image, card, force=False):
     cjk = getattr(engine, "language", "en") in ("ja", "ko", "zh", "tc")
     validate = getattr(engine, "_validate_stats", None)
     plausible = validate is None or validate(card)
+    needs_recovery = not card["complete"] or not plausible
     if (
         card["complete"]
         and card.get("normalizedPercent")
+        and not card.get("normalizedSpacing")
         and validate
         and plausible
         and not cjk
@@ -546,6 +573,7 @@ async def refine_card(engine, image, card, force=False):
         and not force
         and not cjk
         and not card.get("normalizedPercent")
+        and not card.get("normalizedSpacing")
     ):
         return card
     bounds = card.get("textBounds") or card["bounds"]
@@ -556,8 +584,7 @@ async def refine_card(engine, image, card, force=False):
     # when the row is tight to the crop edge. Preserve breathing room around
     # the full text block without including more of the animated artwork above.
     horizontal_margin = max(margin, title["h"] * 0.8) if cjk else margin
-    footer = card.get("footerBounds")
-    bottom = footer["y"] + footer["h"] if footer else bounds["y"] + bounds["h"]
+    bottom = card_text_bottom(image, card)
     box = clipped_box(
         image,
         (
@@ -572,7 +599,7 @@ async def refine_card(engine, image, card, force=False):
     # those pixels with modest horizontal room and a smooth grayscale scale;
     # changing only the original tight crop can repeatedly omit the same value.
     cache_box = box
-    if not card["complete"]:
+    if needs_recovery:
         recovery_box = recovery_text_box(image, card, 1.5)
         cache_box = (
             min(box[0], recovery_box[0]),
@@ -616,7 +643,7 @@ async def refine_card(engine, image, card, force=False):
     )
     language = getattr(engine, "language", "en")
     cjk = language in ("ja", "ko", "zh", "tc")
-    if card["complete"] and language != "en":
+    if not needs_recovery and language != "en":
         # The confirming read needs the same help as an incomplete translated
         # card: clean, enlarged glyphs, including compact CJK lettering. This
         # changes only the retry order, never the agreement requirement.
@@ -625,7 +652,10 @@ async def refine_card(engine, image, card, force=False):
             if cjk
             else ((2, "smooth-wide"), (2, "smooth-roomy"))
         ) + tuple(item for item in treatments if not (cjk and item == (2, "original")))
-    if not card["complete"]:
+    if needs_recovery:
+        # A fully parsed but out-of-range value can still have missing digits.
+        # Give it the same pixel recovery as a missing line; acceptance still
+        # requires two agreeing complete reads with plausible values.
         recovery = tuple((mode[0], name) for name, mode in _RECOVERY_MODES.items())
         if getattr(engine, "language", "en") != "en":
             # Several localized models lose numeric prefixes at normal glyph
@@ -784,7 +814,13 @@ async def refine_result(
 def source_coordinates(result, offset, scale):
     """Return every detected box in the original captured image's coordinates."""
     for card in result["cards"]:
-        for name in ("bounds", "footerBounds", "titleBounds", "textBounds"):
+        for name in (
+            "bounds",
+            "footerBounds",
+            "counterBounds",
+            "titleBounds",
+            "textBounds",
+        ):
             box = card.get(name)
             if box:
                 card[name] = {

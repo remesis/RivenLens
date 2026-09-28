@@ -13,7 +13,7 @@ from winrt.windows.globalization import Language
 from winrt.windows.graphics.imaging import BitmapPixelFormat, SoftwareBitmap
 from winrt.windows.media.ocr import OcrEngine
 from winrt.windows.storage.streams import DataWriter
-from localization import LANGUAGES, adapt_lines, profile
+from localization import LANGUAGES, adapt_lines, profile, repair_decimal_spacing
 
 
 def available_languages():
@@ -146,20 +146,24 @@ class LocalOCR:
                         rect.x, rect.y, rect.width, rect.height
                     )
                 if self.language != "en":
-                    footer = profile(self.language).footer_bounds(
-                        [
-                            {
-                                "text": word.text,
-                                **original_box(
-                                    word.bounding_rect.x,
-                                    word.bounding_rect.y,
-                                    word.bounding_rect.width,
-                                    word.bounding_rect.height,
-                                ),
-                            }
-                            for word in words
-                        ]
-                    )
+                    located_words = [
+                        {
+                            "text": word.text,
+                            **original_box(
+                                word.bounding_rect.x,
+                                word.bounding_rect.y,
+                                word.bounding_rect.width,
+                                word.bounding_rect.height,
+                            ),
+                        }
+                        for word in words
+                    ]
+                    if self.language == "ru":
+                        repaired = repair_decimal_spacing(line.text, located_words)
+                        if repaired != line.text:
+                            entry["text"] = repaired
+                            entry["localizedNumberJoin"] = True
+                    footer = profile(self.language).footer_bounds(located_words)
                     if footer:
                         entry["footerBounds"] = footer
                 lines.append(entry)

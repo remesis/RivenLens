@@ -379,8 +379,9 @@ def parse_cards(lines, width, height):
             key=lambda line: line["y"],
         )
         stats, pending, footer, invalid = [], None, False, False
-        normalized_percent = False
+        normalized_percent = normalized_spacing = False
         footer_bounds = None
+        counter_candidates = []
         unreadable = []
         text_rows = [header]
 
@@ -496,6 +497,24 @@ def parse_cards(lines, width, height):
             normalized_percent = normalized_percent or line.get(
                 "localizedPercentRepair", False
             )
+            normalized_spacing = normalized_spacing or line.get(
+                "localizedNumberJoin", False
+            )
+            # The isolated roll counter is another footer-font anchor when OCR
+            # misses the mastery label. It never establishes card completeness;
+            # rank detection must still verify the entire visible eight-pip row.
+            if (
+                re.fullmatch(r"[0-9]{1,7}", text)
+                and len(stats) + (pending is not None) >= 2
+                and line["x"] > center + font_height * 0.7
+                and font_height * 0.35 <= line["h"] <= font_height
+                and line["w"] <= font_height * 5
+            ):
+                counter_candidates.append(
+                    {key: line[key] for key in ("x", "y", "w", "h")}
+                )
+                finish()
+                continue
             # Percent glyphs are sometimes decoded as 0/0. Do not alter digits
             # or guess a missing decimal; just restore this recognizable symbol.
             text = re.sub(r"[0Oo]\s*/\s*[0Oo]", "%", text)
@@ -591,8 +610,12 @@ def parse_cards(lines, width, height):
                 "format": f"{positives}p{negatives}n",
                 "complete": complete,
                 "normalizedPercent": normalized_percent,
+                "normalizedSpacing": normalized_spacing,
                 "unreadable": unreadable,
                 "footerBounds": footer_bounds,
+                "counterBounds": counter_candidates[0]
+                if len(counter_candidates) == 1
+                else None,
                 "titleBounds": {key: header[key] for key in ("x", "y", "w", "h")},
                 "textBounds": {
                     "x": text_left,

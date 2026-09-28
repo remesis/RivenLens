@@ -87,6 +87,36 @@ def repair_percent(text):
     return re.sub(r"([+\-]\s*\d+[.,]\d)(?:70|96)(?=\s|[^\W\d_])", r"\1%", text)
 
 
+def repair_decimal_spacing(text, words):
+    """Join two adjacent OCR tokens belonging to one signed decimal percentage.
+
+    Require the visible sign, decimal, unit and tightly aligned word boxes.
+    Callers must still verify the complete stat read at another text scale.
+    """
+    match = re.match(
+        r"^([+\-][0-9]{1,2})\s+([0-9]{1,3}[.,][0-9])"
+        r"(?=\s*(?:%|[0Oo]/[0Oo])(?:\s|$))",
+        text,
+    )
+    if not match or len(words) < 2:
+        return text
+    first, second = words[:2]
+    if first["text"] != match[1] or not second["text"].startswith(match[2]):
+        return text
+    height = min(first["h"], second["h"])
+    gap = second["x"] - first["x"] - first["w"]
+    overlap = min(first["y"] + first["h"], second["y"] + second["h"]) - max(
+        first["y"], second["y"]
+    )
+    if (
+        height <= 0
+        or not -0.1 * height <= gap <= 0.45 * height
+        or overlap < 0.7 * height
+    ):
+        return text
+    return match[1] + match[2] + text[match.end() :]
+
+
 class Profile:
     def __init__(self, language):
         if language not in LANGUAGES:
@@ -232,6 +262,9 @@ class Profile:
         # already be visible; never invent it or repair an arbitrary digit.
         text = re.sub(r"([xX×хХ])\s*[lI|]\s*(?=[.,])", r"\g<1>1", text)
         if self.language == "ru":
+            # A Latin o embedded between Cyrillic letters is a label glyph,
+            # not a numeric repair. Keep names and standalone Latin text exact.
+            text = re.sub(r"(?<=[А-Яа-яЁё])[oO](?=[А-Яа-яЁё])", "о", text)
             # Russian OCR can read the leading zero of a faction multiplier as
             # Latin/Cyrillic o. Require its multiplier, decimal and two digits;
             # the complete faction template must still match below.
