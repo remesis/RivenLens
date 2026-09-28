@@ -8,13 +8,16 @@ import html
 import math
 from pathlib import Path
 
-from PySide6.QtCore import QSize, Qt, Signal
+from PySide6.QtCore import QEvent, QSize, Qt, Signal
 from PySide6.QtGui import QBrush, QColor, QIcon, QPalette
 from PySide6.QtWidgets import (
     QComboBox,
     QHBoxLayout,
     QSizePolicy,
     QStackedWidget,
+    QStyle,
+    QStyleOptionComboBox,
+    QStylePainter,
     QStyledItemDelegate,
     QVBoxLayout,
     QWidget,
@@ -32,6 +35,7 @@ from ui_text import (
 )
 
 SOURCE_TEXT_ROLE = int(Qt.ItemDataRole.UserRole) + 23
+DUPLICATE_ROLE = SOURCE_TEXT_ROLE + 1
 
 
 def label(text="", name="", wrap=False):
@@ -239,6 +243,8 @@ class Combo(TranslationMixin, QComboBox):
 class StatDelegate(QStyledItemDelegate):
     def initStyleOption(self, option, index):
         super().initStyleOption(option, index)
+        if index.data(DUPLICATE_ROLE):
+            option.text += " *"
         brush = index.data(Qt.ItemDataRole.ForegroundRole)
         if brush:
             for role in (QPalette.ColorRole.Text, QPalette.ColorRole.HighlightedText):
@@ -246,12 +252,171 @@ class StatDelegate(QStyledItemDelegate):
 
 
 class StatCombo(Combo):
-    """Stat choices retain eligibility colors even when disabled or highlighted."""
+    """Ordered checkbox targets, or a single choice for a retained/locked stat."""
+
+    selectionChanged = Signal(object)
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("statSelector")
         self.setItemDelegate(StatDelegate(self))
+        self._selected = []
+        self._exclusive = set()
+        self._multiple = False
+        self._pressed_row = -1
+        self.view().installEventFilter(self)
+        self.view().viewport().installEventFilter(self)
+        self.activated.connect(self._activated)
+
+    def _activated(self, row):
+        if self._multiple:
+            # Qt can emit activated when Enter closes its popup container.
+            # Accept the checkbox selection without replacing it with that row.
+            self.setCurrentIndex(self.findData(self._selected[0]))
+        else:
+            self.selectionChanged.emit([self.itemData(row)])
+
+    def set_targets(self, selected, multiple, exclusive, duplicates):
+        self._selected = list(selected)
+        self._exclusive = set(exclusive)
+        self._multiple = multiple
+        for row in range(self.count()):
+            identity = self.itemData(row)
+            self.model().item(row).setCheckable(multiple)
+            self.setItemData(row, identity in duplicates, DUPLICATE_ROLE)
+            self.setItemData(
+                row,
+                (
+                    Qt.CheckState.Checked
+                    if identity in selected
+                    else Qt.CheckState.Unchecked
+                )
+                if multiple
+                else None,
+                Qt.ItemDataRole.CheckStateRole,
+            )
+        if not multiple and self.view().isVisible():
+            self.hidePopup()
+        self.setAccessibleDescription(
+            ", ".join(self.itemText(self.findData(i)) for i in self._selected)
+        )
+        self.update()
+
+    def summary_text(self):
+        first = (
+            self.itemText(self.findData(self._selected[0])) if self._selected else ""
+        )
+        return (
+            translate(f"{first}, +{len(self._selected) - 1} more")
+            if len(self._selected) > 1
+            else first
+        )
+
+    def paintEvent(self, event):
+        painter = QStylePainter(self)
+        option = QStyleOptionComboBox()
+        self.initStyleOption(option)
+        option.currentText = self.summary_text()
+        if len(self._selected) > 1:
+            template = translate("{stat}, +{count} more")
+            remaining = template.format(stat="", count=len(self._selected) - 1)
+            width = (
+                self.style()
+                .subControlRect(
+                    QStyle.ComplexControl.CC_ComboBox,
+                    option,
+                    QStyle.SubControl.SC_ComboBoxEditField,
+                    self,
+                )
+                .width()
+            )
+            first = self.fontMetrics().elidedText(
+                self.itemText(self.findData(self._selected[0])),
+                Qt.TextElideMode.ElideRight,
+                max(0, width - self.fontMetrics().horizontalAdvance(remaining) - 2),
+            )
+            option.currentText = template.format(
+                stat=first, count=len(self._selected) - 1
+            )
+        painter.drawComplexControl(QStyle.ComplexControl.CC_ComboBox, option)
+        painter.drawControl(QStyle.ControlElement.CE_ComboBoxLabel, option)
+
+    def _toggle(self, row):
+        if row < 0 or not self.model().item(row).isEnabled():
+            return
+        identity = self.itemData(row)
+        selected = list(self._selected)
+        if identity in self._exclusive or any(i in self._exclusive for i in selected):
+            selected = [identity]
+        elif identity in selected:
+            if len(selected) == 1:
+                return
+            selected.remove(identity)
+        else:
+            selected.append(identity)
+        # Rendering updates all four slots. Keep the open list at the user's row.
+        scroll = self.view().verticalScrollBar().value()
+        self.selectionChanged.emit(selected)
+        if self.view().isVisible():
+            self.view().setCurrentIndex(self.model().index(self.findData(identity), 0))
+            self.view().verticalScrollBar().setValue(scroll)
+
+    def eventFilter(self, watched, event):
+        if self._multiple and self.view().isVisible():
+            if watched is self.view().viewport():
+                if (
+                    event.type() == QEvent.Type.MouseButtonPress
+                    and event.button() == Qt.MouseButton.LeftButton
+                ):
+                    self._pressed_row = (
+                        self.view().indexAt(event.position().toPoint()).row()
+                    )
+                    return True
+                if (
+                    event.type() == QEvent.Type.MouseButtonRelease
+                    and event.button() == Qt.MouseButton.LeftButton
+                ):
+                    row = self.view().indexAt(event.position().toPoint()).row()
+                    if row == self._pressed_row:
+                        self._toggle(row)
+                    self._pressed_row = -1
+                    return True
+            if event.type() == QEvent.Type.KeyPress:
+                if event.key() == Qt.Key.Key_Space:
+                    self._toggle(self.view().currentIndex().row())
+                    return True
+                if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
+                    self.hidePopup()
+                    return True
+        return super().eventFilter(watched, event)
+
+    def keyPressEvent(self, event):
+        if (
+            self._multiple
+            and not self.view().isVisible()
+            and (
+                event.key()
+                in (
+                    Qt.Key.Key_Space,
+                    Qt.Key.Key_Return,
+                    Qt.Key.Key_Enter,
+                    Qt.Key.Key_Down,
+                    Qt.Key.Key_Up,
+                    Qt.Key.Key_Home,
+                    Qt.Key.Key_End,
+                )
+                or event.text().isprintable()
+                and event.text().strip()
+            )
+        ):
+            self.showPopup()
+            event.accept()
+        else:
+            super().keyPressEvent(event)
+
+    def showPopup(self):
+        self._pressed_row = -1
+        super().showPopup()
 
     def set_eligibility(self, index, excluded, selectable, vintage, uncertain=False):
         item = self.model().item(index)

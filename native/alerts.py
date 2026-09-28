@@ -9,6 +9,8 @@ from collections import OrderedDict
 
 from catalog import recipes
 from grading import GRADE_NAMES, grade_stat, grading_rank
+from odds import matches_targets
+from planner import Planner
 
 
 def meets_grade(result, minimum):
@@ -18,6 +20,41 @@ def meets_grade(result, minimum):
         and minimum in GRADE_NAMES
         and GRADE_NAMES.index(grade) <= GRADE_NAMES.index(minimum)
     )
+
+
+def final_target_matches(card, grades, planner):
+    """A whole, graded roll must satisfy the target and retained grade thresholds."""
+    state = planner.state
+    stats = card["stats"]
+    if (
+        card.get("complete") is not True
+        or card["format"] != state["format"]
+        or len({s["id"] for s in stats}) != len(stats)
+        or any(g.get("grade") not in GRADE_NAMES for g in grades)
+        or any(s["polarity"] not in ("positive", "negative") for s in stats)
+    ):
+        return False
+    positives = [s["id"] for s in stats if s["polarity"] == "positive"]
+    negatives = [s["id"] for s in stats if s["polarity"] == "negative"]
+    if not matches_targets(positives, planner.positive_options):
+        return False
+    if len(negatives) != int(planner.has_negative):
+        return False
+    if negatives and not (
+        planner.is_rollable(negatives[0], "negative")
+        if state["negative"] == "any"
+        else negatives[0] in planner.targets(3)
+    ):
+        return False
+    for stat, grade in zip(stats, grades):
+        if planner.lock_target == {"id": stat["id"], "polarity": stat["polarity"]}:
+            if not meets_grade(grade, state["lockGrade"]):
+                return False
+        if stat["id"] == planner.splice and not meets_grade(
+            grade, state["spliceGrade"]
+        ):
+            return False
+    return True
 
 
 def find_matches(cards, catalog, preferences):
@@ -44,7 +81,10 @@ def find_matches(cards, catalog, preferences):
         != "excluded"
     )
     matches = []
-    for card in cards:
+    planner = (
+        Planner(catalog, dict(preferences)) if preferences.get("finalSound") else None
+    )
+    for index, card in enumerate(cards):
         if not card or card.get("snapshot") or card.get("complete") is False:
             continue
         rank = grading_rank(card, preferences)
@@ -71,6 +111,7 @@ def find_matches(cards, catalog, preferences):
                 ),
             ]
         )
+        grades = []
         for stat in card["stats"]:
             grade = grade_stat(
                 stat,
@@ -80,6 +121,7 @@ def find_matches(cards, catalog, preferences):
                 catalog.range_model,
                 rank,
             )
+            grades.append(grade)
             if (
                 preferences["spliceSound"]
                 and stat["polarity"] == "positive"
@@ -96,6 +138,12 @@ def find_matches(cards, catalog, preferences):
                 and meets_grade(grade, preferences["lockGrade"])
             ):
                 matches.append(("lock", identity))
+        if (
+            planner
+            and card.get("slot", "current" if index == 0 else "new") == "new"
+            and final_target_matches(card, grades, planner)
+        ):
+            matches.append(("final", identity))
     return matches
 
 

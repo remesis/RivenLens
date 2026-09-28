@@ -150,7 +150,9 @@ class PlannerView(Section):
             self.stat_captions.append(caption)
             selector = StatCombo()
             selector.setAccessibleName(f"Positive {index + 1}")
-            selector.activated.connect(lambda _, i=index: self.choose_positive(i))
+            selector.selectionChanged.connect(
+                lambda values, i=index: self.choose_positive(i, values)
+            )
             row_layout.addWidget(caption)
             row_layout.addWidget(selector, 1)
             row_layout.addWidget(self.make_stat_lock(index))
@@ -167,7 +169,7 @@ class PlannerView(Section):
         self.stat_captions.append(negative_caption)
         self.negative = StatCombo()
         self.negative.setAccessibleName("Negative")
-        self.negative.activated.connect(self.choose_negative)
+        self.negative.selectionChanged.connect(self.choose_negative)
         neg_layout.addWidget(negative_caption)
         neg_layout.addWidget(self.negative, 1)
         neg_layout.addWidget(self.make_stat_lock(3))
@@ -235,8 +237,17 @@ class PlannerView(Section):
         self.stages["lock"].content.addWidget(self.lock_info)
         self.stages["lock"].content.addWidget(self.lock_metrics)
         self.final_info = label("", "muted")
+        self.final_ding = QCheckBox("Ding")
+        self.final_ding.setToolTip(
+            "Ding when a new roll matches every target slot. Locked and spliced stats must meet their selected grades."
+        )
+        self.final_ding.toggled.connect(lambda value: self.ding_toggled("final", value))
+        final_toolbar, final_layout = box(False, spacing=6)
+        final_layout.addWidget(self.final_info)
+        final_layout.addStretch()
+        final_layout.addWidget(self.final_ding)
         self.final_metrics = rich(wrap=True)
-        self.stages["final"].content.addWidget(self.final_info)
+        self.stages["final"].content.addWidget(final_toolbar)
         self.stages["final"].content.addWidget(self.final_metrics)
         self.error = label("", "muted", True)
         self.content.addWidget(self.error)
@@ -279,19 +290,20 @@ class PlannerView(Section):
             if index >= len(self.state["positives"]):
                 return
             identity = self.state["positives"][index]
-            if identity in SPLICE_IDS:
+            if identity in SPLICE_IDS or identity == "any":
                 return
             target = "positive:" + identity
-        self.save_value("lock", "none" if self.state["lock"] == target else target)
+        locked = self.model.slot_locked(index)
+        self.state["positiveLockSlot"] = index if index < 3 and not locked else -1
+        self.save_value("lock", "none" if locked else target)
 
     def show_stat_lock(self, index, identity, polarity):
         available = identity is not None and identity != "any"
-        target = "negative" if polarity == "negative" else f"positive:{identity}"
         self.stat_locks[index].show_lock(
             f"{'+' if polarity == 'positive' else '-'} {self.model.name(identity)}"
             if available
             else "",
-            locked=available and self.state["lock"] == target,
+            locked=available and self.model.slot_locked(index),
             retained=identity in SPLICE_IDS,
             available=available,
         )
@@ -300,9 +312,20 @@ class PlannerView(Section):
         self.show_stat_lock(index, identity, polarity)
         value = self.stat_ranges[index]
         selected = identity is not None and identity != "any"
+        targets = self.model.targets(index)
         value.setText(
-            format_range(self.model.stat_range(identity, polarity)) if selected else ""
+            "Multiple target ranges"
+            if len(targets) > 1
+            else format_range(self.model.stat_range(identity, polarity))
+            if selected
+            else ""
         )
+        ranges = "\n".join(
+            f"{self.model.name(i)}: {format_range(self.model.stat_range(i, polarity))}"
+            for i in targets
+            if i is not None and i != "any"
+        )
+        value.setToolTip(ranges)
         value.setVisible(selected)
         value.setAccessibleName(
             f"{self.model.name(identity)} range for {self.model.variant['name']}, rank {self.model.rank}"
@@ -314,6 +337,33 @@ class PlannerView(Section):
             self.model.family["traits"].get(identity, {}).get(polarity) == "unresolved"
         )
         selector = self.negative if index == 3 else self.positives[index]
+        selector.setToolTip(
+            (
+                "Any compatible rollable stat; duplicates are excluded."
+                if identity == "any"
+                else ranges
+            )
+            + "\n* Selected in another slot. Each rolled stat must be different."
+        )
+        duplicates = {
+            i
+            for other in range(4)
+            if other != index
+            for i in self.model.targets(other)
+            if i is not None and i != "any"
+        }
+        selector.set_targets(
+            targets,
+            multiple=not self.model.slot_locked(index)
+            and identity not in SPLICE_IDS
+            and not vintage,
+            exclusive={
+                selector.itemData(row)
+                for row in range(selector.count())
+                if self.model.single_target(selector.itemData(row), polarity)
+            },
+            duplicates=duplicates,
+        )
         for widget in (selector, value):
             if (
                 widget.property("unrollable") != vintage
@@ -324,14 +374,15 @@ class PlannerView(Section):
                 widget.style().unpolish(widget)
                 widget.style().polish(widget)
 
-    def style_stat_choices(self, selector, polarity):
+    def style_stat_choices(self, selector, polarity, slot):
         for index in range(selector.count()):
             identity = selector.itemData(index)
             special = identity is None or identity == "any" or identity in SPLICE_IDS
             selector.set_eligibility(
                 index,
                 excluded=not special and not self.model.is_rollable(identity, polarity),
-                selectable=special or self.model.is_selectable(identity, polarity),
+                selectable=(special or self.model.is_selectable(identity, polarity))
+                and not self.model.conflicts_with_lock(slot, identity),
                 vintage=self.model.is_vintage(identity, polarity),
                 uncertain=self.model.family["traits"].get(identity, {}).get(polarity)
                 == "unresolved",
@@ -379,32 +430,20 @@ class PlannerView(Section):
         else:
             self.weapon.setEditText(self.weapon.itemText(self.weapon.currentIndex()))
 
-    def choose_positive(self, index):
-        identity = self.positives[index].currentData()
-        if identity is not None and not self.model.is_selectable(identity, "positive"):
-            self.render()
-            return
-        if index == 2:
-            positives = self.state["positives"][:2]
-            if identity is not None:
-                positives.append(identity)
-            self.state["format"] = f"{len(positives)}p{int(self.model.has_negative)}n"
-            self.state["positives"] = positives
-        else:
-            self.state["positives"][index] = identity
-        if self.model.is_vintage(identity, "positive"):
-            self.state["lock"] = "positive:" + identity
+    def choose_positive(self, index, choices=None):
+        self.model.set_targets(
+            index,
+            choices if choices is not None else [self.positives[index].currentData()],
+        )
         self.render(auto_lock=True)
         self.changed.emit()
 
-    def choose_negative(self):
-        identity = self.negative.currentData()
-        if identity != "any" and not self.model.is_selectable(identity, "negative"):
-            self.render()
-            return
-        if self.model.is_vintage(identity, "negative"):
-            self.state["lock"] = "negative"
-        self.save_value("negative", identity)
+    def choose_negative(self, choices=None):
+        self.model.set_targets(
+            3, choices if choices is not None else [self.negative.currentData()]
+        )
+        self.render(auto_lock=True)
+        self.changed.emit()
 
     def render(self, auto_lock=False):
         self.model.normalize(auto_lock=auto_lock)
@@ -433,30 +472,30 @@ class PlannerView(Section):
             choices = [
                 t
                 for t in model.positive_traits(include_unrollable=True)
-                if t["id"] not in others
-                and not (t["id"] in SPLICE_IDS and any(i in SPLICE_IDS for i in others))
+                if not (t["id"] in SPLICE_IDS and any(i in SPLICE_IDS for i in others))
             ]
             options(
                 self.positives[index],
                 ([("No Third Positive", None)] if index == 2 else [])
-                + [(t["name"], t["id"]) for t in choices],
+                + [(t["name"], t["id"]) for t in choices]
+                + [("Any", "any")],
                 identity,
             )
-            self.style_stat_choices(self.positives[index], "positive")
+            self.style_stat_choices(self.positives[index], "positive", index)
             self.refresh_stat_row(index, identity, "positive")
         self.negative_row.setVisible(model.has_negative)
         options(
             self.negative,
             [
-                ("Any compatible negative", "any"),
                 *(
                     (t["name"], t["id"])
                     for t in model.negative_traits(include_unrollable=True)
                 ),
+                ("Any", "any"),
             ],
             s["negative"],
         )
-        self.style_stat_choices(self.negative, "negative")
+        self.style_stat_choices(self.negative, "negative", 3)
         self.refresh_stat_row(
             3, s["negative"] if model.has_negative else None, "negative"
         )
@@ -473,6 +512,9 @@ class PlannerView(Section):
             ding.setChecked(s[key + "Sound"])
             ding.blockSignals(False)
         available = {t["id"] for t in splices_for(model.weapon["kind"])}
+        self.final_ding.blockSignals(True)
+        self.final_ding.setChecked(s["finalSound"])
+        self.final_ding.blockSignals(False)
         self.watch.setText(f"Watch splices ({len(set(s['spliceWatch']) & available)})")
         self.generation += 1
         # Never leave old odds looking like results for a newly selected target.
@@ -613,6 +655,11 @@ class PlannerView(Section):
             self.final_metrics.setText(
                 f'<b style="color:#ff757b">Not possible by cycling</b><br>{note}'
             )
+            self.final_metrics.setToolTip("")
+            self.stages["final"].set_summary("Not possible by cycling")
+            return
+        if probability["max"] <= 0:
+            self.final_metrics.setText("Not possible by cycling")
             self.final_metrics.setToolTip("")
             self.stages["final"].set_summary("Not possible by cycling")
             return

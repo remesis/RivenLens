@@ -21,6 +21,8 @@ DEFAULTS = {
     "positives": ["damage", "multishot", "fire-rate-attack-speed"],
     "negative": "impact",
     "lock": "none",
+    "positiveLockSlot": -1,
+    "statAlternatives": [[], [], [], []],
     "rank": 8,
     "rankMode": "auto",
     "gradeVariants": {},
@@ -28,6 +30,7 @@ DEFAULTS = {
     "lockGrade": "F",
     "spliceSound": False,
     "lockSound": False,
+    "finalSound": False,
     "ocrWarningEnabled": True,
     "spliceWatch": [],
     "stagesOpen": {},
@@ -100,6 +103,15 @@ def sanitize(saved):
     if not 0 <= state["rank"] <= 8:
         state["rank"] = 8
     state["positives"] = [s for s in state["positives"] if isinstance(s, str)][:3]
+    alternatives = state["statAlternatives"]
+    state["statAlternatives"] = [
+        list(dict.fromkeys(s for s in row if isinstance(s, str)))[:64]
+        if isinstance(row, list)
+        else []
+        for row in (alternatives + [[], [], [], []])[:4]
+    ]
+    if state["positiveLockSlot"] not in (-1, 0, 1, 2):
+        state["positiveLockSlot"] = -1
     state["spliceWatch"] = [
         s for s in state["spliceWatch"] if isinstance(s, str) and s in SPLICE_IDS
     ]
@@ -169,7 +181,16 @@ class Preferences:
         merged = sanitize(saved)
         changed = {key for key in DEFAULTS if data[key] != self._saved[key]}
         # Keep a planner selection internally consistent across simultaneous copies.
-        target = {"weapon", "variant", "format", "positives", "negative", "lock"}
+        target = {
+            "weapon",
+            "variant",
+            "format",
+            "positives",
+            "negative",
+            "lock",
+            "positiveLockSlot",
+            "statAlternatives",
+        }
         if changed & target:
             changed |= target
         for key in changed:

@@ -49,10 +49,26 @@ closing the window or choosing **Quit** exits the app.
 
 - Current and new rolls side by side, with automatic rank and variant detection.
 - Collapsible splice, manual-lock and final-odds stages, shown when relevant.
+- Multiple acceptable targets per unlocked stat slot, with odds for distinct
+  combinations. Choose **Any** at the bottom of a stat list to leave that slot open.
 - Separate good and warning dings, volume controls, ten presets each and custom audio.
 - Remembered targets, sounds, collapsed sections and window placement.
 - **Always on top** in Settings for an overlay-style window. Use windowed or
   borderless play; exclusive fullscreen may cover it.
+
+In stat lists, check all acceptable targets; press Enter or click outside to close.
+The field shows the first selection and how many more are selected. A `*` marks
+a stat selected in another unlocked slot. Overlapping targets are allowed, but
+each actual rolled stat must be different, and each matching combination counts
+only once.
+Locking a slot keeps only its first selection and makes that list single-select.
+That stat becomes unavailable in every other slot, including the opposite sign.
+Existing duplicates are removed; a slot with no remaining targets becomes **Any**.
+Splices and vintage stats remain single selections.
+
+Enable **Ding** in the final-odds stage to hear when a fully read new roll matches
+the whole target. Locked and spliced stats must also meet their selected grades.
+This toggle is independent of the splice-ingredient and lock-stat dings.
 
 ## Language support
 

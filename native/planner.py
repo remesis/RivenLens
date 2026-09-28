@@ -64,6 +64,91 @@ class Planner:
             return {"id": lock[9:], "polarity": "positive"}
         return None
 
+    def targets(self, index):
+        """Ordered alternatives; the first choice remains the saved primary stat."""
+        if index == 3:
+            primary = self.state["negative"] if self.has_negative else None
+        else:
+            positives = self.state["positives"]
+            primary = positives[index] if index < len(positives) else None
+        return [primary, *self.state["statAlternatives"][index]]
+
+    @property
+    def positive_options(self):
+        rollable = [
+            t["id"]
+            for t in self.positive_traits()
+            if self.is_rollable(t["id"], "positive")
+        ]
+        return [
+            [
+                identity
+                for identity in rollable
+                if not self.conflicts_with_lock(i, identity)
+            ]
+            if self.targets(i)[0] == "any"
+            else self.targets(i)
+            for i in range(len(self.state["positives"]))
+        ]
+
+    def slot_locked(self, index):
+        return (
+            self.state["lock"] == "negative"
+            if index == 3
+            else self.state["lock"].startswith("positive:")
+            and self.state["positiveLockSlot"] == index
+        )
+
+    def single_target(self, identity, polarity):
+        return (
+            identity is None
+            or identity == "any"
+            or identity in SPLICE_IDS
+            or self.is_vintage(identity, polarity)
+        )
+
+    def conflicts_with_lock(self, index, identity):
+        target = self.lock_target
+        return bool(target and target["id"] == identity and not self.slot_locked(index))
+
+    def set_targets(self, index, choices):
+        """Apply a slot selection, including format changes and retained locks."""
+        choices = list(dict.fromkeys(choices))
+        if not choices:
+            return
+        polarity = "negative" if index == 3 else "positive"
+        if any(
+            self.conflicts_with_lock(index, i)
+            or (
+                not (i == "any" or i is None and index == 2)
+                and not self.is_selectable(i, polarity)
+            )
+            for i in choices
+        ):
+            return
+        identity = choices[0]
+        locked = self.slot_locked(index)
+        if locked or any(self.single_target(i, polarity) for i in choices):
+            choices = choices[:1]
+        if index == 3:
+            self.state["negative"] = identity
+        elif index == 2:
+            self.state["positives"] = self.state["positives"][:2]
+            if identity is not None:
+                self.state["positives"].append(identity)
+            self.state["format"] = (
+                f"{len(self.state['positives'])}p{int(self.has_negative)}n"
+            )
+        else:
+            self.state["positives"][index] = identity
+        self.state["statAlternatives"][index] = choices[1:]
+        if locked or self.is_vintage(identity, polarity):
+            self.state["lock"] = (
+                "negative" if index == 3 else "positive:" + str(identity)
+            )
+            self.state["positiveLockSlot"] = index if index < 3 else -1
+        self.normalize(auto_lock=True)
+
     def is_vintage(self, identity, polarity):
         entry = self.family["traits"].get(identity, {})
         return bool(entry.get("vintage") and entry.get(polarity) == "excluded")
@@ -103,6 +188,8 @@ class Planner:
         )
 
     def name(self, identity):
+        if identity == "any":
+            return "Any"
         return next(
             (r["name"] for r in [*self.definitions, *SPLICES] if r["id"] == identity),
             identity,
@@ -151,7 +238,6 @@ class Planner:
             for t in self.definitions
             if t["negative"]
             and (include_unrollable or self.is_selectable(t["id"], "negative"))
-            and t["id"] not in self.state["positives"]
         ]
 
     def normalize(self, auto_lock=False):
@@ -159,21 +245,36 @@ class Planner:
         s["weapon"], s["variant"] = self.weapon["id"], self.variant["id"]
         if s.get("format") not in FORMATS:
             s["format"] = "3p1n"
+        alternatives = s.get("statAlternatives", [])
+        s["statAlternatives"] = [
+            list(dict.fromkeys(row)) if isinstance(row, list) else []
+            for row in (alternatives + [[], [], [], []])[:4]
+        ]
         eligible = self.positive_traits()
+        eligible_ids = {t["id"] for t in eligible}
         selected = []
         for index in range(FORMATS[s["format"]][0]):
             current = s.get("positives", [])
             identity = current[index] if index < len(current) else None
-            if (
-                identity not in [t["id"] for t in eligible]
-                or identity in selected
-                or (identity in SPLICE_IDS and any(i in SPLICE_IDS for i in selected))
+            if (identity != "any" and identity not in eligible_ids) or (
+                identity in SPLICE_IDS and any(i in SPLICE_IDS for i in selected)
             ):
                 identity = next(
-                    t["id"]
-                    for t in eligible
-                    if t["id"] not in selected and self.is_rollable(t["id"], "positive")
+                    (
+                        i
+                        for i in s["statAlternatives"][index]
+                        if i in eligible_ids and not self.single_target(i, "positive")
+                    ),
+                    None,
                 )
+                if identity is None:
+                    identity = next(
+                        t["id"]
+                        for t in eligible
+                        if t["id"] not in selected
+                        and t["id"] not in current
+                        and self.is_rollable(t["id"], "positive")
+                    )
             selected.append(identity)
         s["positives"] = selected
         negatives = self.negative_traits()
@@ -181,15 +282,31 @@ class Planner:
             t["id"] for t in negatives
         ]:
             s["negative"] = next(
-                (t["id"] for t in negatives if self.is_rollable(t["id"], "negative")),
-                "any",
+                (
+                    i
+                    for i in s["statAlternatives"][3]
+                    if i in {t["id"] for t in negatives}
+                    and not self.single_target(i, "negative")
+                ),
+                None,
             )
+            if s["negative"] is None:
+                s["negative"] = next(
+                    (
+                        t["id"]
+                        for t in negatives
+                        if self.is_rollable(t["id"], "negative")
+                    ),
+                    "any",
+                )
         lock = s.get("lock", "none")
         if (
             lock == "negative" and (not self.has_negative or s["negative"] == "any")
         ) or (
             lock.startswith("positive:")
-            and (lock[9:] not in selected or lock[9:] in SPLICE_IDS)
+            and (
+                lock[9:] not in selected or lock[9:] in SPLICE_IDS or lock[9:] == "any"
+            )
         ):
             s["lock"] = "none"
         if auto_lock:
@@ -198,6 +315,36 @@ class Planner:
                 required.append("negative")
             if required and s["lock"] not in required:
                 s["lock"] = required[0]
+        slot = s.get("positiveLockSlot", -1)
+        if s["lock"].startswith("positive:"):
+            identity = s["lock"][9:]
+            if slot not in range(len(selected)) or selected[slot] != identity:
+                slot = selected.index(identity)
+        else:
+            slot = -1
+        s["positiveLockSlot"] = slot
+        for index in range(4):
+            identity = self.targets(index)[0]
+            polarity = "negative" if index == 3 else "positive"
+            s["statAlternatives"][index] = [
+                i
+                for i in s["statAlternatives"][index]
+                if not self.slot_locked(index)
+                and not self.single_target(identity, polarity)
+                and i != identity
+                and isinstance(i, str)
+                and not self.single_target(i, polarity)
+                and self.is_selectable(i, polarity)
+            ]
+        for index in range(4):
+            choices = [
+                i for i in self.targets(index) if not self.conflicts_with_lock(index, i)
+            ] or ["any"]
+            if index == 3 and self.has_negative:
+                s["negative"] = choices[0]
+            elif index < len(s["positives"]):
+                s["positives"][index] = choices[0]
+            s["statAlternatives"][index] = choices[1:]
 
     @lru_cache(maxsize=64)
     def setup(self, family_id, kind, identity, fmt, grade):
@@ -253,12 +400,15 @@ class Planner:
                 t["id"]
                 for t in self.negative_traits()
                 if self.is_rollable(t["id"], "negative")
+                and not self.conflicts_with_lock(3, t["id"])
             ]
             if s["negative"] == "any"
-            else [s["negative"]]
+            else self.targets(3)
         )
+        positive_options = self.positive_options
         target = {
             "positives": s["positives"],
+            "positiveOptions": positive_options,
             "negatives": negatives,
             "hasNegative": self.has_negative,
             "retainedPositives": self.retained_positives,
@@ -267,7 +417,13 @@ class Planner:
             "heldPositive": s["lock"][9:]
             if s["lock"].startswith("positive:")
             else next(iter(self.retained_positives), None)
-            or next((i for i in s["positives"] if i not in SPLICE_IDS), None),
+            or next(
+                (i for i in s["positives"] if i not in SPLICE_IDS and i != "any"), None
+            )
+            or next(
+                (i for row in positive_options for i in row if i not in SPLICE_IDS),
+                None,
+            ),
         }
         rows = [evaluate(pool, target, self.catalog.assumptions) for pool in pools]
         result["final"] = {

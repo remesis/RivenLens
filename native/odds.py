@@ -5,7 +5,8 @@
 """Exact positives-first probabilities, including splice setup routes."""
 
 import math
-from itertools import combinations
+from functools import lru_cache
+from itertools import combinations, permutations, product
 
 from catalog import SPLICE_IDS
 
@@ -262,7 +263,58 @@ def selected_lock_chance(pool, target, assumptions):
     )
 
 
+@lru_cache(maxsize=64)
+def target_combinations(options):
+    """Unordered, distinct-stat outcomes satisfying every slot exactly once."""
+    return tuple(
+        sorted(
+            {
+                tuple(sorted(row))
+                for row in product(*options)
+                if len(set(row)) == len(row)
+            }
+        )
+    )
+
+
+def matches_targets(stats, options):
+    """Require a distinct rolled stat for each target slot, regardless of order."""
+    return (
+        len(stats) == len(options)
+        and len(set(stats)) == len(stats)
+        and any(
+            all(stat in choices for stat, choices in zip(assignment, options))
+            for assignment in permutations(stats)
+        )
+    )
+
+
 def evaluate(pool, target, assumptions):
+    options = target.get("positiveOptions")
+    if not options:
+        return _evaluate_single(pool, target, assumptions)
+    if all(len(row) == 1 for row in options):
+        return _evaluate_single(
+            pool, {**target, "positives": [row[0] for row in options]}, assumptions
+        )
+    # Use the same held stat for every outcome, including hypothetical strategies.
+    fixed = dict(target)
+    fixed["heldPositive"] = target.get("heldPositive") or next(
+        iter(
+            target.get("retainedPositives")
+            or [i for row in options for i in row if i not in SPLICE_IDS]
+        ),
+        None,
+    )
+    totals = {key: [] for key in ("q0", "qPositive", "qNegative")}
+    for positives in target_combinations(tuple(tuple(row) for row in options)):
+        row = _evaluate_single(pool, {**fixed, "positives": positives}, assumptions)
+        for key, value in row.items():
+            totals[key].append(value)
+    return {key: math.fsum(values) for key, values in totals.items()}
+
+
+def _evaluate_single(pool, target, assumptions):
     positives, negatives = target["positives"], target["negatives"]
     combined = [i for i in positives if i in SPLICE_IDS]
     held_negative = target.get("heldNegative")
