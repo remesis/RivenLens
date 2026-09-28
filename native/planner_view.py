@@ -21,7 +21,6 @@ from PySide6.QtWidgets import (
 from catalog import SPLICES, SPLICE_IDS, splices_for, variant_label
 from dialogs import ModalDialog
 from grading import FORMATS, GRADE_NAMES, format_range
-from odds import attempts_for
 from planner import Planner
 from search_combo import SearchCombo
 from ui_text import QCheckBox, QFrame, QPushButton, language
@@ -32,7 +31,9 @@ from widgets import (
     StatCombo,
     box,
     interval,
+    kuva_text,
     label,
+    number,
     odds_text,
     options,
     rich,
@@ -519,6 +520,7 @@ class PlannerView(Section):
         self.generation += 1
         # Never leave old odds looking like results for a newly selected target.
         self.final_metrics.setText('<span style="color:#8dabc0">Calculating…</span>')
+        self.final_metrics.setToolTip("")
         self.splice_info.setText(self.splice_description())
         self.splice_metrics.clear()
         self.splice_note.clear()
@@ -663,25 +665,26 @@ class PlannerView(Section):
             self.final_metrics.setToolTip("")
             self.stages["final"].set_summary("Not possible by cycling")
             return
-        chances = []
-        for confidence in (0.5, 0.95):
-            attempts = interval(
-                {
-                    "min": attempts_for(probability["max"], confidence),
-                    "max": attempts_for(probability["min"], confidence),
-                },
-                0,
-            )
-            chances.append(
-                f'<span style="color:#8dabc0">{confidence:.0%}</span> · <b>{attempts} rolls</b>'
-            )
+        total = result["total"]
+        rolls = f"{interval(total['rolls'])} rolls" if total else "Unavailable"
+        kuva = kuva_text(total["kuva"] if total else None)
         self.final_metrics.setText(
             f'<table width="100%"><tr><td valign="middle"><span style="color:#80d4fc;font-size:26px">{odds_text(probability)}</span></td>'
-            f'<td align="right">{chances[0]}<br>{chances[1]}</td></tr></table>'
+            f'<td align="right"><span style="color:#8dabc0"><span>Avg. total</span> · </span><b style="color:#e5edf7">{rolls}</b>'
+            f'<br><span style="color:#8dabc0"><span>Est. Kuva</span> · </span><b style="color:#e5edf7">{kuva}</b></td></tr></table>'
         )
+        base_cost = model.catalog.assumptions["kuvaPerRoll"]
+        locked_cost = base_cost * model.catalog.assumptions["lockedKuvaMultiplier"]
         self.final_metrics.setToolTip(
-            "\n".join(f"{name}: {odds_text(p)}" for name, p in result["final"].items())
-            + "\nAverage rolls, not a guarantee. Existing locks and splice assumed."
+            "Estimated combined cost of splice setup, acquiring the selected lock, and rolling the final target. Adds the applicable stage averages, not guarantees."
+            f"\nCapped costs: {number(base_cost, 0)} Kuva per unlocked roll; {number(locked_cost, 0)} with a manual lock. Splice retention is free."
+            "\nExcludes the starting Riven, starting setup lock and splicer acquisition."
+            "\nLeft-hand odds assume the selected lock and splice are already available."
+            + (
+                "\nCombined estimate unavailable: a required setup stage cannot be calculated or the selected vintage stat cannot be rolled anew."
+                if total is None
+                else ""
+            )
         )
         self.stages["final"].set_summary(odds_text(probability))
 

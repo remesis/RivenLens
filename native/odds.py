@@ -289,6 +289,50 @@ def matches_targets(stats, options):
     )
 
 
+def staged_cost(result, assumptions, final_complete=False):
+    """Sum the modeled stage means, using each stage's capped cycling cost."""
+    base = assumptions["kuvaPerRoll"]
+    locked = base * assumptions["lockedKuvaMultiplier"]
+    stages = []
+    setup, lock = result["splice"], result["lock"]
+    if setup:
+        if not setup["available"]:
+            return None
+        stages.append((setup["total"], locked))
+    if lock and lock["vintage"]:
+        return None
+    for probability, cost, complete in (
+        (lock["probability"] if lock else None, base, False),
+        (
+            result["final"][result["strategy"]],
+            locked if result["strategy"] != "none" else base,
+            final_complete,
+        ),
+    ):
+        if probability is None or complete:
+            continue
+        if probability["max"] <= 0:
+            return None
+        stages.append(
+            (
+                {
+                    "min": 1 / probability["max"],
+                    "max": 1 / probability["min"] if probability["min"] else math.inf,
+                },
+                cost,
+            )
+        )
+    return {
+        "rolls": {
+            key: math.fsum(rolls[key] for rolls, _ in stages) for key in ("min", "max")
+        },
+        "kuva": {
+            key: math.fsum(rolls[key] * cost for rolls, cost in stages)
+            for key in ("min", "max")
+        },
+    }
+
+
 def evaluate(pool, target, assumptions):
     options = target.get("positiveOptions")
     if not options:

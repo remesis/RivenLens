@@ -69,6 +69,10 @@ Splices and vintage stats remain single selections.
 Enable **Ding** in the final-odds stage to hear when a fully read new roll matches
 the whole target. Locked and spliced stats must also meet their selected grades.
 This toggle is independent of the splice-ingredient and lock-stat dings.
+The final-odds stage also shows estimated combined rolls and Kuva for the
+applicable setup stages and final target. Hover over the figures for assumptions;
+Kuva estimates of one million or more are displayed in thousands (for example,
+`1,234k`).
 
 ## Language support
 

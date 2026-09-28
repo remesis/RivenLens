@@ -14,6 +14,7 @@ from odds import (
     evaluate,
     optimal_splice_setup,
     selected_lock_chance,
+    staged_cost,
 )
 
 
@@ -436,5 +437,13 @@ class Planner:
         }
         result["strategy"] = (
             "positive" if s["lock"].startswith("positive:") else s["lock"]
+        )
+        result["total"] = staged_cost(
+            result,
+            self.catalog.assumptions,
+            final_complete=bool(self.splice)
+            and result["strategy"] == "positive"
+            and len(s["positives"]) == 2
+            and not self.has_negative,
         )
         return result

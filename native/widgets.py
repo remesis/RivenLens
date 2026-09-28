@@ -512,6 +512,21 @@ def interval(value, decimals=1):
     return low if low == high else f"{low} to {high}"
 
 
+def kuva_text(value):
+    if not value:
+        return "Unavailable"
+
+    def amount(cost):
+        return (
+            number(cost / 1000, 0) + "k"
+            if math.isfinite(cost) and cost >= 1_000_000
+            else number(cost, 0)
+        )
+
+    low, high = amount(value["min"]), amount(value["max"])
+    return low if low == high else f"{low} to {high}"
+
+
 def odds_text(probability):
     if not probability or probability["max"] <= 0:
         return "Not available"
