@@ -14,11 +14,12 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QHBoxLayout,
     QScrollArea,
+    QSizePolicy,
     QVBoxLayout,
     QWidget,
 )
 
-from catalog import SPLICES, SPLICE_IDS, splices_for, variant_label
+from catalog import SPLICE_IDS, splices_for, variant_label
 from dialogs import ModalDialog
 from grading import FORMATS, GRADE_NAMES, format_range
 from planner import Planner
@@ -248,8 +249,22 @@ class PlannerView(Section):
         final_layout.addStretch()
         final_layout.addWidget(self.final_ding)
         self.final_metrics = rich(wrap=True)
+        self.final_totals = rich()
+        self.final_totals.setAlignment(
+            Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
+        )
+        self.final_totals.setSizePolicy(
+            QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Fixed
+        )
+        final_values, values_layout = box(False, spacing=8)
+        values_layout.addWidget(self.final_metrics, 1)
+        values_layout.addWidget(
+            self.final_totals,
+            0,
+            Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter,
+        )
         self.stages["final"].content.addWidget(final_toolbar)
-        self.stages["final"].content.addWidget(self.final_metrics)
+        self.stages["final"].content.addWidget(final_values)
         self.error = label("", "muted", True)
         self.content.addWidget(self.error)
         self.render(auto_lock=True)
@@ -405,13 +420,9 @@ class PlannerView(Section):
         self.sound_toggled.emit(value)
 
     def choose_category(self):
-        self.state["weapon"] = next(
-            w["id"]
-            for w in self.catalog.weapons
-            if w["category"] == self.category.currentData()
-        )
-        self.render(auto_lock=True)
-        self.changed.emit()
+        if self.model.select_category(self.category.currentData()):
+            self.render(auto_lock=True)
+            self.changed.emit()
 
     def choose_weapon(self, *_):
         match = next(
@@ -520,7 +531,9 @@ class PlannerView(Section):
         self.generation += 1
         # Never leave old odds looking like results for a newly selected target.
         self.final_metrics.setText('<span style="color:#8dabc0">Calculating…</span>')
-        self.final_metrics.setToolTip("")
+        self.final_totals.clear()
+        self.final_totals.setToolTip("")
+        self.final_totals.hide()
         self.splice_info.setText(self.splice_description())
         self.splice_metrics.clear()
         self.splice_note.clear()
@@ -532,6 +545,8 @@ class PlannerView(Section):
         self.calculator.submit(self.generation, s)
 
     def refresh_stages(self):
+        self.lock_choices.opened = self.state["startingLocksOpen"]
+        self.lock_choices.refresh()
         available = {
             "splice": bool(self.model.splice),
             "lock": bool(self.model.lock_target),
@@ -540,6 +555,8 @@ class PlannerView(Section):
         number = 1
         for key, title in STAGE_TITLES.items():
             stage = self.stages[key]
+            stage.opened = self.state["stagesOpen"].get(key, True)
+            stage.refresh()
             stage.setVisible(available[key])
             stage.title.setText(f"{number}. {title}" if available[key] else title)
             if available[key]:
@@ -560,6 +577,9 @@ class PlannerView(Section):
     def show_results(self, generation, result):
         if generation != self.generation:
             return
+        self.final_totals.clear()
+        self.final_totals.setToolTip("")
+        self.final_totals.hide()
         if "error" in result:
             self.error.setText("Estimate unavailable: " + result["error"])
             self.error.show()
@@ -657,25 +677,26 @@ class PlannerView(Section):
             self.final_metrics.setText(
                 f'<b style="color:#ff757b">Not possible by cycling</b><br>{note}'
             )
-            self.final_metrics.setToolTip("")
             self.stages["final"].set_summary("Not possible by cycling")
             return
         if probability["max"] <= 0:
             self.final_metrics.setText("Not possible by cycling")
-            self.final_metrics.setToolTip("")
             self.stages["final"].set_summary("Not possible by cycling")
             return
         total = result["total"]
         rolls = f"{interval(total['rolls'])} rolls" if total else "Unavailable"
         kuva = kuva_text(total["kuva"] if total else None)
         self.final_metrics.setText(
-            f'<table width="100%"><tr><td valign="middle"><span style="color:#80d4fc;font-size:26px">{odds_text(probability)}</span></td>'
-            f'<td align="right"><span style="color:#8dabc0"><span>Avg. total</span> · </span><b style="color:#e5edf7">{rolls}</b>'
-            f'<br><span style="color:#8dabc0"><span>Est. Kuva</span> · </span><b style="color:#e5edf7">{kuva}</b></td></tr></table>'
+            f'<span style="color:#80d4fc;font-size:26px">{odds_text(probability)}</span>'
         )
+        self.final_totals.setText(
+            f'<span style="color:#8dabc0"><span>Avg. total</span> · </span><b style="color:#e5edf7">{rolls}</b>'
+            f'<br><span style="color:#8dabc0"><span>Est. Kuva</span> · </span><b style="color:#e5edf7">{kuva}</b>'
+        )
+        self.final_totals.show()
         base_cost = model.catalog.assumptions["kuvaPerRoll"]
         locked_cost = base_cost * model.catalog.assumptions["lockedKuvaMultiplier"]
-        self.final_metrics.setToolTip(
+        self.final_totals.setToolTip(
             "Estimated combined cost of splice setup, acquiring the selected lock, and rolling the final target. Adds the applicable stage averages, not guarantees."
             f"\nCapped costs: {number(base_cost, 0)} Kuva per unlocked roll; {number(locked_cost, 0)} with a manual lock. Splice retention is free."
             "\nExcludes the starting Riven, starting setup lock and splicer acquisition."
@@ -702,19 +723,11 @@ class PlannerView(Section):
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         content, rows = box(spacing=12)
-        available = {t["id"] for t in splices_for(self.model.weapon["kind"])}
-        for trait in SPLICES:
+        for trait in splices_for(self.model.weapon["kind"]):
             checkbox = QCheckBox(trait["name"])
-            checkbox.setEnabled(trait["id"] in available)
-            checkbox.setChecked(
-                trait["id"] in available and trait["id"] in self.state["spliceWatch"]
-            )
+            checkbox.setChecked(trait["id"] in self.state["spliceWatch"])
             rows.addWidget(checkbox)
-            recipe = (
-                self.model.recipe_text(trait["id"])
-                if trait["id"] in available
-                else "Not applicable to this weapon type"
-            )
+            recipe = self.model.recipe_text(trait["id"])
             rows.addWidget(label(recipe, "recipe", True))
             checkbox.toggled.connect(
                 lambda checked, identity=trait["id"]: self.watch_changed(

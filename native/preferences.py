@@ -23,6 +23,7 @@ DEFAULTS = {
     "lock": "none",
     "positiveLockSlot": -1,
     "statAlternatives": [[], [], [], []],
+    "categoryPlans": {},
     "rank": 8,
     "rankMode": "auto",
     "gradeVariants": {},
@@ -54,6 +55,62 @@ DEFAULTS = {
     "windowSize": [],
     "windowLayoutVersion": 0,
 }
+
+PLANNER_FIELDS = (
+    "weapon",
+    "variant",
+    "format",
+    "positives",
+    "negative",
+    "lock",
+    "positiveLockSlot",
+    "statAlternatives",
+    "spliceGrade",
+    "lockGrade",
+    "spliceSound",
+    "lockSound",
+    "finalSound",
+    "spliceWatch",
+    "stagesOpen",
+    "startingLocksOpen",
+)
+
+
+def planner_settings(saved):
+    """Copy only category-specific selections, with safe defaults for older saves."""
+    saved = saved if isinstance(saved, dict) else {}
+    state = {
+        key: copy.deepcopy(
+            saved[key]
+            if key in saved and type(saved[key]) is type(DEFAULTS[key])
+            else DEFAULTS[key]
+        )
+        for key in PLANNER_FIELDS
+    }
+    if state["format"] not in FORMATS:
+        state["format"] = DEFAULTS["format"]
+    for key in ("spliceGrade", "lockGrade"):
+        if state[key] not in GRADE_NAMES:
+            state[key] = DEFAULTS[key]
+    state["positives"] = [s for s in state["positives"] if isinstance(s, str)][:3]
+    alternatives = state["statAlternatives"]
+    state["statAlternatives"] = [
+        list(dict.fromkeys(s for s in row if isinstance(s, str)))[:64]
+        if isinstance(row, list)
+        else []
+        for row in (alternatives + [[], [], [], []])[:4]
+    ]
+    if state["positiveLockSlot"] not in (-1, 0, 1, 2):
+        state["positiveLockSlot"] = -1
+    state["spliceWatch"] = [
+        s for s in state["spliceWatch"] if isinstance(s, str) and s in SPLICE_IDS
+    ]
+    state["stagesOpen"] = {
+        key: value
+        for key, value in state["stagesOpen"].items()
+        if key in ("splice", "lock", "final") and type(value) is bool
+    }
+    return state
 
 
 def capture_settings(value):
@@ -93,28 +150,16 @@ def sanitize(saved):
     for key, default in DEFAULTS.items():
         if key in saved and type(saved[key]) is type(default):
             state[key] = copy.deepcopy(saved[key])
-    if state["format"] not in FORMATS:
-        state["format"] = "3p1n"
-    for key in ("spliceGrade", "lockGrade"):
-        if state[key] not in GRADE_NAMES:
-            state[key] = DEFAULTS[key]
+    state.update(planner_settings(state))
+    state["categoryPlans"] = {
+        category: planner_settings(plan)
+        for category, plan in state["categoryPlans"].items()
+        if isinstance(category, str) and len(category) <= 64 and isinstance(plan, dict)
+    }
     if state["rankMode"] != "manual":
         state["rankMode"] = "auto"
     if not 0 <= state["rank"] <= 8:
         state["rank"] = 8
-    state["positives"] = [s for s in state["positives"] if isinstance(s, str)][:3]
-    alternatives = state["statAlternatives"]
-    state["statAlternatives"] = [
-        list(dict.fromkeys(s for s in row if isinstance(s, str)))[:64]
-        if isinstance(row, list)
-        else []
-        for row in (alternatives + [[], [], [], []])[:4]
-    ]
-    if state["positiveLockSlot"] not in (-1, 0, 1, 2):
-        state["positiveLockSlot"] = -1
-    state["spliceWatch"] = [
-        s for s in state["spliceWatch"] if isinstance(s, str) and s in SPLICE_IDS
-    ]
     state["capture"] = capture_settings(state["capture"])
     position = state["windowPosition"]
     if len(position) != 2 or any(
@@ -181,20 +226,20 @@ class Preferences:
         merged = sanitize(saved)
         changed = {key for key in DEFAULTS if data[key] != self._saved[key]}
         # Keep a planner selection internally consistent across simultaneous copies.
-        target = {
-            "weapon",
-            "variant",
-            "format",
-            "positives",
-            "negative",
-            "lock",
-            "positiveLockSlot",
-            "statAlternatives",
-        }
+        target = set(PLANNER_FIELDS)
         if changed & target:
             changed |= target
         for key in changed:
-            merged[key] = data[key]
+            if key == "categoryPlans":
+                # Independent categories edited in another copy must survive.
+                for category in data[key].keys() | self._saved[key].keys():
+                    if data[key].get(category) != self._saved[key].get(category):
+                        if category in data[key]:
+                            merged[key][category] = copy.deepcopy(data[key][category])
+                        else:
+                            merged[key].pop(category, None)
+            else:
+                merged[key] = data[key]
         file = QSaveFile(str(self.path))
         if not file.open(QIODevice.OpenModeFlag.WriteOnly):
             raise OSError("Could not open local settings")

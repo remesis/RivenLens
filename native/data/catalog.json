@@ -1916,6 +1916,7 @@
     "104044111144444400400001",
     "044114104441044401944449",
     "944114194441444441444444",
+    "444114104041444491444444",
     "444114104441444441444444",
     "0441141044414444144444",
     "844114184841444491444444",
@@ -2538,7 +2539,7 @@
     [
       "Dual Toxocyst",
       "Pistol",
-      0
+      37
     ],
     [
       "Dual Viciss",
@@ -2633,7 +2634,7 @@
     [
       "Felarx",
       "Shotgun",
-      37
+      38
     ],
     [
       "Ferrox",
@@ -2643,7 +2644,7 @@
     [
       "Fluctus",
       "Archgun",
-      38
+      39
     ],
     [
       "Flux Rifle",
@@ -2673,7 +2674,7 @@
     [
       "Fusilai",
       "Pistol",
-      37
+      38
     ],
     [
       "Galariak Prime",
@@ -2703,7 +2704,7 @@
     [
       "Gaze",
       "Kitgun",
-      39
+      40
     ],
     [
       "Ghoulsaw",
@@ -2743,12 +2744,12 @@
     [
       "Grattler",
       "Archgun",
-      40
+      41
     ],
     [
       "Grimoire",
       "Pistol",
-      41
+      42
     ],
     [
       "Grinlok",
@@ -2783,7 +2784,7 @@
     [
       "Harpak",
       "Rifle",
-      42
+      43
     ],
     [
       "Hate",
@@ -2818,7 +2819,7 @@
     [
       "Hema",
       "Rifle",
-      43
+      44
     ],
     [
       "Hespar",
@@ -2828,7 +2829,7 @@
     [
       "Higasa",
       "Rifle",
-      37
+      38
     ],
     [
       "Hikou",
@@ -2918,7 +2919,7 @@
     [
       "Knell",
       "Pistol",
-      44
+      45
     ],
     [
       "Kogake",
@@ -2938,7 +2939,7 @@
     [
       "Komorex",
       "Rifle",
-      37
+      38
     ],
     [
       "Kompressa",
@@ -3023,7 +3024,7 @@
     [
       "Lacerten",
       "Melee",
-      45
+      46
     ],
     [
       "Laetum",
@@ -3033,7 +3034,7 @@
     [
       "Lanka",
       "Rifle",
-      46
+      47
     ],
     [
       "Larkspur",
@@ -3043,7 +3044,7 @@
     [
       "Laser Rifle",
       "Rifle",
-      47
+      48
     ],
     [
       "Lato",
@@ -3138,7 +3139,7 @@
     [
       "Multron",
       "Rifle",
-      48
+      49
     ],
     [
       "Mutalist Cernos",
@@ -3148,7 +3149,7 @@
     [
       "Mutalist Quanta",
       "Rifle",
-      49
+      50
     ],
     [
       "Nagantaka",
@@ -3203,7 +3204,7 @@
     [
       "Ogris",
       "Rifle",
-      46
+      47
     ],
     [
       "Ohma",
@@ -3253,7 +3254,7 @@
     [
       "Panthera",
       "Rifle",
-      50
+      51
     ],
     [
       "Paracesis",
@@ -3263,7 +3264,7 @@
     [
       "Paracyst",
       "Rifle",
-      51
+      52
     ],
     [
       "Paris",
@@ -3288,12 +3289,12 @@
     [
       "Perigale",
       "Rifle",
-      52
+      53
     ],
     [
       "Phaedra",
       "Archgun",
-      40
+      41
     ],
     [
       "Phage",
@@ -3423,7 +3424,7 @@
     [
       "Reconifex",
       "Rifle",
-      44
+      45
     ],
     [
       "Redeemer",
@@ -3443,7 +3444,7 @@
     [
       "Rubico",
       "Rifle",
-      53
+      54
     ],
     [
       "Rumblejack",
@@ -3578,7 +3579,7 @@
     [
       "Sobek",
       "Shotgun",
-      53
+      54
     ],
     [
       "Soma",
@@ -3618,7 +3619,7 @@
     [
       "Stahlta",
       "Rifle",
-      37
+      38
     ],
     [
       "Staticor",
@@ -3633,7 +3634,7 @@
     [
       "Stinger",
       "Rifle",
-      54
+      55
     ],
     [
       "Stradavar",
@@ -3673,7 +3674,7 @@
     [
       "Sweeper",
       "Shotgun",
-      55
+      56
     ],
     [
       "Syam",
@@ -3793,7 +3794,7 @@
     [
       "Tombfinger",
       "Kitgun",
-      56
+      57
     ],
     [
       "Tonbo",
@@ -3808,7 +3809,7 @@
     [
       "Tonkor",
       "Rifle",
-      42
+      43
     ],
     [
       "Torid",
@@ -3848,7 +3849,7 @@
     [
       "Twin Rogga",
       "Pistol",
-      44
+      45
     ],
     [
       "Twin Vipers",
@@ -3913,7 +3914,7 @@
     [
       "Verglas",
       "Rifle",
-      57
+      58
     ],
     [
       "Vericres",
@@ -3928,7 +3929,7 @@
     [
       "Vesper 77",
       "Pistol",
-      44
+      45
     ],
     [
       "Vinquibus",
@@ -3958,7 +3959,7 @@
     [
       "Vulcax",
       "Rifle",
-      58
+      59
     ],
     [
       "Vulkar",
@@ -3968,7 +3969,7 @@
     [
       "Vulklok",
       "Rifle",
-      54
+      55
     ],
     [
       "War",
@@ -4023,7 +4024,7 @@
     [
       "Zymos",
       "Pistol",
-      44
+      45
     ],
     [
       "Nunchasa",

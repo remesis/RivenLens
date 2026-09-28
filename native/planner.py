@@ -8,6 +8,7 @@ from functools import lru_cache
 
 from catalog import SPLICE_IDS, SPLICES, recipes, splices_for
 from grading import FORMATS, format_range, grade_chance, grade_range, trait_range
+from preferences import planner_settings
 from odds import (
     bounds,
     enumerate_pools,
@@ -22,6 +23,22 @@ class Planner:
     def __init__(self, catalog, state):
         self.catalog, self.state = catalog, state
         self.normalize()
+
+    def select_category(self, category):
+        """Retain the outgoing plan and restore the requested category's last plan."""
+        weapons = [w for w in self.catalog.weapons if w["category"] == category]
+        if not weapons or category == self.weapon["category"]:
+            return False
+        plans = self.state.setdefault("categoryPlans", {})
+        plans[self.weapon["category"]] = planner_settings(self.state)
+        restored = planner_settings(plans.get(category))
+        weapon = self.catalog.by_id.get(restored["weapon"])
+        if weapon is None or weapon["category"] != category:
+            restored["weapon"] = weapons[0]["id"]
+            restored["variant"] = weapons[0]["variants"][0]["id"]
+        self.state.update(restored)
+        self.normalize(auto_lock=True)
+        return True
 
     @property
     def weapon(self):

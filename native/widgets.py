@@ -234,6 +234,38 @@ class Combo(TranslationMixin, QComboBox):
         finally:
             self.blockSignals(blocked)
 
+    def label_width(self, option):
+        width = (
+            self.style()
+            .subControlRect(
+                QStyle.ComplexControl.CC_ComboBox,
+                option,
+                QStyle.SubControl.SC_ComboBoxEditField,
+                self,
+            )
+            .width()
+            - 2
+        )
+        if not option.currentIcon.isNull():
+            width -= option.iconSize.width() + 4
+        return max(0, width)
+
+    def elided_label(self, option):
+        return option.fontMetrics.elidedText(
+            option.currentText, Qt.TextElideMode.ElideRight, self.label_width(option)
+        )
+
+    def paintEvent(self, event):
+        if self.isEditable():
+            super().paintEvent(event)
+            return
+        painter = QStylePainter(self)
+        option = QStyleOptionComboBox()
+        self.initStyleOption(option)
+        option.currentText = self.elided_label(option)
+        painter.drawComplexControl(QStyle.ComplexControl.CC_ComboBox, option)
+        painter.drawControl(QStyle.ControlElement.CE_ComboBoxLabel, option)
+
     def wheelEvent(self, event):
         # Scrolling a settings panel must not silently change a selected stat.
         if self.view().isVisible():
@@ -314,34 +346,24 @@ class StatCombo(Combo):
             else first
         )
 
-    def paintEvent(self, event):
-        painter = QStylePainter(self)
-        option = QStyleOptionComboBox()
-        self.initStyleOption(option)
+    def elided_label(self, option):
         option.currentText = self.summary_text()
         if len(self._selected) > 1:
             template = translate("{stat}, +{count} more")
             remaining = template.format(stat="", count=len(self._selected) - 1)
-            width = (
-                self.style()
-                .subControlRect(
-                    QStyle.ComplexControl.CC_ComboBox,
-                    option,
-                    QStyle.SubControl.SC_ComboBoxEditField,
-                    self,
-                )
-                .width()
-            )
-            first = self.fontMetrics().elidedText(
+            first = option.fontMetrics.elidedText(
                 self.itemText(self.findData(self._selected[0])),
                 Qt.TextElideMode.ElideRight,
-                max(0, width - self.fontMetrics().horizontalAdvance(remaining) - 2),
+                max(
+                    0,
+                    self.label_width(option)
+                    - option.fontMetrics.horizontalAdvance(remaining),
+                ),
             )
             option.currentText = template.format(
                 stat=first, count=len(self._selected) - 1
             )
-        painter.drawComplexControl(QStyle.ComplexControl.CC_ComboBox, option)
-        painter.drawControl(QStyle.ControlElement.CE_ComboBoxLabel, option)
+        return super().elided_label(option)
 
     def _toggle(self, row):
         if row < 0 or not self.model().item(row).isEnabled():
