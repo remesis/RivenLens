@@ -25,12 +25,14 @@ from PySide6.QtWidgets import (
 
 from grading import GRADE_COLORS, grade_stat, grading_rank
 from appearance import scaled_pixels
+from compact_numbers import compact_number
 from ui_text import (
     QLabel,
     QPushButton,
     QToolButton,
     QFrame,
     TranslationMixin,
+    language,
     translate,
 )
 
@@ -514,17 +516,12 @@ def interval(value, decimals=1):
 
 def kuva_text(value):
     if not value:
-        return "Unavailable"
-
-    def amount(cost):
-        return (
-            number(cost / 1000, 0) + "k"
-            if math.isfinite(cost) and cost >= 1_000_000
-            else number(cost, 0)
-        )
-
-    low, high = amount(value["min"]), amount(value["max"])
-    return low if low == high else f"{low} to {high}"
+        return translate("Unavailable")
+    low = compact_number(value["min"], language.code)
+    high = compact_number(value["max"], language.code)
+    return (
+        low if low == high else translate("{low} to {high}").format(low=low, high=high)
+    )
 
 
 def odds_text(probability):

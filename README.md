@@ -71,8 +71,10 @@ the whole target. Locked and spliced stats must also meet their selected grades.
 This toggle is independent of the splice-ingredient and lock-stat dings.
 The final-odds stage also shows estimated combined rolls and Kuva for the
 applicable setup stages and final target. Hover over the figures for assumptions;
-Kuva estimates of one million or more are displayed in thousands (for example,
-`1,234k`).
+Kuva estimates use the selected language's compact units and number formatting.
+English uses whole thousands (`135k`) and two decimal places for millions
+(`1.23m`); other languages use their familiar abbreviations or units, such as
+`1,23 млн` in Russian and `123万` in Japanese.
 
 ## Language support
 
