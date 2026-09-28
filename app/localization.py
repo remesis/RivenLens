@@ -231,6 +231,15 @@ class Profile:
         # Same narrow glyph correction as the English parser: the decimal must
         # already be visible; never invent it or repair an arbitrary digit.
         text = re.sub(r"([xX×хХ])\s*[lI|]\s*(?=[.,])", r"\g<1>1", text)
+        if self.language == "ru":
+            # Russian OCR can read the leading zero of a faction multiplier as
+            # Latin/Cyrillic o. Require its multiplier, decimal and two digits;
+            # the complete faction template must still match below.
+            text = re.sub(
+                r"^(\s*[xX×хХ]\s*)[oOоО](?=\s*[.,]\s*[0-9]{2}(?![0-9]))",
+                r"\g<1>0",
+                text,
+            )
         key = text_key(text)
         matches = {}
         for pattern, stat in self.templates:

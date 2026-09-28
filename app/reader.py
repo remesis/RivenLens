@@ -968,7 +968,17 @@ async def read_rank(engine, image, card):
     if box[2] <= box[0] or box[3] <= box[1]:
         return None
     area = image.crop(box)
-    identity = (box, hashlib.blake2b(area.tobytes(), digest_size=16).digest())
+    context_box = (
+        box[0],
+        max(0, round(title["y"])),
+        min(image.width, round(center + title["h"] * 2)),
+        box[3],
+    )
+    identity = (
+        box,
+        context_box,
+        hashlib.blake2b(image.crop(context_box).tobytes(), digest_size=16).digest(),
+    )
     cache = getattr(engine, "_rank_footer_cache", None) or {}
     candidates, attempt = cache.get(identity, ([], 0))
 
@@ -981,23 +991,39 @@ async def read_rank(engine, image, card):
         return next(iter(ranks)) if len(ranks) == 1 else None
 
     rank = candidate_rank()
-    while rank is None and attempt < 2:
+    while rank is None and attempt < 4:
         if not allow_retry(engine):
             return None
-        scale = min(2, 1800 / max(area.size))
+        # A short footer can disappear from a masked, half-line crop. Color
+        # retries keep title context and progressively more right-hand padding
+        # so OCR can resolve its lettering and orientation at two text scales.
+        retry_box = (
+            (
+                box[0],
+                max(0, round(title["y"])),
+                min(image.width, round(center + title["h"] * (attempt - 1))),
+                box[3],
+            )
+            if attempt >= 2
+            else box
+        )
+        retry_area = image.crop(retry_box) if attempt >= 2 else area
+        scale = min(1.5 if attempt == 2 else 2, 1800 / max(retry_area.size))
         sample = (
-            isolate_card_text(area)
+            isolate_card_text(retry_area)
             if attempt == 0
-            else ImageOps.autocontrast(area.convert("L"))
+            else ImageOps.autocontrast(retry_area.convert("L"))
+            if attempt == 1
+            else retry_area
         ).resize(
-            (round(area.width * scale), round(area.height * scale)),
+            (round(retry_area.width * scale), round(retry_area.height * scale)),
             Image.Resampling.LANCZOS,
         )
-        sx, sy = sample.width / area.width, sample.height / area.height
+        sx, sy = sample.width / retry_area.width, sample.height / retry_area.height
         candidates = candidates + [
             {
-                "x": line["x"] / sx + box[0],
-                "y": line["y"] / sy + box[1],
+                "x": line["x"] / sx + retry_box[0],
+                "y": line["y"] / sy + retry_box[1],
                 "w": line["w"] / sx,
                 "h": line["h"] / sy,
             }
