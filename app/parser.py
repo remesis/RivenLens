@@ -322,9 +322,19 @@ def game_card_headers(lines):
         (header, name)
         for header, name in headers
         if not any(
-            0 < header["y"] - label["y"] < max(100, header["h"] * 5)
-            and abs((header["x"] + header["w"] / 2) - (label["x"] + label["w"] / 2))
-            < max(header["w"], label["w"])
+            (
+                0 < header["y"] - label["y"] < max(100, header["h"] * 5)
+                and abs(header["x"] + header["w"] / 2 - label["x"] - label["w"] / 2)
+                < max(header["w"], label["w"])
+            )
+            or (
+                # OCR may lose one of the adjacent companion headings. Its
+                # matching-sized title still shares the other panel's row.
+                0 < header["y"] - label["y"] < label["h"] * 4
+                and header["h"] <= label["h"] * 2
+                and abs(header["x"] + header["w"] / 2 - label["x"] - label["w"] / 2)
+                < label["h"] * 32
+            )
             for label in companion_labels
         )
     ]
@@ -489,11 +499,6 @@ def parse_cards(lines, width, height):
                 lower_limit = min(lower_limit, line["y"] + line["h"] + header["h"])
                 finish()
                 break
-            if line.get("localizedUnreadable"):
-                finish()
-                invalid = True
-                unreadable.append(line.get("displayText", text))
-                continue
             normalized_percent = normalized_percent or line.get(
                 "localizedPercentRepair", False
             )
@@ -501,19 +506,25 @@ def parse_cards(lines, width, height):
                 "localizedNumberJoin", False
             )
             # The isolated roll counter is another footer-font anchor when OCR
-            # misses the mastery label. It never establishes card completeness;
+            # misses the mastery label. It is not completeness evidence alone;
             # rank detection must still verify the entire visible eight-pip row.
+            counter = line.get("counterBounds") or line
             if (
-                re.fullmatch(r"[0-9]{1,7}", text)
+                (line.get("counterBounds") or re.fullmatch(r"[0-9]{1,7}", text))
                 and len(stats) + (pending is not None) >= 2
-                and line["x"] > center + font_height * 0.7
-                and font_height * 0.35 <= line["h"] <= font_height
-                and line["w"] <= font_height * 5
+                and counter["x"] > center + font_height * 0.7
+                and font_height * 0.35 <= counter["h"] <= font_height
+                and counter["w"] <= font_height * 5
             ):
                 counter_candidates.append(
-                    {key: line[key] for key in ("x", "y", "w", "h")}
+                    {key: counter[key] for key in ("x", "y", "w", "h")}
                 )
                 finish()
+                continue
+            if line.get("localizedUnreadable"):
+                finish()
+                invalid = True
+                unreadable.append(line.get("displayText", text))
                 continue
             # Percent glyphs are sometimes decoded as 0/0. Do not alter digits
             # or guess a missing decimal; just restore this recognizable symbol.

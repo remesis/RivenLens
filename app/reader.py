@@ -546,8 +546,24 @@ def recovery_text_sample(image, card, treatment):
     return area, (box[0] - padding / sx, box[1] - padding / sy), (sx, sy)
 
 
+def counter_footer_complete(image, card):
+    """Verify the bottom of a short card without guessing a missing stat line."""
+    return bool(
+        not card["complete"]
+        and not card.get("unreadable")
+        and card.get("counterBounds")
+        and card.get("format") in ("2p0n", "2p1n", "3p0n")
+        and len({stat["id"] for stat in card["stats"]}) == len(card["stats"])
+        and detect_rank(image, card) is not None
+    )
+
+
 async def refine_card(engine, image, card, force=False):
     """Read small or incomplete text in place, requiring agreement for repairs."""
+    counter_confirmed = counter_footer_complete(image, card)
+    if counter_confirmed:
+        card = {**card, "complete": True}
+        force = True
     title = card.get("titleBounds")
     cjk = getattr(engine, "language", "en") in ("ja", "ko", "zh", "tc")
     validate = getattr(engine, "_validate_stats", None)
@@ -556,6 +572,7 @@ async def refine_card(engine, image, card, force=False):
     if (
         card["complete"]
         and card.get("normalizedPercent")
+        and not counter_confirmed
         and not card.get("normalizedSpacing")
         and validate
         and plausible
@@ -731,6 +748,12 @@ async def refine_card(engine, image, card, force=False):
             sample_scale = (area.width / crop.width, area.height / crop.height)
         parsed = parse_cards(await engine.read(area), area.width, area.height)
         schedule[location] = treatments[(index + 1) % len(treatments)]
+        if len(parsed["cards"]) == 1 and not parsed["complete"]:
+            positioned = source_coordinates(
+                deepcopy(parsed), sample_offset, sample_scale
+            )["cards"][0]
+            if counter_footer_complete(image, positioned):
+                parsed["cards"][0]["complete"] = parsed["complete"] = True
         if not parsed["complete"] or len(parsed["cards"]) != 1:
             continue
         recovered = parsed["cards"][0]
@@ -764,13 +787,17 @@ async def refine_card(engine, image, card, force=False):
         ):
             # Try the successful text scale first next time, on fresh pixels.
             schedule[location] = treatments[index]
-            return remember(
-                source_coordinates(
-                    parsed,
-                    sample_offset,
-                    sample_scale,
-                )["cards"][0]
-            )
+            verified = source_coordinates(parsed, sample_offset, sample_scale)["cards"][
+                0
+            ]
+            if not verified.get("counterBounds") and card.get("counterBounds"):
+                anchored = {**verified, "counterBounds": card["counterBounds"]}
+                # The confirming crop can miss a footer seen by this frame's
+                # first read. Reuse its geometry only after checking the pips
+                # again at the confirmed card's position, never from old frames.
+                if detect_rank(image, anchored) is not None:
+                    verified = anchored
+            return remember(verified)
         conflict = conflict or identity != original
     if card["complete"]:
         return remember(
@@ -961,10 +988,17 @@ async def read_frame(
             ) / (width * 6)
         else:
             card["screenX"] = -1
-    if result["cards"] and (action or not getattr(engine, "_card_region", None)):
+    # A title alone can belong to the companion or a weapon selector. Only
+    # physical card footers may relocate the learned region during transitions.
+    located = [
+        card
+        for card in result["cards"]
+        if detect_rank(metadata_image, card) is not None
+    ]
+    if located and (action or not getattr(engine, "_card_region", None)):
         engine._card_region = card_region(
             image,
-            result["cards"],
+            located,
             action,
             getattr(engine, "_card_region", None) or engine._frame_region,
         )

@@ -13,7 +13,13 @@ from winrt.windows.globalization import Language
 from winrt.windows.graphics.imaging import BitmapPixelFormat, SoftwareBitmap
 from winrt.windows.media.ocr import OcrEngine
 from winrt.windows.storage.streams import DataWriter
-from localization import LANGUAGES, adapt_lines, profile, repair_decimal_spacing
+from localization import (
+    LANGUAGES,
+    adapt_lines,
+    profile,
+    repair_decimal_spacing,
+    roll_counter_bounds,
+)
 
 
 def available_languages():
@@ -166,6 +172,9 @@ class LocalOCR:
                     footer = profile(self.language).footer_bounds(located_words)
                     if footer:
                         entry["footerBounds"] = footer
+                    counter = roll_counter_bounds(line.text, located_words)
+                    if counter:
+                        entry["counterBounds"] = counter
                 lines.append(entry)
             return adapt_lines(lines, self.language)
         finally:

@@ -23,7 +23,7 @@ def clipped_box(image, box):
 
 
 def map_lines(lines, offset=(0, 0), scale=(1, 1)):
-    """Map OCR and MR-word bounds back to the original captured pixels."""
+    """Map OCR lines and footer-word bounds back to captured pixels."""
 
     def box(value):
         return {
@@ -37,11 +37,11 @@ def map_lines(lines, offset=(0, 0), scale=(1, 1)):
         {
             **line,
             **box(line),
-            **(
-                {"footerBounds": box(line["footerBounds"])}
-                if line.get("footerBounds")
-                else {}
-            ),
+            **{
+                name: box(line[name])
+                for name in ("footerBounds", "counterBounds")
+                if line.get(name)
+            },
         }
         for line in lines
     ]

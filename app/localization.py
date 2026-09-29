@@ -117,6 +117,16 @@ def repair_decimal_spacing(text, words):
     return match[1] + match[2] + text[match.end() :]
 
 
+def roll_counter_bounds(text, words):
+    """Locate counter numerals separately from an OCR-decoded circular icon."""
+    match = re.fullmatch(r"\s*([oOоО↻])\s+([0-9]{1,7})\s*", text)
+    if not match:
+        return None
+    if len(words) != 2 or words[0]["text"] != match[1] or words[1]["text"] != match[2]:
+        return None
+    return {key: words[1][key] for key in ("x", "y", "w", "h")}
+
+
 class Profile:
     def __init__(self, language):
         if language not in LANGUAGES:
@@ -421,6 +431,9 @@ def adapt_lines(lines, language):
             index, row = rows[cursor]
             if row["text"].startswith(("MR ", "CONFIRM", "CYCLE FOR")):
                 break
+            if row.get("counterBounds"):
+                cursor += 1
+                continue
             raw = row["displayText"]
             if (
                 raw
@@ -435,6 +448,8 @@ def adapt_lines(lines, language):
                 if end > cursor:
                     following = rows[end][1]
                     if following["text"].startswith(("MR ", "CONFIRM", "CYCLE FOR")):
+                        break
+                    if following.get("counterBounds"):
                         break
                     if following["y"] - joined["y"] - joined["h"] > font * 1.4:
                         break
