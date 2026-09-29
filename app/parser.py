@@ -305,6 +305,37 @@ def card_headers(lines):
     return headers
 
 
+def companion_regions(lines):
+    """Bound the companion using two visible, language-independent anchors."""
+    brands = [line for line in lines if re.search(r"\bRivenLens\b", line["text"], re.I)]
+    links = [
+        line
+        for line in lines
+        if normalize(line["text"]) in ("httpsarbiguide", "discordggarbitrations")
+    ]
+    regions = []
+    for brand in brands:
+        font = brand["h"]
+        nearby = [
+            link
+            for link in links
+            if font * 8 < link["y"] - brand["y"] < font * 65
+            and abs(link["x"] - brand["x"]) < font * 40
+        ]
+        # A brand alone says nothing about the window's size or position.
+        if nearby:
+            anchors = [brand, *nearby]
+            regions.append(
+                (
+                    min(row["x"] for row in anchors) - font * 2,
+                    brand["y"] - font * 2,
+                    max(row["x"] + row["w"] for row in anchors) + font * 2,
+                    max(row["y"] + row["h"] for row in nearby) + font * 2,
+                )
+            )
+    return regions
+
+
 def game_card_headers(lines):
     headers = card_headers(lines)
     # If the companion was left on the captured monitor, do not re-read its
@@ -318,10 +349,16 @@ def game_card_headers(lines):
             re.I,
         )
     ]
+    regions = companion_regions(lines)
     headers = [
         (header, name)
         for header, name in headers
         if not any(
+            left < header["x"] + header["w"] / 2 < right
+            and top < header["y"] + header["h"] / 2 < bottom
+            for left, top, right, bottom in regions
+        )
+        and not any(
             (
                 0 < header["y"] - label["y"] < max(100, header["h"] * 5)
                 and abs(header["x"] + header["w"] / 2 - label["x"] - label["w"] / 2)
@@ -394,6 +431,7 @@ def parse_cards(lines, width, height):
         counter_candidates = []
         unreadable = []
         text_rows = [header]
+        stat_rows = []
 
         def finish():
             nonlocal pending, invalid, normalized_percent
@@ -546,6 +584,7 @@ def parse_cards(lines, width, height):
             multiplier = None if match or note_continuation else MULTIPLIER.search(text)
             if multiplier:
                 finish()
+                stat_rows.append(line)
                 value_text = multiplier.group("prefix") or multiplier.group("suffix")
                 pending = {
                     "value": float(re.sub(r"\s", "", value_text).replace(",", ".")),
@@ -557,6 +596,7 @@ def parse_cards(lines, width, height):
                 continue
             if match:
                 finish()
+                stat_rows.append(line)
                 groups = match.groupdict()
                 value_text = groups["value"].strip()
                 if re.search(r"\d\s+\d", value_text) and not re.search(
@@ -590,6 +630,7 @@ def parse_cards(lines, width, height):
                 # "Damage" + "to Orokin" must not silently become plain Damage.
                 pending["label"] += " " + text
                 pending["raw"] += " " + text
+                stat_rows.append(line)
             elif pending is not None and re.search(r"[a-zA-Z]{3}", text):
                 invalid = True
                 unreadable.append(text)
@@ -600,6 +641,17 @@ def parse_cards(lines, width, height):
                 invalid = True
                 unreadable.append(text)
         finish()
+        bottom_anchor = footer_bounds or (
+            counter_candidates[0] if len(counter_candidates) == 1 else None
+        )
+        if bottom_anchor and stat_rows and len(stats) < 4:
+            last = max(stat_rows, key=lambda row: row["y"] + row["h"])
+            line_height = last.get("glyphHeight", last.get("fontHeight", last["h"]))
+            if bottom_anchor["y"] - last["y"] - last["h"] > line_height * 1.7:
+                # OCR can omit entire rows under a pointer or icon. A footer
+                # does not make a short read complete when text space is lost.
+                invalid = True
+                unreadable.append("Unreadable text above the footer.")
         positives = sum(stat["polarity"] == "positive" for stat in stats)
         negatives = len(stats) - positives
         # Four recognized traits are unambiguous. Shorter cards must include MR footer,

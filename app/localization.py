@@ -200,6 +200,18 @@ class Profile:
                 )
 
             before, after = map(literal, parts)
+            if language == "ko":
+                # The Hangul syllable 타 can be split into Latin E by OCR.
+                # Restrict that ambiguity to this complete fixed label prefix.
+                before = before.replace("치명타", "치명[타e]")
+                after = after.replace("치명타", "치명[타e]")
+                # At small sizes 체 loses its extra stroke and becomes 세.
+                before = before.replace("발사체속도", "발사[체세]속도")
+                after = after.replace("발사체속도", "발사[체세]속도")
+            if language == "ko" and after.endswith(r"\)"):
+                # The entire parenthetical must match; its thin final stroke
+                # can disappear at a card edge without changing the stat.
+                after += "?"
             if language == "ru" and stat["unit"] == "s" and after.startswith("c"):
                 after = "[cс]" + after[1:]
             if stat["unit"] == "x":
@@ -214,7 +226,9 @@ class Profile:
             self.templates.append(
                 (
                     re.compile(
-                        r"^[aoqe0аое]{0,2}"
+                        # A lock can resemble 6, but only before an explicit
+                        # signed value; never discard a leading value digit.
+                        r"^(?:6(?=[+\-])|[aoqe0аое]{0,2})"
                         + before
                         + number
                         + after
@@ -312,6 +326,13 @@ class Profile:
             if control_key(text) == control_key(_markup(self.ui[name])):
                 return canonical
         if key == self.cycle_caption or self.cycle.fullmatch(key):
+            return "CYCLE FOR"
+        if self.language == "ko" and re.fullmatch(
+            r"[^\d]{0,3}\d[\d.,~]*쿠바.{0,8}순환시키기", key
+        ):
+            # A pointer can obscure the intervening connective. Require both
+            # the currency after a price and the complete cycle verb; this
+            # recognizes a control only, never a card value or missing stat.
             return "CYCLE FOR"
         match = self.footer.match(key)
         if match:

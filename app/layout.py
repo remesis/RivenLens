@@ -38,6 +38,11 @@ def map_lines(lines, offset=(0, 0), scale=(1, 1)):
             **line,
             **box(line),
             **{
+                name: line[name] / scale[1]
+                for name in ("fontHeight", "glyphHeight")
+                if name in line
+            },
+            **{
                 name: box(line[name])
                 for name in ("footerBounds", "counterBounds")
                 if line.get(name)

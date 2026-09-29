@@ -139,6 +139,7 @@ class LocalOCR:
                 entry = {
                     "text": line.text,
                     **original_box(x, y, right - x, bottom - y),
+                    "glyphHeight": (bottom - y) / sy,
                 }
                 # Decorative footer arrows can inflate the whole line's box.
                 # Use the MR word's font height to anchor the rank-pip row.
