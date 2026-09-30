@@ -2,7 +2,7 @@
 
 A small desktop companion for grading Rivens as you roll.
 
-![RivenLens example](native/data/example-image.png)
+![RivenLens example](https://raw.githubusercontent.com/remesis/RivenLens/main/assets/screenshots/example-image.png)
 
 ## Why use RivenLens instead of AlecaFrame or WFHelper?
 

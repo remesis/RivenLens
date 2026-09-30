@@ -6,6 +6,8 @@
 
 import copy
 import json
+import os
+import uuid
 
 from PySide6.QtCore import QIODevice, QLockFile, QSaveFile
 
@@ -177,17 +179,20 @@ def sanitize(saved):
     return state
 
 
+def decode_settings(content):
+    saved = json.loads(content.decode("utf-8")) if content is not None else {}
+    if not isinstance(saved, dict):
+        raise ValueError("Invalid settings")
+    return saved
+
+
 class Preferences:
     def __init__(self, directory):
         self.directory = directory
         self.path = directory / "preferences.json"
         self.error = ""
         try:
-            saved = (
-                json.loads(self.path.read_text(encoding="utf-8"))
-                if self.path.exists()
-                else {}
-            )
+            saved = decode_settings(self._read_content())
         except (OSError, ValueError):
             saved = {}
             self.error = "Saved settings could not be read. Defaults are in use."
@@ -210,45 +215,72 @@ class Preferences:
         finally:
             lock.unlock()
 
+    def _read_content(self):
+        try:
+            return self.path.read_bytes()
+        except FileNotFoundError:
+            return None
+
+    def _backup_damaged(self, content):
+        backup = self.directory / f"preferences.corrupt-{uuid.uuid4().hex}.json"
+        try:
+            with backup.open("xb") as stream:
+                if stream.write(content) != len(content):
+                    raise OSError("Incomplete settings backup")
+                stream.flush()
+                os.fsync(stream.fileno())
+        except OSError as exc:
+            raise OSError(
+                "Damaged settings could not be backed up. The original file was left untouched."
+            ) from exc
+
     def _save_changed(self, data):
         try:
-            saved = (
-                json.loads(self.path.read_text(encoding="utf-8"))
-                if self.path.exists()
-                else {}
-            )
-            if not isinstance(saved, dict):
-                raise ValueError("Invalid settings")
-        except (OSError, ValueError) as exc:
+            content = self._read_content()
+        except OSError as exc:
             raise OSError(
                 "Saved settings could not be read. The existing file was left untouched."
             ) from exc
-        merged = sanitize(saved)
-        changed = {key for key in DEFAULTS if data[key] != self._saved[key]}
-        # Keep a planner selection internally consistent across simultaneous copies.
-        target = set(PLANNER_FIELDS)
-        if changed & target:
-            changed |= target
-        for key in changed:
-            if key == "categoryPlans":
-                # Independent categories edited in another copy must survive.
-                for category in data[key].keys() | self._saved[key].keys():
-                    if data[key].get(category) != self._saved[key].get(category):
-                        if category in data[key]:
-                            merged[key][category] = copy.deepcopy(data[key][category])
-                        else:
-                            merged[key].pop(category, None)
-            else:
-                merged[key] = data[key]
-        file = QSaveFile(str(self.path))
-        if not file.open(QIODevice.OpenModeFlag.WriteOnly):
-            raise OSError("Could not open local settings")
+        try:
+            saved = decode_settings(content)
+        except ValueError:
+            self._backup_damaged(content)
+            # Recovery has no healthy on-disk state to merge with. Preserve the
+            # whole current session, including choices unchanged since startup.
+            merged = sanitize(data)
+        else:
+            merged = sanitize(saved)
+            changed = {key for key in DEFAULTS if data[key] != self._saved[key]}
+            # Keep a planner selection internally consistent across simultaneous copies.
+            target = set(PLANNER_FIELDS)
+            if changed & target:
+                changed |= target
+            for key in changed:
+                if key == "categoryPlans":
+                    # Independent categories edited in another copy must survive.
+                    for category in data[key].keys() | self._saved[key].keys():
+                        if data[key].get(category) != self._saved[key].get(category):
+                            if category in data[key]:
+                                merged[key][category] = copy.deepcopy(
+                                    data[key][category]
+                                )
+                            else:
+                                merged[key].pop(category, None)
+                else:
+                    merged[key] = data[key]
         content = json.dumps(
             {"schemaVersion": 1, **merged},
             ensure_ascii=False,
             allow_nan=False,
             indent=2,
         ).encode("utf-8")
-        if file.write(content) != len(content) or not file.commit():
+        file = QSaveFile(str(self.path))
+        if not file.open(QIODevice.OpenModeFlag.WriteOnly):
+            raise OSError("Could not open local settings")
+        if file.write(content) != len(content):
+            file.cancelWriting()
+            raise OSError("Could not save local settings")
+        if not file.commit():
             raise OSError("Could not save local settings")
         self._saved = copy.deepcopy(data)
+        self.error = ""

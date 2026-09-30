@@ -23,6 +23,9 @@ future updates the verified file list required by the current installer.
    Git's committed archive, not checkout bytes, and fixes ZIP timestamps so local
    line-ending settings and file dates do not change the package.
 
+Screenshots and full-resolution branding under `assets/` stay in the repository,
+outside the application ZIP. A smaller local logo is bundled for offline use.
+
 The checker requires the named asset, a positive size and GitHub's SHA-256 digest.
 It does not fall back to GitHub's generated source ZIP. Source downloads and copies
 with modified application files show a manual-install notice instead of offering
