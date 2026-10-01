@@ -40,6 +40,8 @@ DEFAULTS = {
     "spliceWatch": [],
     "stagesOpen": {},
     "startingLocksOpen": False,
+    "seedListingAge": "30d",
+    "seedWindowBounds": [],
     "plannerOpen": True,
     "alwaysOnTop": False,
     "soundId": "chime",
@@ -163,6 +165,15 @@ def sanitize(saved):
     if state["rankMode"] not in ("manual", "auto"):
         state["rankMode"] = DEFAULTS["rankMode"]
     state["rank"] = 8
+    if state["seedListingAge"] not in ("15d", "30d", "3m", "6m", "all"):
+        state["seedListingAge"] = DEFAULTS["seedListingAge"]
+    bounds = state["seedWindowBounds"]
+    if (
+        len(bounds) != 4
+        or any(type(n) is not int or not -(2**30) <= n < 2**30 for n in bounds[:2])
+        or any(type(n) is not int or not 1 <= n <= 32768 for n in bounds[2:])
+    ):
+        state["seedWindowBounds"] = []
     state["capture"] = capture_settings(state["capture"])
     position = state["windowPosition"]
     if len(position) != 2 or any(

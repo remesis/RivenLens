@@ -12,6 +12,7 @@ QLabel#heading { font-size: 13px; font-weight: 650; }
 QLabel#variant { color: #bd9ae6; font-weight: 600; }
 QLabel#status { color: #8dabc0; font-size: 11px; }
 QLabel#status[warning="true"] { color: #ffbd69; }
+QTextBrowser#seedListings { background: #101922; border: 1px solid #2a3b4d; border-radius: 6px; padding: 6px; }
 QLabel#metric { color: #80d4fc; font-size: 23px; font-weight: 650; }
 QLabel#recipe { color: #c4a2ef; font-weight: 650; font-size: 11px; }
 QLabel#cardName { font-size: 17px; font-weight: 600; }

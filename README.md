@@ -50,6 +50,8 @@ closing the window or choosing **Quit** exits the app.
 - Current and new rolls side by side, with rank-8 grading by default and automatic
   variant detection. Automatic rank detection is available in Settings.
 - Collapsible splice, manual-lock and final-odds stages, shown when relevant.
+- A platinum-icon seed finder for matching Warframe Market listings, sorted by
+  the lowest listed price, with a remembered listing-age filter.
 - Multiple acceptable targets per unlocked stat slot, with odds for distinct
   combinations. Choose **Any** at the bottom of a stat list to leave that slot open.
 - Separate good and warning dings, volume controls, ten presets each and custom audio.
@@ -76,6 +78,41 @@ Kuva estimates use the selected language's compact units and number formatting.
 English uses whole thousands (`135k`) and two decimal places for millions
 (`1.23m`); other languages use their familiar abbreviations or units, such as
 `1,23 млн` in Russian and `123万` in Japanese.
+
+Select a splice or manual lock, then click the **platinum button** beside the
+eligibility legend to open **Purchase Ideal Starting Seed**. Without either
+selection, the button does nothing. Searches run from your PC only when you open
+the window or explicitly press **Refresh** in it. Changing planner stats,
+grades, weapons or categories never sends Market requests; changing the age
+filter uses downloaded results. Reopening within five minutes reuses cached
+listings, including after grade changes; **Refresh** fetches listings again.
+Search progress and request waits are shown in the window.
+Requests are spaced at least 6.1 seconds apart. Failures stop the search rather
+than automatically retrying, and rate-limit responses preserve their cooldown.
+The window remembers its size and position. Each listing appears only in its
+highest matching stage, rather than repeating across sections.
+Searches never place bids, buy items or message
+sellers.
+
+For a splice, Stage 1 finds either ingredient at the selected splice grade or
+better. With a manual lock too, Stage 2 requires that lock at its selected grade
+and both ingredients, with at least one meeting the splice grade (the partner
+can be any grade), or the qualifying splice itself. Both ingredient grades are
+shown when present: S + F still produces an S splice. Without a
+splice, Stage 1 finds the selected lock. All sections require the selected
+format. Market currently does not advertise the new splice stats, so ingredient
+listings are available but already-spliced listings cannot yet be verified.
+
+The default age filter is **Less than 30 days**, measured from original creation,
+not the seller's latest refresh. Options also include 15 days, 3 months, 6 months
+and **Show All**; your preference is saved. Results include PC listings and
+crossplay-enabled Xbox, PlayStation and mobile listings, including offline
+sellers. Nintendo Switch listings are excluded. Searches use a five-minute
+cache and may be limited by Market's search API. Seller-entered stats are
+graded at the listed rank using Market's
+base-weapon disposition. Inaccurate listings may be excluded; verify the Riven
+with its seller. Auction prices show the lower listed endpoint, not a promise
+that the item can be purchased for that amount.
 
 ## Language support
 

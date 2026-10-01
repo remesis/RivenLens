@@ -40,6 +40,15 @@ The footer links open their external sites only when clicked. Installing
 dependencies uses the configured Python package index. These services have
 their own privacy practices.
 
+Opening **Purchase Ideal Starting Seed** sends public HTTPS requests directly to
+`api.warframe.market` for the selected weapon and relevant stat identities. No
+screen pixels, OCR readings, account credentials or complete settings are sent.
+Market receives ordinary connection information such as your IP address and an
+identifying RivenLens User-Agent. Searches are rate-limited locally; responses
+are cached in memory, not saved to disk. Closing the dialog cancels pending
+requests. Clicking a listing opens its page in your browser. The app does not
+sign in, buy, bid, message sellers or automatically monitor listings.
+
 If standard 64-bit Python 3.13 or 3.14 is missing, the launcher asks before
 downloading a pinned official Python 3.13 installer from python.org. It checks
 the published SHA-256 before running it for the current Windows account, without

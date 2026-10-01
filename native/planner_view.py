@@ -8,8 +8,10 @@ import copy
 import html
 import math
 import threading
+from pathlib import Path
 
-from PySide6.QtCore import QThread, Qt, Signal
+from PySide6.QtCore import QSize, QThread, Qt, Signal
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (
     QGridLayout,
     QHBoxLayout,
@@ -22,6 +24,8 @@ from PySide6.QtWidgets import (
 from catalog import SPLICE_IDS, splices_for, variant_label
 from dialogs import ModalDialog
 from grading import FORMATS, GRADE_NAMES, format_range
+from market_network import MarketClient
+from market_view import SeedDialog
 from planner import Planner
 from search_combo import SearchCombo
 from ui_text import QCheckBox, QFrame, QPushButton, language
@@ -192,7 +196,20 @@ class PlannerView(Section):
             row_layout.addWidget(caption)
             row_layout.addStretch()
             legend_layout.addWidget(row)
-        left_layout.addWidget(self.eligibility_legend)
+        legend_row, legend_row_layout = box(False, spacing=6)
+        legend_row_layout.addWidget(self.eligibility_legend, 1)
+        self.seed_button = QPushButton()
+        self.seed_button.setIcon(
+            QIcon(str(Path(__file__).parent / "data/platinum.png"))
+        )
+        self.seed_button.setIconSize(QSize(24, 24))
+        self.seed_button.setFixedSize(34, 34)
+        self.seed_button.setToolTip("Purchase Ideal Starting Seed")
+        self.seed_button.setAccessibleName("Purchase Ideal Starting Seed")
+        self.seed_button.clicked.connect(self.seed_dialog)
+        legend_row_layout.addWidget(self.seed_button)
+        self.market_client = MarketClient(self)
+        left_layout.addWidget(legend_row)
         left_layout.addStretch()
         self.stages = {}
         for key, title in STAGE_TITLES.items():
@@ -275,6 +292,8 @@ class PlannerView(Section):
         self.right_column.setMinimumWidth(round(270 * scale))
         self.left_column.layout().setSpacing(round(6 * scale))
         self.right_column.layout().setSpacing(round(5 * scale))
+        self.seed_button.setFixedSize(round(34 * scale), round(34 * scale))
+        self.seed_button.setIconSize(QSize(round(24 * scale), round(24 * scale)))
         for caption in self.stat_captions:
             caption.setFixedWidth(round(12 * scale))
         for value in self.stat_ranges:
@@ -708,6 +727,11 @@ class PlannerView(Section):
             )
         )
         self.stages["final"].set_summary(odds_text(probability))
+
+    def seed_dialog(self):
+        if not self.model.splice and not self.model.lock_target:
+            return
+        SeedDialog(self, self.market_client).exec()
 
     def watch_dialog(self):
         dialog = ModalDialog(self)
