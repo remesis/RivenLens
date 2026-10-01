@@ -907,6 +907,7 @@ async def read_frame(
     previous_new=None,
     variant_mismatch=None,
     validate_stats=None,
+    auto_rank=True,
 ):
     if getattr(engine, "_layout_size", None) != image.size:
         reset_layout(engine)
@@ -937,7 +938,7 @@ async def read_frame(
 
     async def annotate(card):
         nonlocal hint, variant_attempted
-        card["rank"] = await read_rank(engine, metadata_image, card)
+        card["rank"] = await read_rank(engine, metadata_image, card) if auto_rank else 8
         compatible = hint in VARIANT_CHOICES.get(card["weapon"], set())
         if not compatible:
             hint = engine._session_variant_hint = None

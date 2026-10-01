@@ -47,7 +47,8 @@ closing the window or choosing **Quit** exits the app.
 
 ## What's included
 
-- Current and new rolls side by side, with automatic rank and variant detection.
+- Current and new rolls side by side, with rank-8 grading by default and automatic
+  variant detection. Automatic rank detection is available in Settings.
 - Collapsible splice, manual-lock and final-odds stages, shown when relevant.
 - Multiple acceptable targets per unlocked stat slot, with odds for distinct
   combinations. Choose **Any** at the bottom of a stat list to leave that slot open.
@@ -108,7 +109,14 @@ Support does not guarantee every roll will be read correctly.
 
 ## A few things to know
 
-Keep the stat text, rank pips and bottom-right **Fits In** label visible. Small
+Grading defaults to **Manual rank 8/8**. Keep **Show Ranked** enabled in Warframe
+when using this setting. If viewing lower-rank values, choose **Auto-detect rank
+pips** under **Settings → Grading → Riven rank**. Your saved choice is remembered.
+Existing installations switch to rank 8 once when upgrading; choices made
+afterward remain saved.
+
+Keep the stat text, card footer and bottom-right **Fits In** label visible; rank
+pips must also be visible when using automatic rank detection. Small
 text, animations and covered cards can confuse OCR. Previous grades stay visible
 during brief interruptions. If capture is blank, try another capture method.
 

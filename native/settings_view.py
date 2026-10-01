@@ -168,8 +168,8 @@ class SettingsDialog(ModalDialog):
         options(
             rank,
             [
+                ("Manual rank 8/8", 8),
                 ("Auto-detect rank pips", "auto"),
-                *((f"Manual rank {n}/8", n) for n in range(9)),
             ],
             self.state["rank"] if self.state["rankMode"] == "manual" else "auto",
         )
@@ -283,9 +283,8 @@ class SettingsDialog(ModalDialog):
 
     def rank_changed(self, value):
         self.state["rankMode"] = "auto" if value == "auto" else "manual"
-        if value != "auto":
-            self.state["rank"] = value
-        self.owner.refresh_grades()
+        self.state["rank"] = 8
+        self.owner.apply_capture()
         self.owner.planner.render()
         self.owner.persist()
 

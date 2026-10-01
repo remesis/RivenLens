@@ -30,6 +30,13 @@ def enumerate_monitors():
         return [{k: m[k] for k in keys if k in m} for m in probe.monitors[1:]]
 
 
+def worker_settings(settings):
+    return {
+        **capture_settings(settings),
+        "rankMode": "auto" if settings.get("rankMode") == "auto" else "manual",
+    }
+
+
 class CaptureWorker(QThread):
     updated = Signal(object)
     displays = Signal(object, object)
@@ -37,7 +44,7 @@ class CaptureWorker(QThread):
     def __init__(self, settings, parent=None):
         super().__init__(parent)
         self._guard = threading.Lock()
-        self._config = {**capture_settings(settings), "running": False}
+        self._config = {**worker_settings(settings), "running": False}
         self._revision = 0
         self._stop = threading.Event()
         self._wake = threading.Event()
@@ -46,7 +53,7 @@ class CaptureWorker(QThread):
 
     def configure(self, settings, running):
         with self._guard:
-            self._config = {**capture_settings(settings), "running": bool(running)}
+            self._config = {**worker_settings(settings), "running": bool(running)}
             if self._monitors:
                 self._resolve_monitor(self._monitors)
             self._revision += 1
@@ -197,6 +204,7 @@ class CaptureWorker(QThread):
                             previous_new=tracker.pending_new_key(),
                             variant_mismatch=catalog.variant_mismatch,
                             validate_stats=catalog.plausible_stats,
+                            auto_rank=config["rankMode"] == "auto",
                         )
                         tracked = tracker.update(parsed, time.monotonic())
                         if tracked["newRollWarning"]:

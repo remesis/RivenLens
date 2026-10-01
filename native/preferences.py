@@ -16,6 +16,8 @@ from grading import FORMATS, GRADE_NAMES
 from localization import LANGUAGES
 from ui_text import default_language
 
+SETTINGS_SCHEMA_VERSION = 2
+
 DEFAULTS = {
     "weapon": "sobek-shotgun-primary",
     "variant": "sobek",
@@ -27,7 +29,7 @@ DEFAULTS = {
     "statAlternatives": [[], [], [], []],
     "categoryPlans": {},
     "rank": 8,
-    "rankMode": "auto",
+    "rankMode": "manual",
     "gradeVariants": {},
     "spliceGrade": "S",
     "lockGrade": "F",
@@ -158,10 +160,9 @@ def sanitize(saved):
         for category, plan in state["categoryPlans"].items()
         if isinstance(category, str) and len(category) <= 64 and isinstance(plan, dict)
     }
-    if state["rankMode"] != "manual":
-        state["rankMode"] = "auto"
-    if not 0 <= state["rank"] <= 8:
-        state["rank"] = 8
+    if state["rankMode"] not in ("manual", "auto"):
+        state["rankMode"] = DEFAULTS["rankMode"]
+    state["rank"] = 8
     state["capture"] = capture_settings(state["capture"])
     position = state["windowPosition"]
     if len(position) != 2 or any(
@@ -183,6 +184,10 @@ def decode_settings(content):
     saved = json.loads(content.decode("utf-8")) if content is not None else {}
     if not isinstance(saved, dict):
         raise ValueError("Invalid settings")
+    version = saved.get("schemaVersion")
+    if type(version) is not int or version < SETTINGS_SCHEMA_VERSION:
+        # Apply the new default once; subsequent saved Automatic choices win.
+        saved.update(rankMode="manual", rank=8)
     return saved
 
 
@@ -269,7 +274,7 @@ class Preferences:
                 else:
                     merged[key] = data[key]
         content = json.dumps(
-            {"schemaVersion": 1, **merged},
+            {"schemaVersion": SETTINGS_SCHEMA_VERSION, **merged},
             ensure_ascii=False,
             allow_nan=False,
             indent=2,

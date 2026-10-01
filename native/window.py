@@ -184,7 +184,7 @@ class MainWindow(QWidget):
         self.warning_sound.message.connect(self.audio_message)
         self.good_sound.custom_loaded.connect(self.persist)
         self.warning_sound.custom_loaded.connect(self.persist)
-        self.worker = worker_factory(self.state["capture"], self)
+        self.worker = worker_factory(self.capture_config(), self)
         self.ocr_setup = OCRSetup(self)
         self.ocr_setup.busy_changed.connect(self.ocr_setup_busy)
         self.ocr_setup.ready.connect(self.ocr_language_ready)
@@ -454,13 +454,16 @@ class MainWindow(QWidget):
         self.apply_capture()
 
     def apply_capture(self):
-        self.revision = self.worker.configure(self.state["capture"], self.running)
+        self.revision = self.worker.configure(self.capture_config(), self.running)
         self.stop_sounds()
         self.cards = []
         self.refresh_grades()
         self.new_card.set_warning(False)
         self.status.setText("Waiting for a Riven" if self.running else "Capture paused")
         self.update_start()
+
+    def capture_config(self):
+        return {**self.state["capture"], "rankMode": self.state["rankMode"]}
 
     def set_language(self, code):
         if self.ocr_setup.busy:
