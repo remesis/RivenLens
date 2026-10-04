@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "native"))
 from update_package import (  # noqa: E402
     MANIFEST,
-    REQUIRED_FILES,
+    required_files_present,
     source_path,
 )
 
@@ -44,7 +44,7 @@ def build(destination):
             if stat.S_ISLNK(entry.external_attr >> 16):
                 raise ValueError("Release files must not be symbolic links.")
             files[name] = committed.read(entry)
-    if not (REQUIRED_FILES - {MANIFEST}).issubset(files):
+    if not required_files_present(files, manifest=False):
         raise ValueError("Required application files are not committed.")
     hashes = {name: hashlib.sha256(files[name]).hexdigest() for name in sorted(files)}
     files[MANIFEST] = (
@@ -54,7 +54,9 @@ def build(destination):
         for name in sorted(files):
             entry = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
             entry.create_system = 3
-            entry.external_attr = (stat.S_IFREG | 0o644) << 16
+            entry.external_attr = (
+                stat.S_IFREG | (0o755 if name.endswith(".sh") else 0o644)
+            ) << 16
             archive.writestr(entry, files[name], zipfile.ZIP_DEFLATED, compresslevel=9)
     return destination
 

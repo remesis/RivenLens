@@ -17,14 +17,23 @@ from pathlib import Path, PurePosixPath
 
 from releases import ReleaseConfig, version_number
 
-ROOT_FILES = frozenset(
-    {"README.md", "LICENSE", "requirements.txt", "Start Riven Lens.cmd"}
+WINDOWS_LAUNCHERS = frozenset(
+    {"Start Riven Lens.cmd", "Launch RivenLens - Windows.cmd"}
+)
+ROOT_FILES = (
+    frozenset(
+        {"README.md", "LICENSE", "requirements.txt", "Launch RivenLens - Linux.sh"}
+    )
+    | WINDOWS_LAUNCHERS
 )
 SOURCE_DIRS = frozenset({"app", "native", "docs"})
 LOCAL_NAMES = frozenset({".venv", ".runtimes", "__pycache__", ".git", ".ruff_cache"})
 STATE_FILES = frozenset({"native/runtime.json", "native/update-pending.json"})
 MANIFEST = "native/data/source-manifest.json"
-REQUIRED_FILES = ROOT_FILES | {
+REQUIRED_FILES = {
+    "README.md",
+    "LICENSE",
+    "requirements.txt",
     MANIFEST,
     "native/bootstrap.py",
     "native/dependencies.py",
@@ -42,6 +51,11 @@ MAX_EXPANDED = 256 * 1024 * 1024
 
 class UpdateError(Exception):
     pass
+
+
+def required_files_present(files, *, manifest=True):
+    required = REQUIRED_FILES if manifest else REQUIRED_FILES - {MANIFEST}
+    return required.issubset(files) and bool(WINDOWS_LAUNCHERS.intersection(files))
 
 
 def write_json(path, data):
@@ -144,7 +158,7 @@ def extract_release(archive, destination, config, version):
             with package.open(entry) as source, output.open("xb") as target:
                 shutil.copyfileobj(source, target, 64 * 1024)
             extracted.append(relative)
-    if not REQUIRED_FILES.issubset(extracted):
+    if not required_files_present(extracted):
         raise UpdateError("The release is missing required application files.")
     bundled = ReleaseConfig.load(destination / "native/data/release.json")
     if (
@@ -181,7 +195,7 @@ def release_manifest(root):
             or not 0 < len(files) <= MAX_FILES
         ):
             raise ValueError("Invalid manifest")
-        if not (REQUIRED_FILES - {MANIFEST}).issubset(files):
+        if not required_files_present(files, manifest=False):
             raise ValueError("Incomplete manifest")
         seen = set()
         for name, digest in files.items():

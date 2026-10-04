@@ -17,6 +17,7 @@ from dependencies import INSTALL_FLAGS, locked_packages
 from instance import InstallationLease
 from releases import ReleaseConfig
 from update_package import (
+    WINDOWS_LAUNCHERS,
     UpdateError,
     apply_release,
     backup_installation,
@@ -235,9 +236,8 @@ def _install(job):
     try:
         ensure_installable(root)
         installed_files(root)
-        if (
-            not (root / "native/main.py").is_file()
-            or not (root / "Start Riven Lens.cmd").is_file()
+        if not (root / "native/main.py").is_file() or not any(
+            (root / name).is_file() for name in WINDOWS_LAUNCHERS
         ):
             raise UpdateError("The RivenLens installation could not be identified.")
         config = ReleaseConfig.load(root / "native/data/release.json")
