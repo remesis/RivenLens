@@ -37,6 +37,7 @@ class SeedDialog(ModalDialog):
         layout = QVBoxLayout(self)
         header = QHBoxLayout()
         self.age = Combo()
+        self.age.setSizeAdjustPolicy(Combo.SizeAdjustPolicy.AdjustToContents)
         options(self.age, AGE_CHOICES, owner.state.get("seedListingAge", "30d"))
         self.age.activated.connect(self.age_changed)
         header.addWidget(self.age)
