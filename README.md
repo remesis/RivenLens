@@ -144,7 +144,8 @@ pips** under **Settings → Grading → Riven rank**. Your saved choice is remem
 Keep the stat text, card footer and bottom-right **Fits In** label visible; rank
 pips must also be visible when using automatic rank detection. Small
 text, animations and covered cards can confuse OCR. Previous grades stay visible
-during brief interruptions. If capture is blank, try another capture method.
+during brief interruptions. On Windows, try another capture method if capture is
+blank.
 
 **Double-check important rolls before discarding them.** The warning covers
 incomplete new-roll stat lines, not unreadable rank pips or variant labels.
@@ -163,6 +164,7 @@ Git checkouts are updated through Git instead of the automatic installer.
 On Windows, copies from 0.2.13 or earlier need the
 [0.2.15 compatibility release](https://github.com/remesis/RivenLens/releases/tag/v0.2.15)
 first, or a fresh extraction of the latest ZIP, because the launchers were renamed.
+Recreate old launcher shortcuts to point to **Launch RivenLens - Windows.cmd**.
 For copies from 0.1.0 or 0.1.1, download **RivenLens.zip** once and extract it into
 a new folder to enable the updated installer. Your saved settings stay available.
 

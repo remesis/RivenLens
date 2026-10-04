@@ -19,7 +19,6 @@ from urllib.parse import urlsplit
 
 from instance import InstallationLease
 from ocr_install import CONSENT_CANCELLED
-
 from ocr_models import (
     BUILD_LOCK,
     LOCK,
@@ -69,6 +68,7 @@ class RapidInstallSession:
     """One user-approved attempt. Failures stop; retry requires another click."""
 
     def __init__(self, code):
+        # Reject unsupported languages before starting a worker or any downloads.
         required_models(code)
         self.code = code
         self.message = "Preparing RapidOCR setup…"

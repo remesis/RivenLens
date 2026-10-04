@@ -28,7 +28,7 @@ def language_installed(code):
 class OCRSetupDialog(ModalDialog):
     def __init__(self, owner, setup):
         super().__init__(owner)
-        self.rapid = backend_for(setup.code) == "rapid"
+        self.rapid = setup.rapid
         self.setWindowTitle("OCR language setup")
         self.setStyleSheet(theme_for(1.08))
         self.setMinimumWidth(360)
@@ -106,6 +106,10 @@ class OCRSetup(QObject):
     def busy(self):
         return self.session is not None
 
+    @property
+    def rapid(self):
+        return backend_for(self.code) == "rapid"
+
     def ensure(self, code, *, resume=False):
         """Called only for an explicit language selection or Start OCR click."""
         if self.closed:
@@ -121,12 +125,12 @@ class OCRSetup(QObject):
             self.present(
                 "unavailable",
                 "Could not check local OCR files. Restart RivenLens or retry setup."
-                if backend_for(code) == "rapid"
+                if self.rapid
                 else "Could not check Windows OCR languages. Open Windows language settings or restart RivenLens.",
                 str(exc),
             )
             return False
-        if backend_for(code) == "rapid":
+        if self.rapid:
             self.present(
                 "missing",
                 "RapidOCR needs local recognition files. Download them now?",
@@ -174,10 +178,10 @@ class OCRSetup(QObject):
             return
         try:
             # Windows may have installed it since the prompt was opened.
-            if language_installed(self.code):
+            if not self.rapid and language_installed(self.code):
                 self.complete()
                 return
-            if backend_for(self.code) == "rapid":
+            if self.rapid:
                 from rapid_setup import RapidInstallSession
 
                 session = RapidInstallSession(self.code)
@@ -189,7 +193,7 @@ class OCRSetup(QObject):
             self.present("failed", "Could not start OCR setup.", str(exc))
             return
         self.busy_changed.emit(True)
-        if backend_for(self.code) == "rapid":
+        if self.rapid:
             self.present(
                 "installing",
                 "Preparing local OCR files…",
@@ -214,14 +218,14 @@ class OCRSetup(QObject):
             self.present(
                 "unavailable",
                 "Could not check local OCR setup. Restart RivenLens before retrying."
-                if backend_for(self.code) == "rapid"
+                if self.rapid
                 else "Could not check Windows OCR setup. Check Windows language settings before retrying.",
                 str(exc),
                 open_dialog=False,
             )
             return
         if result is None:
-            if backend_for(self.code) == "rapid":
+            if self.rapid:
                 self.present(
                     "installing", self.session.message, self.details, open_dialog=False
                 )
@@ -231,7 +235,7 @@ class OCRSetup(QObject):
         self.finish()
         if result == 0:
             self.complete(verified=verified)
-        elif backend_for(self.code) == "rapid":
+        elif self.rapid:
             self.present(
                 "cancelled" if result == CONSENT_CANCELLED else "failed",
                 error or "RapidOCR setup failed. OCR remains paused.",
@@ -260,17 +264,17 @@ class OCRSetup(QObject):
     def complete(self, *, verified=False):
         try:
             # Do not treat the helper's exit code alone as proof OCR is usable.
-            if backend_for(self.code) == "rapid":
-                if not language_installed(self.code):
+            if self.rapid:
+                if not verified or not language_installed(self.code):
                     raise RuntimeError("The local OCR files could not be verified.")
-            if not verified:
+            elif not verified:
                 engine = LocalOCR(self.code)
                 engine.close()
         except Exception as exc:
             self.present(
-                "failed" if backend_for(self.code) == "rapid" else "restart",
+                "failed" if self.rapid else "restart",
                 "The local OCR files are not ready yet. Retry setup; OCR remains paused."
-                if backend_for(self.code) == "rapid"
+                if self.rapid
                 else "The OCR feature is not ready yet. Restart RivenLens; if it is still unavailable, check Windows language settings or restart Windows.",
                 str(exc),
                 open_dialog=False,
@@ -289,7 +293,7 @@ class OCRSetup(QObject):
         self.timer.stop()
         if self.dialog is not None:
             self.dialog.reject()
-        if self.session is not None and backend_for(self.code) == "rapid":
+        if self.session is not None and self.rapid:
             self.session.shutdown()
         # Never terminate Windows servicing. An already-approved helper can
         # complete after the app exits; the next launch checks actual OCR state.

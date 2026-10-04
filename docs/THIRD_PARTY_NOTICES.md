@@ -39,7 +39,7 @@ own license files. The recognizers use PaddleOCR models distributed by RapidAI.
 | --- | --- | --- |
 | RapidOCR and PaddleOCR models | Apache-2.0 | [RapidOCR](https://github.com/RapidAI/RapidOCR) and [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) |
 | ONNX Runtime | MIT, with bundled-component notices | [ONNX Runtime](https://github.com/microsoft/onnxruntime) |
-| OpenCV Python | Apache-2.0; wheels include additional component notices | [OpenCV Python](https://github.com/opencv/opencv-python) |
+| opencv-python-headless | Apache-2.0; wheels include additional component notices | [OpenCV Python](https://github.com/opencv/opencv-python) |
 | Shapely and GEOS | BSD-3-Clause; GEOS LGPL-2.1 | [Shapely](https://github.com/shapely/shapely) and [GEOS](https://libgeos.org/) |
 | Pyclipper | MIT | [Pyclipper](https://github.com/fonttools/pyclipper) |
 | OmegaConf and ANTLR runtime | BSD-3-Clause | [OmegaConf](https://github.com/omry/omegaconf) and [ANTLR](https://github.com/antlr/antlr4) |

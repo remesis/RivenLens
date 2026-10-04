@@ -4,10 +4,11 @@
 
 """Rank annotation for neural OCR's inflated text boxes, using eight visible pips."""
 
-import numpy as np
 from copy import deepcopy
 import math
 import statistics
+
+import numpy as np
 
 from rank_reader import detect_rank
 

@@ -6,6 +6,7 @@
 
 import re
 import math
+from contextlib import nullcontext
 
 from PIL import Image
 
@@ -52,6 +53,8 @@ def recognizer_tag(language, available):
 
 
 class LocalOCR:
+    frame_scope = staticmethod(nullcontext)
+
     def __init__(self, language="en"):
         if language not in LANGUAGES:
             raise ValueError("Unsupported game language")

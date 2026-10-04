@@ -11,8 +11,8 @@ from pathlib import Path
 import re
 import sys
 
-from instance import data_directory
 from dependencies import lock_digest, locked_packages
+from instance import data_directory
 from localization import LANGUAGES, LATIN_UI_LANGUAGES
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -141,7 +141,12 @@ def activate_runtime():
         raise RuntimeError(
             "RapidOCR is not installed. Choose Start OCR to set up this language."
         )
-    base = locked_packages(ROOT / "requirements.txt")
+    base_lock = (
+        ROOT / "native/linux-requirements.txt"
+        if sys.platform == "linux"
+        else ROOT / "requirements.txt"
+    )
+    base = locked_packages(base_lock)
     for name in ("numpy", "pillow"):
         if importlib.metadata.version(name) != base[name]:
             raise RuntimeError("The application's shared OCR dependencies need repair.")

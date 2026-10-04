@@ -7,6 +7,7 @@
 import hashlib
 import re
 import time
+from contextlib import nullcontext
 from copy import deepcopy
 
 from PIL import Image, ImageChops, ImageFilter, ImageOps
@@ -910,155 +911,130 @@ async def read_frame(
     validate_stats=None,
     auto_rank=True,
 ):
-    arguments = dict(
-        focus=focus,
-        require_current=require_current,
-        rank_image=rank_image,
-        budget=budget,
-        previous_new=previous_new,
-        variant_mismatch=variant_mismatch,
-        validate_stats=validate_stats,
-        auto_rank=auto_rank,
-    )
-    if getattr(engine, "backend", None) == "rapid":
-        with engine.frame_scope():
-            return await _read_frame(engine, image, **arguments)
-    return await _read_frame(engine, image, **arguments)
-
-
-async def _read_frame(
-    engine,
-    image,
-    focus=True,
-    require_current=True,
-    rank_image=None,
-    budget=None,
-    previous_new=None,
-    variant_mismatch=None,
-    validate_stats=None,
-    auto_rank=True,
-):
-    if getattr(engine, "backend", None) == "rapid":
-        engine.automatic_rank = auto_rank
-    if getattr(engine, "_layout_size", None) != image.size:
-        reset_layout(engine)
-        engine._layout_size = image.size
-    engine._frame_action = None
-    engine._frame_region = None
-    engine._scene_lines = None
-    engine._frame_budget = budget
-    # Keep one of the bounded retry passes for each card, even when a slow
-    # discovery/caption call exhausts the time allowance before refinement.
-    reserve_verifications(engine, 2)
-    engine._validate_stats = validate_stats
-    metadata_image = rank_image if rank_image is not None else image
-    hint = getattr(engine, "_session_variant_hint", None)
-    priority_variant = getattr(engine, "_variant_pending", False) and (
-        time.monotonic() >= getattr(engine, "_next_variant_priority", 0)
-    )
-    if priority_variant:
-        # A costly stat retry must not starve the caption indefinitely. The same
-        # retry budget still applies; unresolved captions get this turn at most
-        # twice per second, and the primary card read always follows.
-        engine._next_variant_priority = time.monotonic() + 0.5
-        hint = await variant_hint(engine, metadata_image)
-        if hint:
-            engine._session_variant_hint = hint
-            engine._next_variant_check = time.monotonic() + 5
-    variant_attempted = priority_variant
-
-    async def annotate(card):
-        nonlocal hint, variant_attempted
-        card["rank"] = await read_rank(engine, metadata_image, card) if auto_rank else 8
-        compatible = hint in VARIANT_CHOICES.get(card["weapon"], set())
-        if not compatible:
-            hint = engine._session_variant_hint = None
-        now = time.monotonic()
-        outside_range = bool(
-            compatible and variant_mismatch and variant_mismatch(card, hint)
+    with getattr(engine, "frame_scope", nullcontext)():
+        if getattr(engine, "backend", None) == "rapid":
+            engine.automatic_rank = auto_rank
+        if getattr(engine, "_layout_size", None) != image.size:
+            reset_layout(engine)
+            engine._layout_size = image.size
+        engine._frame_action = None
+        engine._frame_region = None
+        engine._scene_lines = None
+        engine._frame_budget = budget
+        # Keep one of the bounded retry passes for each card, even when a slow
+        # discovery/caption call exhausts the time allowance before refinement.
+        reserve_verifications(engine, 2)
+        engine._validate_stats = validate_stats
+        metadata_image = rank_image if rank_image is not None else image
+        hint = getattr(engine, "_session_variant_hint", None)
+        priority_variant = getattr(engine, "_variant_pending", False) and (
+            time.monotonic() >= getattr(engine, "_next_variant_priority", 0)
         )
-        range_due = outside_range and now >= getattr(
-            engine, "_next_variant_range_check", 0
-        )
-        candidate_pending = (
-            previous_new is not None
-            and mode_from_lines([engine._frame_action] if engine._frame_action else [])
-            == "comparison"
-            and fingerprint({"cards": [card]}) != previous_new
-        )
-        periodic_due = now >= getattr(engine, "_next_variant_check", 0)
-        if variant_attempted or (
-            compatible and not range_due and (not periodic_due or candidate_pending)
-        ):
-            return
-        # An established variant survives ordinary rolls. Periodic caption work
-        # waits until the proposed roll has been published; incompatible values
-        # request an earlier check without inventing a different variant.
-        refreshed = await variant_hint(engine, metadata_image)
-        variant_attempted = True
-        engine._next_variant_range_check = now + 0.5
-        engine._next_variant_check = now + (5 if refreshed else 1)
-        if refreshed in VARIANT_CHOICES.get(card["weapon"], set()):
-            hint = engine._session_variant_hint = refreshed
+        if priority_variant:
+            # A costly stat retry must not starve the caption indefinitely. The same
+            # retry budget still applies; unresolved captions get this turn at most
+            # twice per second, and the primary card read always follows.
+            engine._next_variant_priority = time.monotonic() + 0.5
+            hint = await variant_hint(engine, metadata_image)
+            if hint:
+                engine._session_variant_hint = hint
+                engine._next_variant_check = time.monotonic() + 5
+        variant_attempted = priority_variant
 
-    result = await read_cards(
-        engine,
-        image,
-        focus,
-        require_current,
-        on_verified=annotate,
-        previous_new=previous_new,
-    )
-    if getattr(engine, "backend", None) == "rapid":
-        from rapid_text import caption_namespace
+        async def annotate(card):
+            nonlocal hint, variant_attempted
+            card["rank"] = (
+                await read_rank(engine, metadata_image, card) if auto_rank else 8
+            )
+            compatible = hint in VARIANT_CHOICES.get(card["weapon"], set())
+            if not compatible:
+                hint = engine._session_variant_hint = None
+            now = time.monotonic()
+            outside_range = bool(
+                compatible and variant_mismatch and variant_mismatch(card, hint)
+            )
+            range_due = outside_range and now >= getattr(
+                engine, "_next_variant_range_check", 0
+            )
+            candidate_pending = (
+                previous_new is not None
+                and mode_from_lines(
+                    [engine._frame_action] if engine._frame_action else []
+                )
+                == "comparison"
+                and fingerprint({"cards": [card]}) != previous_new
+            )
+            periodic_due = now >= getattr(engine, "_next_variant_check", 0)
+            if variant_attempted or (
+                compatible and not range_due and (not periodic_due or candidate_pending)
+            ):
+                return
+            # An established variant survives ordinary rolls. Periodic caption work
+            # waits until the proposed roll has been published; incompatible values
+            # request an earlier check without inventing a different variant.
+            refreshed = await variant_hint(engine, metadata_image)
+            variant_attempted = True
+            engine._next_variant_range_check = now + 0.5
+            engine._next_variant_check = now + (5 if refreshed else 1)
+            if refreshed in VARIANT_CHOICES.get(card["weapon"], set()):
+                hint = engine._session_variant_hint = refreshed
 
-        observed = caption_namespace()
-        if observed:
-            # An exact caption in this frame takes precedence over retained
-            # metadata. Conflicting panel observations cannot select a variant.
-            hint = observed[0] if len(observed) == 1 else None
-            engine._session_variant_hint = hint
-            if hint is None:
-                for card in result["cards"]:
-                    card.pop("variantHint", None)
-    action = engine._frame_action
-    for card in result["cards"]:
-        title = card.get("titleBounds") or card["bounds"]
-        if action:
-            # Normalize around the visible action button, never the monitor center.
-            width = max(title["w"], title["h"] * 8)
-            card["screenX"] = 0.5 + (
-                title["x"] + title["w"] / 2 - action["x"] - action["w"] / 2
-            ) / (width * 6)
-        else:
-            card["screenX"] = -1
-    # A title alone can belong to the companion or a weapon selector. Only
-    # physical card footers may relocate the learned region during transitions.
-    located = [
-        card
-        for card in result["cards"]
-        if detect_rank(metadata_image, card) is not None
-    ]
-    if located and (action or not getattr(engine, "_card_region", None)):
-        engine._card_region = card_region(
+        result = await read_cards(
+            engine,
             image,
-            located,
-            action,
-            getattr(engine, "_card_region", None) or engine._frame_region,
+            focus,
+            require_current,
+            on_verified=annotate,
+            previous_new=previous_new,
         )
-    if any(card["complete"] for card in result["cards"]):
-        engine._last_located_at = time.monotonic()
-        for card in reversed(result["cards"]):
-            if card["complete"] and "rank" not in card:
-                await annotate(card)
+        if getattr(engine, "backend", None) == "rapid":
+            from rapid_text import caption_namespace
+
+            observed = caption_namespace()
+            if observed:
+                # An exact caption in this frame takes precedence over retained
+                # metadata. Conflicting panel observations cannot select a variant.
+                hint = observed[0] if len(observed) == 1 else None
+                engine._session_variant_hint = hint
+        action = engine._frame_action
         for card in result["cards"]:
-            if hint in VARIANT_CHOICES.get(card["weapon"], set()):
-                card["variantHint"] = hint
-    engine._variant_pending = bool(result["cards"]) and not any(
-        hint in VARIANT_CHOICES.get(card["weapon"], set()) for card in result["cards"]
-    )
-    result["strictRoles"] = getattr(engine, "backend", None) == "rapid"
-    return result
+            title = card.get("titleBounds") or card["bounds"]
+            if action:
+                # Normalize around the visible action button, never the monitor center.
+                width = max(title["w"], title["h"] * 8)
+                card["screenX"] = 0.5 + (
+                    title["x"] + title["w"] / 2 - action["x"] - action["w"] / 2
+                ) / (width * 6)
+            else:
+                card["screenX"] = -1
+        # A title alone can belong to the companion or a weapon selector. Only
+        # physical card footers may relocate the learned region during transitions.
+        located = [
+            card
+            for card in result["cards"]
+            if detect_rank(metadata_image, card) is not None
+        ]
+        if located and (action or not getattr(engine, "_card_region", None)):
+            engine._card_region = card_region(
+                image,
+                located,
+                action,
+                getattr(engine, "_card_region", None) or engine._frame_region,
+            )
+        if any(card["complete"] for card in result["cards"]):
+            engine._last_located_at = time.monotonic()
+            for card in reversed(result["cards"]):
+                if card["complete"] and "rank" not in card:
+                    await annotate(card)
+            for card in result["cards"]:
+                if hint in VARIANT_CHOICES.get(card["weapon"], set()):
+                    card["variantHint"] = hint
+        engine._variant_pending = bool(result["cards"]) and not any(
+            hint in VARIANT_CHOICES.get(card["weapon"], set())
+            for card in result["cards"]
+        )
+        result["strictRoles"] = getattr(engine, "backend", None) == "rapid"
+        return result
 
 
 async def read_rank(engine, image, card):

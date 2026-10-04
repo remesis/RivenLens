@@ -63,11 +63,8 @@ def default_language(tags=None):
 def tables(code):
     if code == "en":
         return {}, []
-    column = DATA["languages"].index(code) if code in DATA["languages"] else None
-    messages = {
-        key: values[column] if column is not None else key
-        for key, values in DATA["strings"].items()
-    }
+    column = DATA["languages"].index(code)
+    messages = {key: values[column] for key, values in DATA["strings"].items()}
     patterns = []
     for key, value in messages.items():
         if "{" not in key:

@@ -1,1 +1,6 @@
+* text=auto eol=lf
+# Existing Windows installers compare this lock byte-for-byte.
+requirements.txt text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
 *.sh text eol=lf

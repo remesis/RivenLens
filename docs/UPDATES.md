@@ -11,6 +11,7 @@ directory and are not bundled in release ZIPs.
 Windows versions 0.2.13 and earlier cannot install the renamed launchers directly.
 Install the [0.2.15 compatibility release](https://github.com/remesis/RivenLens/releases/tag/v0.2.15)
 first, then update normally, or extract the latest ZIP into a new folder.
+Recreate old launcher shortcuts to point to **Launch RivenLens - Windows.cmd**.
 
 Versions 0.1.0 and 0.1.1 used GitHub's generated source archive, which has no
 managed-file manifest. For those versions, download **RivenLens.zip** once and
@@ -27,8 +28,9 @@ future updates the verified file list required by the current installer.
 3. Publish a non-prerelease GitHub Release with the matching `vX.Y.Z` tag and
    attach that ZIP. The builder includes committed application files and a
    checksum manifest, excluding local environments, settings and caches. It reads
-   Git's committed archive, not checkout bytes, and fixes ZIP timestamps so local
-   line-ending settings and file dates do not change the package.
+   Git's committed archive, not checkout bytes, with pinned text line endings and
+   fixed ZIP timestamps. Checkout settings and file dates do not change packaged
+   contents; compressed bytes can still differ between zlib versions.
 
 Screenshots and full-resolution branding under `assets/` stay in the repository,
 outside the application ZIP. A smaller local logo is bundled for offline use.
