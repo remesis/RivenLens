@@ -1,0 +1,4704 @@
+{
+  "schemaVersion": 1,
+  "languages": {
+    "uk": {
+      "label": "Українська",
+      "recognizer": "uk-UA",
+      "weapons": {
+        "AX-52": [
+          "AX-52"
+        ],
+        "Acceltra": [
+          "Аксельтра"
+        ],
+        "Acceltra Prime": [
+          "Аксельтра-прайм"
+        ],
+        "Ack & Brunt": [
+          "Ак і Брант"
+        ],
+        "Acrid": [
+          "Акрид"
+        ],
+        "Aegrit": [
+          "Еґріт"
+        ],
+        "Aeolak": [
+          "Еолек"
+        ],
+        "Afentis": [
+          "Ефентіс"
+        ],
+        "Afentis Prime": [
+          "Ефентіс-прайм"
+        ],
+        "Afuris": [
+          "Афуріс"
+        ],
+        "Afuris Prime": [
+          "Афуріс-прайм"
+        ],
+        "Akarius": [
+          "Акарій"
+        ],
+        "Akarius Prime": [
+          "Акарій-прайм"
+        ],
+        "Akaten": [
+          "Акатен"
+        ],
+        "Akbolto": [
+          "Акболто"
+        ],
+        "Akbolto Prime": [
+          "Акболто-прайм"
+        ],
+        "Akbronco": [
+          "Акбронко"
+        ],
+        "Akbronco Prime": [
+          "Акбронко-прайм"
+        ],
+        "Akjagara": [
+          "Акджаґара"
+        ],
+        "Akjagara Prime": [
+          "Акджаґара-прайм"
+        ],
+        "Aklato": [
+          "Аклато"
+        ],
+        "Aklex": [
+          "Аклекс"
+        ],
+        "Aklex Prime": [
+          "Аклекс-прайм"
+        ],
+        "Akmagnus": [
+          "Акмагнус"
+        ],
+        "Akmagnus Prime": [
+          "Акмагнус-прайм"
+        ],
+        "Aksomati": [
+          "Аксомати"
+        ],
+        "Aksomati Prime": [
+          "Аксомати-прайм"
+        ],
+        "Aksondol": [
+          "Аксонтоль"
+        ],
+        "Akstiletto": [
+          "Акстилетто"
+        ],
+        "Akstiletto Prime": [
+          "Акстилетто-прайм"
+        ],
+        "Akvasto": [
+          "Аквасто"
+        ],
+        "Akvasto Prime": [
+          "Аквасто-прайм"
+        ],
+        "Akzani": [
+          "Акзані"
+        ],
+        "Alternox": [
+          "Альтернокс"
+        ],
+        "Alternox Prime": [
+          "Альтернокс-прайм"
+        ],
+        "Amanata": [
+          "Аманата"
+        ],
+        "Ambassador": [
+          "Посол",
+          "посол"
+        ],
+        "Amphis": [
+          "Амфіс"
+        ],
+        "Amprex": [
+          "Ампрекс"
+        ],
+        "Angstrum": [
+          "Анґструм"
+        ],
+        "Anku": [
+          "Анку"
+        ],
+        "Ankyros": [
+          "Анкирос"
+        ],
+        "Ankyros Prime": [
+          "Анкирос-прайм"
+        ],
+        "Arbucep": [
+          "Арбуцеп"
+        ],
+        "Arca Plasmor": [
+          "Арка-Плазмор"
+        ],
+        "Arca Scisco": [
+          "Арка-Сциско"
+        ],
+        "Arca Titron": [
+          "Арка-Титрон"
+        ],
+        "Argo & Vel": [
+          "Арґо й Вел"
+        ],
+        "Argonak": [
+          "Арґонак"
+        ],
+        "Artax": [
+          "Артакс"
+        ],
+        "Arum Spinosa": [
+          "Кліщинець"
+        ],
+        "Astilla": [
+          "Астіла"
+        ],
+        "Astilla Prime": [
+          "Астіла-прайм"
+        ],
+        "Athodai": [
+          "Атодай"
+        ],
+        "Athodai Prime": [
+          "Атодай-прайм"
+        ],
+        "Atomos": [
+          "Атомос"
+        ],
+        "Atterax": [
+          "Аттеракс"
+        ],
+        "Attica": [
+          "Аттика"
+        ],
+        "Azima": [
+          "Азима"
+        ],
+        "Azothane": [
+          "Азотан"
+        ],
+        "Balla": [
+          "Балла"
+        ],
+        "Ballistica": [
+          "Балістика"
+        ],
+        "Ballistica Prime": [
+          "Балістика-прайм"
+        ],
+        "Basmu": [
+          "Башму"
+        ],
+        "Batoten": [
+          "Батотен"
+        ],
+        "Battacor": [
+          "Баттакор"
+        ],
+        "Baza": [
+          "База"
+        ],
+        "Baza Prime": [
+          "База-прайм"
+        ],
+        "Bo": [
+          "Бо"
+        ],
+        "Bo Prime": [
+          "Бо-прайм"
+        ],
+        "Boar": [
+          "Вепр"
+        ],
+        "Boar Prime": [
+          "Вепр-прайм"
+        ],
+        "Boltace": [
+          "Болтейс"
+        ],
+        "Bolto": [
+          "Болто"
+        ],
+        "Boltor": [
+          "Болтор"
+        ],
+        "Boltor Prime": [
+          "Болтор-прайм"
+        ],
+        "Brakk": [
+          "Брак"
+        ],
+        "Braton": [
+          "Братон"
+        ],
+        "Braton Prime": [
+          "Братон-прайм"
+        ],
+        "Braton Vandal": [
+          "Братон-вандал"
+        ],
+        "Broken Scepter": [
+          "Зламаний скіпетр"
+        ],
+        "Broken War": [
+          "Зломлена Війна"
+        ],
+        "Bronco": [
+          "Бронко"
+        ],
+        "Bronco Prime": [
+          "Бронко-прайм"
+        ],
+        "Bubonico": [
+          "Бубоніко"
+        ],
+        "Burst Laser": [
+          "Шквальний лазер"
+        ],
+        "Burst Laser Prime": [
+          "Шквальний лазер-прайм"
+        ],
+        "Burston": [
+          "Берстон"
+        ],
+        "Burston Prime": [
+          "Берстон-прайм"
+        ],
+        "Buzlok": [
+          "Базлок"
+        ],
+        "Cadus": [
+          "Кад"
+        ],
+        "Cantare": [
+          "Співаники"
+        ],
+        "Carmine Penta": [
+          "Пента-кармін"
+        ],
+        "Cassowar": [
+          "Казуар"
+        ],
+        "Castanas": [
+          "Кастаньяс"
+        ],
+        "Catabolyst": [
+          "Катаболист"
+        ],
+        "Catchmoon": [
+          "Спіймаймісяць"
+        ],
+        "Catchmoon (Primary)": [
+          "Спіймаймісяць"
+        ],
+        "Catchmoon (Secondary)": [
+          "Спіймаймісяць"
+        ],
+        "Caustacyst": [
+          "Каустацист"
+        ],
+        "Cedo": [
+          "Цедо"
+        ],
+        "Cedo Prime": [
+          "Цедо-прайм"
+        ],
+        "Ceramic Dagger": [
+          "Керамічний кинджал"
+        ],
+        "Cerata": [
+          "Церата"
+        ],
+        "Cernos": [
+          "Цернос"
+        ],
+        "Cernos Prime": [
+          "Цернос-прайм"
+        ],
+        "Cestra": [
+          "Цестра"
+        ],
+        "Ceti Lacera": [
+          "Лацера-цеті"
+        ],
+        "Cinta": [
+          "Цінта"
+        ],
+        "Cobra & Crane": [
+          "Кобра й Журавель"
+        ],
+        "Cobra & Crane Prime": [
+          "Кобра й Журавель-прайм"
+        ],
+        "Coda Bassocyst": [
+          "Басоцист-кода"
+        ],
+        "Coda Bubonico": [
+          "Бубоніко-кода"
+        ],
+        "Coda Catabolyst": [
+          "Катаболист-кода"
+        ],
+        "Coda Caustacyst": [
+          "Каустацист-кода"
+        ],
+        "Coda Hema": [
+          "Гема-кода"
+        ],
+        "Coda Hirudo": [
+          "Гірудо-кода"
+        ],
+        "Coda Mire": [
+          "Трясовина-кода"
+        ],
+        "Coda Motovore": [
+          "Мотоверть-кода"
+        ],
+        "Coda Pathocyst": [
+          "Патоцист-кода"
+        ],
+        "Coda Pox": [
+          "Покс-кода"
+        ],
+        "Coda Sporothrix": [
+          "Споротрикс-кода"
+        ],
+        "Coda Synapse": [
+          "Синапс-кода"
+        ],
+        "Coda Tysis": [
+          "Тайзис-кода"
+        ],
+        "Convectrix": [
+          "Конвектрікс"
+        ],
+        "Corinth": [
+          "Коринф"
+        ],
+        "Corinth Prime": [
+          "Коринф-прайм"
+        ],
+        "Cortege": [
+          "Кортеж"
+        ],
+        "Corufell": [
+          "Коруфел"
+        ],
+        "Corufell Prime": [
+          "Коруфел-прайм"
+        ],
+        "Corvas": [
+          "Корвас"
+        ],
+        "Corvas Prime": [
+          "Корвас-прайм"
+        ],
+        "Cronus": [
+          "Крон"
+        ],
+        "Cryotra": [
+          "Кріотра"
+        ],
+        "Cyanex": [
+          "Ціанекс"
+        ],
+        "Cyath": [
+          "Ціат"
+        ],
+        "Cycron": [
+          "Цикрон"
+        ],
+        "Cyngas": [
+          "Цинґаз"
+        ],
+        "Daikyu": [
+          "Дайк'ю"
+        ],
+        "Daikyu Prime": [
+          "Дайк'ю-прайм"
+        ],
+        "Dakra Prime": [
+          "Дакра-прайм"
+        ],
+        "Dark Dagger": [
+          "Темний кинджал"
+        ],
+        "Dark Split-Sword": [
+          "Темний Роздільник"
+        ],
+        "Dark Sword": [
+          "Темний меч"
+        ],
+        "Deconstructor": [
+          "Розбирач"
+        ],
+        "Deconstructor Prime": [
+          "Розбирач-прайм"
+        ],
+        "Dehtat": [
+          "Дегтат"
+        ],
+        "Dera": [
+          "Дера"
+        ],
+        "Dera Vandal": [
+          "Дера-вандал"
+        ],
+        "Despair": [
+          "Розпач"
+        ],
+        "Destreza": [
+          "Дестреза"
+        ],
+        "Destreza Prime": [
+          "Дестреза-прайм"
+        ],
+        "Deth Machine Rifle": [
+          "Смертомет"
+        ],
+        "Deth Machine Rifle Prime": [
+          "Смертомет-прайм"
+        ],
+        "Detron": [
+          "Детрон"
+        ],
+        "Dex Dakra": [
+          "Дакра-декс"
+        ],
+        "Dex Furis": [
+          "Фуріс-декс"
+        ],
+        "Dex Nikana": [
+          "Нікана-декс"
+        ],
+        "Dex Sybaris": [
+          "Сибаріс-декс"
+        ],
+        "Dokrahm": [
+          "Докрам"
+        ],
+        "Dorrclave": [
+          "Доррклав"
+        ],
+        "Dragon Nikana": [
+          "Драконяча нікана"
+        ],
+        "Drakgoon": [
+          "Дракґун"
+        ],
+        "Dread": [
+          "Жах"
+        ],
+        "Dual Cestra": [
+          "Парні Цестри"
+        ],
+        "Dual Cleavers": [
+          "Парні Сікачі"
+        ],
+        "Dual Coda Torxica": [
+          "Парні Торксики-кода"
+        ],
+        "Dual Decurion": [
+          "Парні Декуріони"
+        ],
+        "Dual Ether": [
+          "Парні Етери"
+        ],
+        "Dual Heat Swords": [
+          "Парні вогнемечі"
+        ],
+        "Dual Ichor": [
+          "Парні Іхори"
+        ],
+        "Dual Kamas": [
+          "Парні Ками"
+        ],
+        "Dual Kamas Prime": [
+          "Парні Ками-прайм"
+        ],
+        "Dual Keres": [
+          "Парні Кери"
+        ],
+        "Dual Keres Prime": [
+          "Парні Кери-прайм"
+        ],
+        "Dual Raza": [
+          "Парні Рази"
+        ],
+        "Dual Skana": [
+          "Парні Скани"
+        ],
+        "Dual Toxocyst": [
+          "Парні Токсоцисти"
+        ],
+        "Dual Viciss": [
+          "Парні Гнойовики"
+        ],
+        "Dual Zoren": [
+          "Парні Зорени"
+        ],
+        "Dual Zoren Prime": [
+          "Парні Зорени-прайм"
+        ],
+        "EFV-5 Jupiter": [
+          "ЕФВ-5 «Юпітер»"
+        ],
+        "EFV-8 Mars": [
+          "ЕФВ-8 «Марс»"
+        ],
+        "Edun": [
+          "Едун"
+        ],
+        "Ekhein": [
+          "Ехейн"
+        ],
+        "Embolist": [
+          "Емболіст"
+        ],
+        "Endura": [
+          "Ендура"
+        ],
+        "Enkaus": [
+          "Енкас"
+        ],
+        "Epitaph": [
+          "Епітафія"
+        ],
+        "Epitaph Prime": [
+          "Епітафія-прайм"
+        ],
+        "Ether Daggers": [
+          "Етерні кинджали"
+        ],
+        "Ether Reaper": [
+          "Етерний Жнець"
+        ],
+        "Ether Sword": [
+          "Етерний меч"
+        ],
+        "Euphona Prime": [
+          "Юфона-прайм"
+        ],
+        "Evensong": [
+          "Усеспів"
+        ],
+        "Exergis": [
+          "Екзерґіс"
+        ],
+        "Falcor": [
+          "Фалькор"
+        ],
+        "Fang": [
+          "Ікла"
+        ],
+        "Fang Prime": [
+          "Ікла-прайм"
+        ],
+        "Felarx": [
+          "Феларкс"
+        ],
+        "Ferrox": [
+          "Ферокс"
+        ],
+        "Fluctus": [
+          "Флукт"
+        ],
+        "Flux Rifle": [
+          "Потокова гвинтівка"
+        ],
+        "Fragor": [
+          "Фраґор"
+        ],
+        "Fragor Prime": [
+          "Фраґор-прайм"
+        ],
+        "Fulmin": [
+          "Фульмін"
+        ],
+        "Fulmin Prime": [
+          "Фульмін-прайм"
+        ],
+        "Furax": [
+          "Фуракс"
+        ],
+        "Furax Wraith": [
+          "Фуракс-примара"
+        ],
+        "Furis": [
+          "Фуріс"
+        ],
+        "Fusilai": [
+          "Фузілаї"
+        ],
+        "Galariak Prime": [
+          "Ґаларіак-прайм"
+        ],
+        "Galatine": [
+          "Ґалатин"
+        ],
+        "Galatine Prime": [
+          "Ґалатин-прайм"
+        ],
+        "Galvacord": [
+          "Гальвакорд"
+        ],
+        "Gammacor": [
+          "Гаммакор"
+        ],
+        "Gazal Machete": [
+          "Мачете «Газель»"
+        ],
+        "Gaze": [
+          "Вдива",
+          "Погляд"
+        ],
+        "Gaze (Primary)": [
+          "Вдива",
+          "Погляд"
+        ],
+        "Gaze (Secondary)": [
+          "Вдива",
+          "Погляд"
+        ],
+        "Ghoulsaw": [
+          "Гулепилка"
+        ],
+        "Glaive": [
+          "Глефа"
+        ],
+        "Glaive Prime": [
+          "Глефа-прайм"
+        ],
+        "Glaxion": [
+          "Ґлаксіо"
+        ],
+        "Glaxion Vandal": [
+          "Ґлаксіо-вандал"
+        ],
+        "Gorgon": [
+          "Горгона"
+        ],
+        "Gorgon Wraith": [
+          "Горгона-примара"
+        ],
+        "Gotva Prime": [
+          "Ґотва-прайм"
+        ],
+        "Grakata": [
+          "Ґраката"
+        ],
+        "Gram": [
+          "Ґрам"
+        ],
+        "Gram Prime": [
+          "Ґрам-прайм"
+        ],
+        "Grattler": [
+          "Ґратлер"
+        ],
+        "Grimoire": [
+          "Ґримуар"
+        ],
+        "Grinlok": [
+          "Ґрінлок"
+        ],
+        "Guandao": [
+          "Ґуаньдао"
+        ],
+        "Guandao Prime": [
+          "Ґуаньдао-прайм"
+        ],
+        "Gunsen": [
+          "Ґунсен"
+        ],
+        "Gunsen Prime": [
+          "Ґунсен-прайм"
+        ],
+        "Haalvu": [
+          "Гаальву"
+        ],
+        "Halikar": [
+          "Галікар"
+        ],
+        "Halikar Wraith": [
+          "Галікар-примара"
+        ],
+        "Harmony": [
+          "Harmony",
+          "Гармонія"
+        ],
+        "Harpak": [
+          "Гарпак"
+        ],
+        "Hate": [
+          "Ненависть"
+        ],
+        "Heat Dagger": [
+          "Вогнекинджал"
+        ],
+        "Heat Sword": [
+          "Вогнемеч"
+        ],
+        "Hek": [
+          "Гек"
+        ],
+        "Heliocor": [
+          "Геліокор"
+        ],
+        "Helstrum": [
+          "Гелструм"
+        ],
+        "Hema": [
+          "Гема"
+        ],
+        "Hespar": [
+          "Геспар"
+        ],
+        "Higasa": [
+          "Хіґаса"
+        ],
+        "Hikou": [
+          "Хіко"
+        ],
+        "Hikou Prime": [
+          "Хіко-прайм"
+        ],
+        "Hind": [
+          "Лань"
+        ],
+        "Hirudo": [
+          "Гірудо"
+        ],
+        "Hystrix": [
+          "Гістрікс"
+        ],
+        "Hystrix Prime": [
+          "Гістрікс-прайм"
+        ],
+        "Ignis": [
+          "Іґніс"
+        ],
+        "Ignis Wraith": [
+          "Іґніс-примара"
+        ],
+        "Imperator": [
+          "Імператор"
+        ],
+        "Imperator Vandal": [
+          "Імператор-вандал"
+        ],
+        "Innodem": [
+          "Іннодем"
+        ],
+        "Jat Kittag": [
+          "Джат Кіттаґ"
+        ],
+        "Jat Kusar": [
+          "Джат Кусар"
+        ],
+        "Javlok": [
+          "Джавлок"
+        ],
+        "Jaw Sword": [
+          "Щелепа"
+        ],
+        "Kama": [
+          "Кама"
+        ],
+        "Karak": [
+          "Карак"
+        ],
+        "Karak Wraith": [
+          "Карак-примара"
+        ],
+        "Karyst": [
+          "Карист"
+        ],
+        "Karyst Prime": [
+          "Карист-прайм"
+        ],
+        "Keratinos": [
+          "Кератини"
+        ],
+        "Kesheg": [
+          "Кешек"
+        ],
+        "Kestrel": [
+          "Боривітер"
+        ],
+        "Kestrel Prime": [
+          "Боривітер-прайм"
+        ],
+        "Knell": [
+          "Вісник Смерті"
+        ],
+        "Knell Prime": [
+          "Вісник Смерті-прайм"
+        ],
+        "Kogake": [
+          "Коґаке"
+        ],
+        "Kogake Prime": [
+          "Коґаке-прайм"
+        ],
+        "Kohm": [
+          "Ком"
+        ],
+        "Kohmak": [
+          "Комак"
+        ],
+        "Komorex": [
+          "Коморекс"
+        ],
+        "Kompressa": [
+          "Компресса"
+        ],
+        "Kompressa Prime": [
+          "Компресса-прайм"
+        ],
+        "Korrudo": [
+          "Корудо"
+        ],
+        "Korumm": [
+          "Корумм"
+        ],
+        "Kraken": [
+          "Кракен"
+        ],
+        "Kreska": [
+          "Креска"
+        ],
+        "Krohkur": [
+          "Крокур"
+        ],
+        "Kronen": [
+          "Кронен"
+        ],
+        "Kronen Prime": [
+          "Кронен-прайм"
+        ],
+        "Kronsh": [
+          "Кронш"
+        ],
+        "Kulstar": [
+          "Кулстар"
+        ],
+        "Kunai": [
+          "Кунаї"
+        ],
+        "Kuva Ayanga": [
+          "Аянга-кува"
+        ],
+        "Kuva Brakk": [
+          "Брак-кува"
+        ],
+        "Kuva Bramma": [
+          "Брама-кува"
+        ],
+        "Kuva Chakkhurr": [
+          "Чакхур-кува"
+        ],
+        "Kuva Drakgoon": [
+          "Дракґун-кува"
+        ],
+        "Kuva Ghoulsaw": [
+          "Гулепилка-кува"
+        ],
+        "Kuva Grattler": [
+          "Ґратлер-кува"
+        ],
+        "Kuva Hek": [
+          "Гек-кува"
+        ],
+        "Kuva Hind": [
+          "Лань-кува"
+        ],
+        "Kuva Karak": [
+          "Карак-кува"
+        ],
+        "Kuva Kohm": [
+          "Ком-кува"
+        ],
+        "Kuva Kraken": [
+          "Кракен-кува"
+        ],
+        "Kuva Nukor": [
+          "Нюкор-кува"
+        ],
+        "Kuva Ogris": [
+          "Оґріс-кува"
+        ],
+        "Kuva Quartakk": [
+          "Квартак-кува"
+        ],
+        "Kuva Seer": [
+          "Провидець-кува"
+        ],
+        "Kuva Shildeg": [
+          "Шильдеґ-кува"
+        ],
+        "Kuva Sobek": [
+          "Себек-кува"
+        ],
+        "Kuva Tonkor": [
+          "Тонкор-кува"
+        ],
+        "Kuva Twin Stubbas": [
+          "Парні Стаби-кува"
+        ],
+        "Kuva Zarr": [
+          "Зар-кува"
+        ],
+        "Lacera": [
+          "Лацера"
+        ],
+        "Lacerten": [
+          "Лацертен"
+        ],
+        "Laetum": [
+          "Лаєт"
+        ],
+        "Lanka": [
+          "Ланка"
+        ],
+        "Larkspur": [
+          "Сокирка"
+        ],
+        "Larkspur Prime": [
+          "Сокирка-прайм"
+        ],
+        "Laser Rifle": [
+          "Лазерна гвинтівка"
+        ],
+        "Lato": [
+          "Лато"
+        ],
+        "Lato Prime": [
+          "Лато-прайм"
+        ],
+        "Lato Vandal": [
+          "Лато-вандал"
+        ],
+        "Latron": [
+          "Пагуба"
+        ],
+        "Latron Prime": [
+          "Пагуба-прайм"
+        ],
+        "Latron Wraith": [
+          "Пагуба-примара"
+        ],
+        "Lecta": [
+          "Лекта"
+        ],
+        "Lenz": [
+          "Ленц"
+        ],
+        "Lesion": [
+          "Лезія"
+        ],
+        "Lex": [
+          "Лекс"
+        ],
+        "Lex Prime": [
+          "Лекс-прайм"
+        ],
+        "MK1-Bo": [
+          "Бо-MK1"
+        ],
+        "MK1-Braton": [
+          "Братон-MK1"
+        ],
+        "MK1-Furax": [
+          "Фуракс-MK1"
+        ],
+        "MK1-Furis": [
+          "Фуріс-MK1"
+        ],
+        "MK1-Kunai": [
+          "Кунаї-MK1"
+        ],
+        "MK1-Paris": [
+          "Паріс-MK1"
+        ],
+        "MK1-Strun": [
+          "Стран-MK1"
+        ],
+        "Machete": [
+          "Мачете"
+        ],
+        "Machete Wraith": [
+          "Мачете-примара"
+        ],
+        "Magistar": [
+          "Маґістар"
+        ],
+        "Magnus": [
+          "Магнус"
+        ],
+        "Magnus Prime": [
+          "Магнус-прайм"
+        ],
+        "Mandonel": [
+          "Мандонель"
+        ],
+        "Mara Detron": [
+          "Детрон-мара"
+        ],
+        "Marelok": [
+          "Мерлок"
+        ],
+        "Masseter": [
+          "Масетер"
+        ],
+        "Masseter Prime": [
+          "Масетер-прайм"
+        ],
+        "Mausolon": [
+          "Мавзолон"
+        ],
+        "Mewan": [
+          "Міван"
+        ],
+        "Mios": [
+          "Міос"
+        ],
+        "Mire": [
+          "Трясовина"
+        ],
+        "Miter": [
+          "Зріз"
+        ],
+        "Morgha": [
+          "Морґа"
+        ],
+        "Multron": [
+          "Мултрон"
+        ],
+        "Mutalist Cernos": [
+          "Цернос-муталіст"
+        ],
+        "Mutalist Quanta": [
+          "Кванта-муталіст"
+        ],
+        "Nagantaka": [
+          "Наґантака"
+        ],
+        "Nagantaka Prime": [
+          "Наґантака-прайм"
+        ],
+        "Nami Skyla": [
+          "Намі-Скила"
+        ],
+        "Nami Skyla Prime": [
+          "Намі-Скила-прайм"
+        ],
+        "Nami Solo": [
+          "Намі-Соло"
+        ],
+        "Nataruk": [
+          "Натарук"
+        ],
+        "Nepheri": [
+          "Нефері"
+        ],
+        "Nikana": [
+          "Нікана"
+        ],
+        "Nikana Prime": [
+          "Нікана-прайм"
+        ],
+        "Ninkondi": [
+          "Нінконді"
+        ],
+        "Ninkondi Prime": [
+          "Нінконді-прайм"
+        ],
+        "Nukor": [
+          "Нюкор"
+        ],
+        "Nunchasa": [
+          "Нунчxаса"
+        ],
+        "Obex": [
+          "Обекс"
+        ],
+        "Ocucor": [
+          "Окукор"
+        ],
+        "Ogris": [
+          "Оґріс"
+        ],
+        "Ohma": [
+          "Оми"
+        ],
+        "Okina": [
+          "Окіни"
+        ],
+        "Okina Prime": [
+          "Окіни-прайм"
+        ],
+        "Onos": [
+          "Оноз"
+        ],
+        "Ooltha": [
+          "Улта"
+        ],
+        "Opticor": [
+          "Оптикор"
+        ],
+        "Opticor Vandal": [
+          "Оптикор-вандал"
+        ],
+        "Orthos": [
+          "Ортос"
+        ],
+        "Orthos Prime": [
+          "Ортос-прайм"
+        ],
+        "Orvius": [
+          "Орвій"
+        ],
+        "Pandero": [
+          "Пандеро"
+        ],
+        "Pandero Prime": [
+          "Пандеро-прайм"
+        ],
+        "Pangolin Prime": [
+          "Панґолін-прайм"
+        ],
+        "Pangolin Sword": [
+          "Панґолін"
+        ],
+        "Panthera": [
+          "Пантера"
+        ],
+        "Panthera Prime": [
+          "Пантера-прайм"
+        ],
+        "Paracesis": [
+          "Парацес"
+        ],
+        "Paracyst": [
+          "Парацист"
+        ],
+        "Paris": [
+          "Паріс"
+        ],
+        "Paris Prime": [
+          "Паріс-прайм"
+        ],
+        "Pathocyst": [
+          "Патоцист"
+        ],
+        "Pennant": [
+          "Вимпел"
+        ],
+        "Penta": [
+          "Пента"
+        ],
+        "Perigale": [
+          "Периґейл"
+        ],
+        "Perigale Prime": [
+          "Периґейл-прайм"
+        ],
+        "Phaedra": [
+          "Федра"
+        ],
+        "Phage": [
+          "Phage",
+          "Фаг"
+        ],
+        "Phantasma": [
+          "Фантазма"
+        ],
+        "Phantasma Prime": [
+          "Фантазма-прайм"
+        ],
+        "Phenmor": [
+          "Фенмор"
+        ],
+        "Plague Keewar": [
+          "Моровий ківар"
+        ],
+        "Plague Kripath": [
+          "Моровий кріпат"
+        ],
+        "Plasma Sword": [
+          "Плазмовий меч"
+        ],
+        "Plinx": [
+          "Плінкс"
+        ],
+        "Pox": [
+          "Pox",
+          "Покс"
+        ],
+        "Praedos": [
+          "Пред"
+        ],
+        "Pride": [
+          "Гонор"
+        ],
+        "Prime Laser Rifle": [
+          "Лазерна гвинтівка-прайм"
+        ],
+        "Prisma Angstrum": [
+          "Анґструм-призма"
+        ],
+        "Prisma Burst Laser": [
+          "Шквальний лазер-призма"
+        ],
+        "Prisma Dual Cleavers": [
+          "Парні Сікачі-призма"
+        ],
+        "Prisma Dual Decurions": [
+          "Парні Декуріони-призма"
+        ],
+        "Prisma Gorgon": [
+          "Горгона-призма"
+        ],
+        "Prisma Grakata": [
+          "Ґраката-призма"
+        ],
+        "Prisma Grinlok": [
+          "Ґрінлок-призма"
+        ],
+        "Prisma Lenz": [
+          "Ленц-призма"
+        ],
+        "Prisma Machete": [
+          "Мачете-призма"
+        ],
+        "Prisma Obex": [
+          "Обекс-призма"
+        ],
+        "Prisma Ohma": [
+          "Оми-призма"
+        ],
+        "Prisma Skana": [
+          "Скана-призма"
+        ],
+        "Prisma Tetra": [
+          "Тетра-призма"
+        ],
+        "Prisma Twin Gremlins": [
+          "Парні Гремліни-призма"
+        ],
+        "Proboscis Cernos": [
+          "Цернос-пробоск"
+        ],
+        "Prova": [
+          "Прова"
+        ],
+        "Prova Vandal": [
+          "Прова-вандал"
+        ],
+        "Pulmonars": [
+          "Пульмонари"
+        ],
+        "Pupacyst": [
+          "Пупацист"
+        ],
+        "Purgator 1": [
+          "Чистильник-1"
+        ],
+        "Pyrana": [
+          "Пірана"
+        ],
+        "Pyrana Prime": [
+          "Пірана-прайм"
+        ],
+        "Quanta": [
+          "Кванта"
+        ],
+        "Quanta Vandal": [
+          "Кванта-вандал"
+        ],
+        "Quartakk": [
+          "Квартак"
+        ],
+        "Quassus": [
+          "Квас"
+        ],
+        "Quassus Prime": [
+          "Квас-прайм"
+        ],
+        "Quatz": [
+          "Квац"
+        ],
+        "Quellor": [
+          "Упокорювач"
+        ],
+        "Rabvee": [
+          "Рабві"
+        ],
+        "Rakta Ballistica": [
+          "Балістика-ракта"
+        ],
+        "Rakta Cernos": [
+          "Цернос-ракта"
+        ],
+        "Rakta Dark Dagger": [
+          "Темний кинджал-ракта"
+        ],
+        "Rattleguts": [
+          "Череворіз"
+        ],
+        "Rattleguts (Primary)": [
+          "Череворіз"
+        ],
+        "Rattleguts (Secondary)": [
+          "Череворіз"
+        ],
+        "Rauta": [
+          "Раута"
+        ],
+        "Reaper Prime": [
+          "Жнець-прайм"
+        ],
+        "Reconifex": [
+          "Розвідниця"
+        ],
+        "Redeemer": [
+          "Визволитель"
+        ],
+        "Redeemer Prime": [
+          "Визволитель-прайм"
+        ],
+        "Riot-848": [
+          "Бунт-848"
+        ],
+        "Ripkas": [
+          "Рвачі"
+        ],
+        "Rubico": [
+          "Рубіко"
+        ],
+        "Rubico Prime": [
+          "Рубіко-прайм"
+        ],
+        "Rumblejack": [
+          "Рамблджек"
+        ],
+        "Ruvox": [
+          "Рувокс"
+        ],
+        "Sagek Prime": [
+          "Саґек-прайм"
+        ],
+        "Sampotes": [
+          "Сампот"
+        ],
+        "Sancti Castanas": [
+          "Кастаньяс-санкті"
+        ],
+        "Sancti Magistar": [
+          "Маґістар-санкті"
+        ],
+        "Sancti Tigris": [
+          "Тигріс-санкті"
+        ],
+        "Sarofang": [
+          "Ікло Сароса"
+        ],
+        "Sarofang Prime": [
+          "Ікло Сароса-прайм"
+        ],
+        "Sarpa": [
+          "Зарпа"
+        ],
+        "Scindo": [
+          "Скіндо"
+        ],
+        "Scindo Prime": [
+          "Скіндо-прайм"
+        ],
+        "Scoliac": [
+          "Сколіак"
+        ],
+        "Scourge": [
+          "Бич"
+        ],
+        "Scourge Prime": [
+          "Бич-прайм"
+        ],
+        "Scyotid": [
+          "Сайотид"
+        ],
+        "Secura Dual Cestra": [
+          "Парні Цестри-секура"
+        ],
+        "Secura Lecta": [
+          "Лекта-секура"
+        ],
+        "Secura Penta": [
+          "Пента-секура"
+        ],
+        "Seer": [
+          "Провидець"
+        ],
+        "Sepfahn": [
+          "Сепфан"
+        ],
+        "Sepulcrum": [
+          "Могильник"
+        ],
+        "Serro": [
+          "Серро"
+        ],
+        "Shaku": [
+          "Шаку"
+        ],
+        "Shedu": [
+          "Шеду"
+        ],
+        "Sheev": [
+          "Шив"
+        ],
+        "Sibear": [
+          "Сибір"
+        ],
+        "Sicarus": [
+          "Сикар"
+        ],
+        "Sicarus Prime": [
+          "Сикар-прайм"
+        ],
+        "Sigma & Octantis": [
+          "Сигма й Октант"
+        ],
+        "Silva & Aegis": [
+          "Сильва й Еґіда"
+        ],
+        "Silva & Aegis Prime": [
+          "Сильва й Еґіда-прайм"
+        ],
+        "Simulor": [
+          "Симулор"
+        ],
+        "Skana": [
+          "Скана"
+        ],
+        "Skana Prime": [
+          "Скана-прайм"
+        ],
+        "Skiajati": [
+          "Ск'яджаті"
+        ],
+        "Slaytra": [
+          "Слейтра"
+        ],
+        "Snipetron": [
+          "Снайптрон"
+        ],
+        "Snipetron Vandal": [
+          "Снайптрон-вандал"
+        ],
+        "Sobek": [
+          "Себек"
+        ],
+        "Soma": [
+          "Сома"
+        ],
+        "Soma Prime": [
+          "Сома-прайм"
+        ],
+        "Sonicor": [
+          "Сонікор"
+        ],
+        "Spectra": [
+          "Спектра"
+        ],
+        "Spectra Vandal": [
+          "Спектра-вандал"
+        ],
+        "Spinnerex": [
+          "Спіннерекс"
+        ],
+        "Spira": [
+          "Спіра"
+        ],
+        "Spira Prime": [
+          "Спіра-прайм"
+        ],
+        "Sporelacer": [
+          "Спороносець"
+        ],
+        "Sporelacer (Primary)": [
+          "Спороносець"
+        ],
+        "Sporelacer (Secondary)": [
+          "Спороносець"
+        ],
+        "Sporothrix": [
+          "Споротрикс"
+        ],
+        "Stahlta": [
+          "Стальта"
+        ],
+        "Staticor": [
+          "Статикор"
+        ],
+        "Steflos": [
+          "Стефлос"
+        ],
+        "Steflos Prime": [
+          "Стефлос-прайм"
+        ],
+        "Stinger": [
+          "Stinger",
+          "Жало"
+        ],
+        "Stradavar": [
+          "Страдавар"
+        ],
+        "Stradavar Prime": [
+          "Страдавар-прайм"
+        ],
+        "Stropha": [
+          "Строфа"
+        ],
+        "Strun": [
+          "Стран"
+        ],
+        "Strun Prime": [
+          "Стран-прайм"
+        ],
+        "Strun Wraith": [
+          "Стран-примара"
+        ],
+        "Stubba": [
+          "Стаба"
+        ],
+        "Stug": [
+          "Штуґ"
+        ],
+        "Sun & Moon": [
+          "Сонце й Місяць"
+        ],
+        "Supra": [
+          "Супра"
+        ],
+        "Supra Vandal": [
+          "Супра-вандал"
+        ],
+        "Sweeper": [
+          "Зачищувач"
+        ],
+        "Sweeper Prime": [
+          "Зачищувач-прайм"
+        ],
+        "Syam": [
+          "Ш'ям"
+        ],
+        "Sybaris": [
+          "Сибаріс"
+        ],
+        "Sybaris Prime": [
+          "Сибаріс-прайм"
+        ],
+        "Sydon": [
+          "Сейдон"
+        ],
+        "Synapse": [
+          "Синапс"
+        ],
+        "Synoid Gammacor": [
+          "Гаммакор-синоїд"
+        ],
+        "Synoid Heliocor": [
+          "Геліокор-синоїд"
+        ],
+        "Synoid Simulor": [
+          "Симулор-синоїд"
+        ],
+        "Tak & Lug": [
+          "Так і Лаґ"
+        ],
+        "Talons": [
+          "Пазурі"
+        ],
+        "Tatsu": [
+          "Татсу"
+        ],
+        "Tatsu Prime": [
+          "Татсу-прайм"
+        ],
+        "Tazicor": [
+          "Тазікор"
+        ],
+        "Tekko": [
+          "Текко"
+        ],
+        "Tekko Prime": [
+          "Текко-прайм"
+        ],
+        "Telos Akbolto": [
+          "Акболто-телос"
+        ],
+        "Telos Boltace": [
+          "Болтейс-телос"
+        ],
+        "Telos Boltor": [
+          "Болтор-телос"
+        ],
+        "Tenet Agendus": [
+          "Порядок-догмат"
+        ],
+        "Tenet Arca Plasmor": [
+          "Арка-Плазмор-догмат"
+        ],
+        "Tenet Cycron": [
+          "Цикрон-догмат"
+        ],
+        "Tenet Detron": [
+          "Детрон-догмат"
+        ],
+        "Tenet Diplos": [
+          "Дипломат-догмат"
+        ],
+        "Tenet Envoy": [
+          "Посланець-догмат"
+        ],
+        "Tenet Exec": [
+          "Виконавець-догмат"
+        ],
+        "Tenet Ferrox": [
+          "Ферокс-догмат"
+        ],
+        "Tenet Flux Rifle": [
+          "Потокова гвинтівка-догмат"
+        ],
+        "Tenet Glaxion": [
+          "Ґлаксіо-догмат"
+        ],
+        "Tenet Grigori": [
+          "Григорій-догмат"
+        ],
+        "Tenet Livia": [
+          "Лівія-догмат"
+        ],
+        "Tenet Plinx": [
+          "Плінкс-догмат"
+        ],
+        "Tenet Quanta": [
+          "Кванта-догмат"
+        ],
+        "Tenet Spirex": [
+          "Спайрекс-догмат"
+        ],
+        "Tenet Tetra": [
+          "Тетра-догмат"
+        ],
+        "Tenora": [
+          "Тенора"
+        ],
+        "Tenora Prime": [
+          "Тенора-прайм"
+        ],
+        "Tetra": [
+          "Тетра"
+        ],
+        "Thalys": [
+          "Талис"
+        ],
+        "Thornbak": [
+          "Шиповиця"
+        ],
+        "Tiberon": [
+          "Тіберон"
+        ],
+        "Tiberon Prime": [
+          "Тіберон-прайм"
+        ],
+        "Tigris": [
+          "Тигріс"
+        ],
+        "Tigris Prime": [
+          "Тигріс-прайм"
+        ],
+        "Tipedo": [
+          "Тіпедо"
+        ],
+        "Tipedo Prime": [
+          "Тіпедо-прайм"
+        ],
+        "Tombfinger": [
+          "Бецман"
+        ],
+        "Tombfinger (Primary)": [
+          "Бецман"
+        ],
+        "Tombfinger (Secondary)": [
+          "Бецман"
+        ],
+        "Tonbo": [
+          "Тонбо"
+        ],
+        "Tonkkatt": [
+          "Тонкатти"
+        ],
+        "Tonkor": [
+          "Тонкор"
+        ],
+        "Torid": [
+          "Торид"
+        ],
+        "Trumna": [
+          "Трунарка"
+        ],
+        "Trumna Prime": [
+          "Трунарка-прайм"
+        ],
+        "Twin Basolk": [
+          "Парні Базолки"
+        ],
+        "Twin Grakatas": [
+          "Парні Ґракати"
+        ],
+        "Twin Gremlins": [
+          "Парні Гремліни"
+        ],
+        "Twin Kohmak": [
+          "Парні Комаки"
+        ],
+        "Twin Krohkur": [
+          "Парні Крокури"
+        ],
+        "Twin Rogga": [
+          "Парні Рогги"
+        ],
+        "Twin Vipers": [
+          "Парні Гадюки"
+        ],
+        "Twin Vipers Wraith": [
+          "Парні Гадюки-примари"
+        ],
+        "Tysis": [
+          "Тайзис"
+        ],
+        "Vadarya Prime": [
+          "Вадар'я-прайм"
+        ],
+        "Vastilok": [
+          "Вастилок"
+        ],
+        "Vasto": [
+          "Васто"
+        ],
+        "Vasto Prime": [
+          "Васто-прайм"
+        ],
+        "Vaykor Hek": [
+          "Гек-вейкор"
+        ],
+        "Vaykor Marelok": [
+          "Мерлок-вейкор"
+        ],
+        "Vaykor Sydon": [
+          "Сейдон-вейкор"
+        ],
+        "Vectis": [
+          "Вектис"
+        ],
+        "Vectis Prime": [
+          "Вектис-прайм"
+        ],
+        "Veldt": [
+          "Велд"
+        ],
+        "Velocitus": [
+          "Велоцит"
+        ],
+        "Velox": [
+          "Велокс"
+        ],
+        "Velox Prime": [
+          "Велокс-прайм"
+        ],
+        "Venato": [
+          "Венато"
+        ],
+        "Venato Prime": [
+          "Венато-прайм"
+        ],
+        "Venka": [
+          "Венка"
+        ],
+        "Venka Prime": [
+          "Венка-прайм"
+        ],
+        "Verdilac": [
+          "Вердилак"
+        ],
+        "Verglas": [
+          "Верґлас"
+        ],
+        "Verglas Prime": [
+          "Верґлас-прайм"
+        ],
+        "Vericres": [
+          "Верікрес"
+        ],
+        "Vermisplicer": [
+          "Розділювач"
+        ],
+        "Vermisplicer (Primary)": [
+          "Розділювач"
+        ],
+        "Vermisplicer (Secondary)": [
+          "Розділювач"
+        ],
+        "Vesper 77": [
+          "Веспер-77"
+        ],
+        "Vinquibus": [
+          "Вінквіб"
+        ],
+        "Vinquibus (Melee)": [
+          "Вінквіб",
+          "Вінквіб (як Холодна Зброя)"
+        ],
+        "Vinquibus (Rifle)": [
+          "Вінквіб"
+        ],
+        "Viper": [
+          "Viper",
+          "Гадюка"
+        ],
+        "Viper Wraith": [
+          "Гадюка-примара"
+        ],
+        "Vitrica": [
+          "Вітріка"
+        ],
+        "Volnus": [
+          "Вольн"
+        ],
+        "Volnus Prime": [
+          "Вольн-прайм"
+        ],
+        "Vulcax": [
+          "Вулкакс"
+        ],
+        "Vulkar": [
+          "Вулкар"
+        ],
+        "Vulkar Wraith": [
+          "Вулкар-примара"
+        ],
+        "Vulklok": [
+          "Вулклок"
+        ],
+        "War": [
+          "War",
+          "Війна"
+        ],
+        "War Prime": [
+          "Війна-прайм"
+        ],
+        "Wolf Sledge": [
+          "Вовча Довбня"
+        ],
+        "Wrath": [
+          "Гнів"
+        ],
+        "Xoris": [
+          "Зоріс"
+        ],
+        "Zakti": [
+          "Закті"
+        ],
+        "Zakti Prime": [
+          "Закті-прайм"
+        ],
+        "Zarr": [
+          "Зар"
+        ],
+        "Zenistar": [
+          "Зеністар"
+        ],
+        "Zenith": [
+          "Зеніт"
+        ],
+        "Zhuge": [
+          "Чжуґе"
+        ],
+        "Zhuge Prime": [
+          "Чжуґе-прайм"
+        ],
+        "Zylok": [
+          "Зайлок"
+        ],
+        "Zylok Prime": [
+          "Зайлок-прайм"
+        ],
+        "Zymos": [
+          "Зим"
+        ]
+      },
+      "stats": [
+        {
+          "id": "puncture",
+          "name": "Puncture",
+          "unit": "%",
+          "template": "|val| % до <DT_PUNCTURE_COLOR>пробивної шкоди"
+        },
+        {
+          "id": "critical-chance",
+          "name": "Critical Chance",
+          "unit": "%",
+          "template": "|val| % до ймовірності критичної шкоди."
+        },
+        {
+          "id": "critical-chance",
+          "name": "Critical Chance",
+          "unit": "%",
+          "template": "|val| % до ймовірності критичної шкоди (х2 для потужних ударів)"
+        },
+        {
+          "id": "critical-damage",
+          "name": "Critical Damage",
+          "unit": "%",
+          "template": "|val| % до критичної шкоди"
+        },
+        {
+          "id": "electricity",
+          "name": "Electricity",
+          "unit": "%",
+          "template": "|val| % до <DT_ELECTRICITY_COLOR>електричної шкоди"
+        },
+        {
+          "id": "heat",
+          "name": "Heat",
+          "unit": "%",
+          "template": "|val| % до <DT_FIRE_COLOR>термічної шкоди"
+        },
+        {
+          "id": "fire-rate-attack-speed",
+          "name": "Fire Rate",
+          "unit": "%",
+          "template": "|val| % до швидкострільності (подвоюється для луків)"
+        },
+        {
+          "id": "fire-rate-attack-speed",
+          "name": "Fire Rate",
+          "unit": "%",
+          "template": "|val| % до швидкострільності"
+        },
+        {
+          "id": "cold",
+          "name": "Cold",
+          "unit": "%",
+          "template": "|val| % до <DT_FREEZE_COLOR>крижаної шкоди"
+        },
+        {
+          "id": "impact",
+          "name": "Impact",
+          "unit": "%",
+          "template": "|val| % до <DT_IMPACT_COLOR>ударної шкоди"
+        },
+        {
+          "id": "status-duration",
+          "name": "Status Duration",
+          "unit": "%",
+          "template": "|val| % до тривалості ефекту стану"
+        },
+        {
+          "id": "slash",
+          "name": "Slash",
+          "unit": "%",
+          "template": "|val| % до <DT_SLASH_COLOR>різальної шкоди"
+        },
+        {
+          "id": "status-chance",
+          "name": "Status Chance",
+          "unit": "%",
+          "template": "|val| % до ймовірності накладання ефекту стану"
+        },
+        {
+          "id": "toxin",
+          "name": "Toxin",
+          "unit": "%",
+          "template": "|val| % <DT_POISON_COLOR>токсичної шкоди"
+        },
+        {
+          "id": "ammo-maximum",
+          "name": "Ammo Maximum",
+          "unit": "%",
+          "template": "|val| % до максимуму боєзапасу"
+        },
+        {
+          "id": "magazine-capacity",
+          "name": "Magazine Capacity",
+          "unit": "%",
+          "template": "|val| % до місткості магазину"
+        },
+        {
+          "id": "damage",
+          "name": "Damage",
+          "unit": "%",
+          "template": "|val| % до завдаваної шкоди"
+        },
+        {
+          "id": "damage",
+          "name": "Damage",
+          "unit": "%",
+          "template": "|val| % до шкоди"
+        },
+        {
+          "id": "multishot",
+          "name": "Multishot",
+          "unit": "%",
+          "template": "|val| % до мультипострілу"
+        },
+        {
+          "id": "punch-through",
+          "name": "Punch Through",
+          "unit": "m",
+          "template": "|val| до пробивання"
+        },
+        {
+          "id": "weapon-recoil",
+          "name": "Weapon Recoil",
+          "unit": "%",
+          "template": "|val| % до віддачі"
+        },
+        {
+          "id": "weapon-recoil",
+          "name": "Weapon Recoil",
+          "unit": "%",
+          "template": "|val| % до віддачі."
+        },
+        {
+          "id": "reload-speed",
+          "name": "Reload Speed",
+          "unit": "%",
+          "template": "|val| % до швидкості перезаряджання"
+        },
+        {
+          "id": "damage-to-corpus",
+          "name": "Damage to Corpus",
+          "unit": "x",
+          "template": "|val| до завдаваної шкоди Корпусу"
+        },
+        {
+          "id": "damage-to-grineer",
+          "name": "Damage to Grineer",
+          "unit": "x",
+          "template": "|val| до завдаваної шкоди ґрінерам"
+        },
+        {
+          "id": "zoom",
+          "name": "Zoom",
+          "unit": "%",
+          "template": "|val| % до наближення"
+        },
+        {
+          "id": "damage-to-infested",
+          "name": "Damage to Infested",
+          "unit": "x",
+          "template": "|val| до завдаваної шкоди зараженим"
+        },
+        {
+          "id": "projectile-speed",
+          "name": "Projectile Speed",
+          "unit": "%",
+          "template": "|val| % до швидкості польоту снарядів"
+        },
+        {
+          "id": "melee-damage",
+          "name": "Melee Damage",
+          "unit": "%",
+          "template": "|val| % до шкоди від атак ближнього бою"
+        },
+        {
+          "id": "fire-rate-attack-speed",
+          "name": "Fire Rate",
+          "unit": "%",
+          "template": "|val| % до швидкості атаки"
+        },
+        {
+          "id": "combo-duration",
+          "name": "Combo Duration",
+          "unit": "s",
+          "template": "|val| с до тривалості серії."
+        },
+        {
+          "id": "combo-duration",
+          "name": "Combo Duration",
+          "unit": "s",
+          "template": "|val| с до тривалості серії"
+        },
+        {
+          "id": "critical-chance-for-slide-attack",
+          "name": "Critical Chance for Slide Attack",
+          "unit": "%",
+          "template": "|STAT1| % до ймовірності завдати критичної шкоди ударами під час ковзання."
+        },
+        {
+          "id": "range",
+          "name": "Range",
+          "unit": "m",
+          "template": "|val| до досяжності"
+        },
+        {
+          "id": "finisher-damage",
+          "name": "Finisher Damage",
+          "unit": "%",
+          "template": "|val| % до шкоди добиванням"
+        },
+        {
+          "id": "heavy-attack-efficiency",
+          "name": "Heavy Attack Efficiency",
+          "unit": "%",
+          "template": "|val| % до дієвості потужного удару"
+        },
+        {
+          "id": "initial-combo",
+          "name": "Initial Combo",
+          "unit": "",
+          "template": "|val| до початкового показника серії"
+        },
+        {
+          "id": "chance-to-gain-combo-count",
+          "name": "Chance to Gain Combo Count",
+          "unit": "%",
+          "template": "|val| % до ймовірності запустити лічильник серії"
+        },
+        {
+          "id": "additional-combo-count-chance",
+          "name": "Additional Combo Count Chance",
+          "unit": "%",
+          "template": "|val| % до додаткової ймовірності зарахування серії."
+        },
+        {
+          "id": "blast",
+          "name": "Blast",
+          "unit": "%",
+          "template": "|val| % до <DT_EXPLOSION_COLOR>вибухової шкоди"
+        },
+        {
+          "id": "corrosive",
+          "name": "Corrosive",
+          "unit": "%",
+          "template": "|val| % до <DT_CORROSIVE_COLOR>корозійної шкоди"
+        },
+        {
+          "id": "gas",
+          "name": "Gas",
+          "unit": "%",
+          "template": "|val| % до <DT_GAS_COLOR>газової шкоди"
+        },
+        {
+          "id": "magnetic",
+          "name": "Magnetic",
+          "unit": "%",
+          "template": "|val| % до <DT_MAGNETIC_COLOR>магнетичної шкоди"
+        },
+        {
+          "id": "radiation",
+          "name": "Radiation",
+          "unit": "%",
+          "template": "|val| % до <DT_RADIATION_COLOR>радіаційної шкоди"
+        },
+        {
+          "id": "viral",
+          "name": "Viral",
+          "unit": "%",
+          "template": "|val| % до <DT_VIRAL_COLOR>вірусної шкоди"
+        },
+        {
+          "id": "damage-to-orokin",
+          "name": "Damage to Orokin",
+          "unit": "x",
+          "template": "|val| до завдаваної шкоди орокінам"
+        },
+        {
+          "id": "damage-to-techrot",
+          "name": "Damage to Techrot",
+          "unit": "x",
+          "template": "|val| до завдаваної шкоди техногнилі"
+        },
+        {
+          "id": "damage-to-scaldra",
+          "name": "Damage to Scaldra",
+          "unit": "x",
+          "template": "|val| до завдаваної шкоди «Скальдрі»"
+        },
+        {
+          "id": "weakpoint-damage",
+          "name": "Weakpoint Damage",
+          "unit": "%",
+          "template": "|val| % до шкоди слабким місцям"
+        },
+        {
+          "id": "weakpoint-critical-chance",
+          "name": "Weakpoint Critical Chance",
+          "unit": "%",
+          "template": "|val| % до ймовірності критичної шкоди слабким місцям"
+        },
+        {
+          "id": "ammo-efficiency",
+          "name": "Ammo Efficiency",
+          "unit": "%",
+          "template": "|val| % до дієвості набоїв"
+        },
+        {
+          "id": "magazine-reload-while-holstered",
+          "name": "Magazine Reload While Holstered",
+          "unit": "%",
+          "template": "|val| % до перезаряджання магазину/с, коли в руках інша зброя"
+        },
+        {
+          "id": "status-damage",
+          "name": "Status Damage",
+          "unit": "%",
+          "template": "|val| % до шкоди від ефекту стану"
+        },
+        {
+          "id": "heavy-attack-damage",
+          "name": "Heavy Attack Damage",
+          "unit": "%",
+          "template": "|val| % до шкоди від потужних ударів"
+        },
+        {
+          "id": "heavy-attack-windup-speed",
+          "name": "Heavy Attack Windup Speed",
+          "unit": "%",
+          "template": "|val| % до швидкості підготовки потужного удару"
+        },
+        {
+          "id": "parry-angle",
+          "name": "Parry Angle",
+          "unit": "%",
+          "template": "|val| % до кута парирування"
+        },
+        {
+          "id": "parry-angle",
+          "name": "Parry Angle",
+          "unit": "°",
+          "template": "|val| до кута парирування"
+        },
+        {
+          "id": "slam-damage",
+          "name": "Slam Damage",
+          "unit": "%",
+          "template": "|val|% до шкоди від удару по землі"
+        }
+      ],
+      "statLabels": {
+        "Puncture": "до пробивної шкоди",
+        "Critical Chance": "до ймовірності критичної шкоди.",
+        "Critical Damage": "до критичної шкоди",
+        "Electricity": "до електричної шкоди",
+        "Heat": "до термічної шкоди",
+        "Fire Rate": "до швидкострільності",
+        "Cold": "до крижаної шкоди",
+        "Impact": "до ударної шкоди",
+        "Status Duration": "до тривалості ефекту стану",
+        "Slash": "до різальної шкоди",
+        "Status Chance": "до ймовірності накладання ефекту стану",
+        "Toxin": "токсичної шкоди",
+        "Ammo Maximum": "до максимуму боєзапасу",
+        "Magazine Capacity": "до місткості магазину",
+        "Damage": "до завдаваної шкоди",
+        "Multishot": "до мультипострілу",
+        "Punch Through": "до пробивання",
+        "Weapon Recoil": "до віддачі",
+        "Reload Speed": "до швидкості перезаряджання",
+        "Damage to Corpus": "до завдаваної шкоди Корпусу",
+        "Damage to Grineer": "до завдаваної шкоди ґрінерам",
+        "Zoom": "до наближення",
+        "Damage to Infested": "до завдаваної шкоди зараженим",
+        "Projectile Speed": "до швидкості польоту снарядів",
+        "Melee Damage": "до шкоди від атак ближнього бою",
+        "Combo Duration": "с до тривалості серії.",
+        "Critical Chance for Slide Attack": "до ймовірності завдати критичної шкоди ударами під час ковзання.",
+        "Range": "до досяжності",
+        "Finisher Damage": "до шкоди добиванням",
+        "Heavy Attack Efficiency": "до дієвості потужного удару",
+        "Initial Combo": "до початкового показника серії",
+        "Chance to Gain Combo Count": "до ймовірності запустити лічильник серії",
+        "Additional Combo Count Chance": "до додаткової ймовірності зарахування серії.",
+        "Blast": "до вибухової шкоди",
+        "Corrosive": "до корозійної шкоди",
+        "Gas": "до газової шкоди",
+        "Magnetic": "до магнетичної шкоди",
+        "Radiation": "до радіаційної шкоди",
+        "Viral": "до вірусної шкоди",
+        "Damage to Orokin": "до завдаваної шкоди орокінам",
+        "Damage to Techrot": "до завдаваної шкоди техногнилі",
+        "Damage to Scaldra": "до завдаваної шкоди «Скальдрі»",
+        "Weakpoint Damage": "до шкоди слабким місцям",
+        "Weakpoint Critical Chance": "до ймовірності критичної шкоди слабким місцям",
+        "Ammo Efficiency": "до дієвості набоїв",
+        "Magazine Reload While Holstered": "до перезаряджання магазину/с, коли в руках інша зброя",
+        "Status Damage": "до шкоди від ефекту стану",
+        "Heavy Attack Damage": "до шкоди від потужних ударів",
+        "Heavy Attack Windup Speed": "до швидкості підготовки потужного удару",
+        "Parry Angle": "до кута парирування",
+        "Slam Damage": "до шкоди від удару по землі",
+        "Attack Speed": "Швидкість атаки"
+      },
+      "ui": {
+        "fits": "ПІДХОДИТЬ",
+        "confirm": "ПІДТВЕРДИТИ",
+        "cycle": "Змінити за |PRICE|<KUVA>",
+        "footer": "Майстерність: |LEVEL|",
+        "yes": "ТАК",
+        "no": "НІ",
+        "ranked": "ПОКАЗУВАТИ ПОЛІПШЕНІ <CHECKMARK>"
+      }
+    },
+    "th": {
+      "label": "ไทย",
+      "recognizer": "th-TH",
+      "weapons": {
+        "AX-52": [
+          "AX-52"
+        ],
+        "Acceltra": [
+          "Acceltra"
+        ],
+        "Acceltra Prime": [
+          "Acceltra Prime"
+        ],
+        "Ack & Brunt": [
+          "Ack & Brunt"
+        ],
+        "Acrid": [
+          "Acrid"
+        ],
+        "Aegrit": [
+          "Aegrit"
+        ],
+        "Aeolak": [
+          "Aeolak"
+        ],
+        "Afentis": [
+          "Afentis"
+        ],
+        "Afentis Prime": [
+          "Afentis Prime"
+        ],
+        "Afuris": [
+          "Afuris"
+        ],
+        "Afuris Prime": [
+          "Afuris Prime"
+        ],
+        "Akarius": [
+          "Akarius"
+        ],
+        "Akarius Prime": [
+          "Akarius Prime"
+        ],
+        "Akaten": [
+          "Akaten"
+        ],
+        "Akbolto": [
+          "Akbolto"
+        ],
+        "Akbolto Prime": [
+          "Akbolto Prime"
+        ],
+        "Akbronco": [
+          "Akbronco"
+        ],
+        "Akbronco Prime": [
+          "Akbronco Prime"
+        ],
+        "Akjagara": [
+          "Akjagara"
+        ],
+        "Akjagara Prime": [
+          "Akjagara Prime"
+        ],
+        "Aklato": [
+          "Aklato"
+        ],
+        "Aklex": [
+          "Aklex"
+        ],
+        "Aklex Prime": [
+          "Aklex Prime"
+        ],
+        "Akmagnus": [
+          "Akmagnus"
+        ],
+        "Akmagnus Prime": [
+          "Akmagnus Prime"
+        ],
+        "Aksomati": [
+          "Aksomati"
+        ],
+        "Aksomati Prime": [
+          "Aksomati Prime"
+        ],
+        "Aksondol": [
+          "Aksondol"
+        ],
+        "Akstiletto": [
+          "Akstiletto"
+        ],
+        "Akstiletto Prime": [
+          "Akstiletto Prime"
+        ],
+        "Akvasto": [
+          "Akvasto"
+        ],
+        "Akvasto Prime": [
+          "Akvasto Prime"
+        ],
+        "Akzani": [
+          "Akzani"
+        ],
+        "Alternox": [
+          "Alternox"
+        ],
+        "Alternox Prime": [
+          "Alternox Prime"
+        ],
+        "Amanata": [
+          "Amanata"
+        ],
+        "Ambassador": [
+          "Ambassador",
+          "เอกอัครราชทูต"
+        ],
+        "Amphis": [
+          "Amphis"
+        ],
+        "Amprex": [
+          "Amprex"
+        ],
+        "Angstrum": [
+          "Angstrum"
+        ],
+        "Anku": [
+          "Anku"
+        ],
+        "Ankyros": [
+          "Ankyros"
+        ],
+        "Ankyros Prime": [
+          "Ankyros Prime"
+        ],
+        "Arbucep": [
+          "Arbucep"
+        ],
+        "Arca Plasmor": [
+          "Arca Plasmor"
+        ],
+        "Arca Scisco": [
+          "Arca Scisco"
+        ],
+        "Arca Titron": [
+          "Arca Titron"
+        ],
+        "Argo & Vel": [
+          "Argo & Vel"
+        ],
+        "Argonak": [
+          "Argonak"
+        ],
+        "Artax": [
+          "Artax"
+        ],
+        "Arum Spinosa": [
+          "Arum Spinosa"
+        ],
+        "Astilla": [
+          "Astilla"
+        ],
+        "Astilla Prime": [
+          "Astilla Prime"
+        ],
+        "Athodai": [
+          "Athodai"
+        ],
+        "Athodai Prime": [
+          "Athodai Prime"
+        ],
+        "Atomos": [
+          "Atomos"
+        ],
+        "Atterax": [
+          "Atterax"
+        ],
+        "Attica": [
+          "Attica"
+        ],
+        "Azima": [
+          "Azima"
+        ],
+        "Azothane": [
+          "Azothane"
+        ],
+        "Balla": [
+          "Balla"
+        ],
+        "Ballistica": [
+          "Ballistica"
+        ],
+        "Ballistica Prime": [
+          "Ballistica Prime"
+        ],
+        "Basmu": [
+          "Basmu"
+        ],
+        "Batoten": [
+          "Batoten"
+        ],
+        "Battacor": [
+          "Battacor"
+        ],
+        "Baza": [
+          "Baza"
+        ],
+        "Baza Prime": [
+          "Baza Prime"
+        ],
+        "Bo": [
+          "Bo"
+        ],
+        "Bo Prime": [
+          "Bo Prime"
+        ],
+        "Boar": [
+          "Boar"
+        ],
+        "Boar Prime": [
+          "Boar Prime"
+        ],
+        "Boltace": [
+          "Boltace"
+        ],
+        "Bolto": [
+          "Bolto"
+        ],
+        "Boltor": [
+          "Boltor"
+        ],
+        "Boltor Prime": [
+          "Boltor Prime"
+        ],
+        "Brakk": [
+          "Brakk"
+        ],
+        "Braton": [
+          "Braton"
+        ],
+        "Braton Prime": [
+          "Braton Prime"
+        ],
+        "Braton Vandal": [
+          "Braton Vandal"
+        ],
+        "Broken Scepter": [
+          "Broken Scepter"
+        ],
+        "Broken War": [
+          "Broken War"
+        ],
+        "Bronco": [
+          "Bronco"
+        ],
+        "Bronco Prime": [
+          "Bronco Prime"
+        ],
+        "Bubonico": [
+          "Bubonico"
+        ],
+        "Burst Laser": [
+          "Burst Laser"
+        ],
+        "Burst Laser Prime": [
+          "Burst Laser Prime"
+        ],
+        "Burston": [
+          "Burston"
+        ],
+        "Burston Prime": [
+          "Burston Prime"
+        ],
+        "Buzlok": [
+          "Buzlok"
+        ],
+        "Cadus": [
+          "Cadus"
+        ],
+        "Cantare": [
+          "Cantare"
+        ],
+        "Carmine Penta": [
+          "Carmine Penta"
+        ],
+        "Cassowar": [
+          "Cassowar"
+        ],
+        "Castanas": [
+          "Castanas"
+        ],
+        "Catabolyst": [
+          "Catabolyst"
+        ],
+        "Catchmoon": [
+          "Catchmoon"
+        ],
+        "Catchmoon (Primary)": [
+          "Catchmoon"
+        ],
+        "Catchmoon (Secondary)": [
+          "Catchmoon"
+        ],
+        "Caustacyst": [
+          "Caustacyst"
+        ],
+        "Cedo": [
+          "Cedo"
+        ],
+        "Cedo Prime": [
+          "Cedo Prime"
+        ],
+        "Ceramic Dagger": [
+          "Ceramic Dagger"
+        ],
+        "Cerata": [
+          "Cerata"
+        ],
+        "Cernos": [
+          "Cernos"
+        ],
+        "Cernos Prime": [
+          "Cernos Prime"
+        ],
+        "Cestra": [
+          "Cestra"
+        ],
+        "Ceti Lacera": [
+          "Ceti Lacera"
+        ],
+        "Cinta": [
+          "Cinta"
+        ],
+        "Cobra & Crane": [
+          "Cobra & Crane"
+        ],
+        "Cobra & Crane Prime": [
+          "Cobra & Crane Prime"
+        ],
+        "Coda Bassocyst": [
+          "Coda Bassocyst"
+        ],
+        "Coda Bubonico": [
+          "Coda Bubonico"
+        ],
+        "Coda Catabolyst": [
+          "Coda Catabolyst"
+        ],
+        "Coda Caustacyst": [
+          "Coda Caustacyst"
+        ],
+        "Coda Hema": [
+          "Coda Hema"
+        ],
+        "Coda Hirudo": [
+          "Coda Hirudo"
+        ],
+        "Coda Mire": [
+          "Coda Mire"
+        ],
+        "Coda Motovore": [
+          "Coda Motovore"
+        ],
+        "Coda Pathocyst": [
+          "Coda Pathocyst"
+        ],
+        "Coda Pox": [
+          "Coda Pox"
+        ],
+        "Coda Sporothrix": [
+          "Coda Sporothrix"
+        ],
+        "Coda Synapse": [
+          "Coda Synapse"
+        ],
+        "Coda Tysis": [
+          "Coda Tysis"
+        ],
+        "Convectrix": [
+          "Convectrix"
+        ],
+        "Corinth": [
+          "Corinth"
+        ],
+        "Corinth Prime": [
+          "Corinth Prime"
+        ],
+        "Cortege": [
+          "Cortege"
+        ],
+        "Corufell": [
+          "Corufell"
+        ],
+        "Corufell Prime": [
+          "Corufell Prime"
+        ],
+        "Corvas": [
+          "Corvas"
+        ],
+        "Corvas Prime": [
+          "Corvas Prime"
+        ],
+        "Cronus": [
+          "Cronus"
+        ],
+        "Cryotra": [
+          "Cryotra"
+        ],
+        "Cyanex": [
+          "Cyanex"
+        ],
+        "Cyath": [
+          "Cyath"
+        ],
+        "Cycron": [
+          "Cycron"
+        ],
+        "Cyngas": [
+          "Cyngas"
+        ],
+        "Daikyu": [
+          "Daikyu"
+        ],
+        "Daikyu Prime": [
+          "Daikyu Prime"
+        ],
+        "Dakra Prime": [
+          "Dakra Prime"
+        ],
+        "Dark Dagger": [
+          "Dark Dagger"
+        ],
+        "Dark Split-Sword": [
+          "Dark Split-Sword"
+        ],
+        "Dark Sword": [
+          "Dark Sword"
+        ],
+        "Deconstructor": [
+          "Deconstructor"
+        ],
+        "Deconstructor Prime": [
+          "Deconstructor Prime"
+        ],
+        "Dehtat": [
+          "Dehtat"
+        ],
+        "Dera": [
+          "Dera"
+        ],
+        "Dera Vandal": [
+          "Dera Vandal"
+        ],
+        "Despair": [
+          "Despair"
+        ],
+        "Destreza": [
+          "Destreza"
+        ],
+        "Destreza Prime": [
+          "Destreza Prime"
+        ],
+        "Deth Machine Rifle": [
+          "Deth Machine Rifle"
+        ],
+        "Deth Machine Rifle Prime": [
+          "Deth Machine Rifle Prime"
+        ],
+        "Detron": [
+          "Detron"
+        ],
+        "Dex Dakra": [
+          "Dex Dakra"
+        ],
+        "Dex Furis": [
+          "Dex Furis"
+        ],
+        "Dex Nikana": [
+          "Dex Nikana"
+        ],
+        "Dex Sybaris": [
+          "Dex Sybaris"
+        ],
+        "Dokrahm": [
+          "Dokrahm"
+        ],
+        "Dorrclave": [
+          "Dorrclave"
+        ],
+        "Dragon Nikana": [
+          "Dragon Nikana"
+        ],
+        "Drakgoon": [
+          "Drakgoon"
+        ],
+        "Dread": [
+          "Dread"
+        ],
+        "Dual Cestra": [
+          "Dual Cestra"
+        ],
+        "Dual Cleavers": [
+          "Dual Cleavers"
+        ],
+        "Dual Coda Torxica": [
+          "Dual Coda Torxica"
+        ],
+        "Dual Decurion": [
+          "Dual Decurion"
+        ],
+        "Dual Ether": [
+          "Dual Ether"
+        ],
+        "Dual Heat Swords": [
+          "Dual Heat Swords"
+        ],
+        "Dual Ichor": [
+          "Dual Ichor"
+        ],
+        "Dual Kamas": [
+          "Dual Kamas"
+        ],
+        "Dual Kamas Prime": [
+          "Dual Kamas Prime"
+        ],
+        "Dual Keres": [
+          "Dual Keres"
+        ],
+        "Dual Keres Prime": [
+          "Dual Keres Prime"
+        ],
+        "Dual Raza": [
+          "Dual Raza"
+        ],
+        "Dual Skana": [
+          "Dual Skana"
+        ],
+        "Dual Toxocyst": [
+          "Dual Toxocyst"
+        ],
+        "Dual Viciss": [
+          "Dual Viciss"
+        ],
+        "Dual Zoren": [
+          "Dual Zoren"
+        ],
+        "Dual Zoren Prime": [
+          "Dual Zoren Prime"
+        ],
+        "EFV-5 Jupiter": [
+          "EFV-5 Jupiter"
+        ],
+        "EFV-8 Mars": [
+          "EFV-8 Mars"
+        ],
+        "Edun": [
+          "Edun"
+        ],
+        "Ekhein": [
+          "Ekhein"
+        ],
+        "Embolist": [
+          "Embolist"
+        ],
+        "Endura": [
+          "Endura"
+        ],
+        "Enkaus": [
+          "Enkaus"
+        ],
+        "Epitaph": [
+          "Epitaph"
+        ],
+        "Epitaph Prime": [
+          "Epitaph Prime"
+        ],
+        "Ether Daggers": [
+          "Ether Daggers"
+        ],
+        "Ether Reaper": [
+          "Ether Reaper"
+        ],
+        "Ether Sword": [
+          "Ether Sword"
+        ],
+        "Euphona Prime": [
+          "Euphona Prime"
+        ],
+        "Evensong": [
+          "Evensong"
+        ],
+        "Exergis": [
+          "Exergis"
+        ],
+        "Falcor": [
+          "Falcor"
+        ],
+        "Fang": [
+          "Fang"
+        ],
+        "Fang Prime": [
+          "Fang Prime"
+        ],
+        "Felarx": [
+          "Felarx"
+        ],
+        "Ferrox": [
+          "Ferrox"
+        ],
+        "Fluctus": [
+          "Fluctus"
+        ],
+        "Flux Rifle": [
+          "Flux Rifle"
+        ],
+        "Fragor": [
+          "Fragor"
+        ],
+        "Fragor Prime": [
+          "Fragor Prime"
+        ],
+        "Fulmin": [
+          "Fulmin"
+        ],
+        "Fulmin Prime": [
+          "Fulmin Prime"
+        ],
+        "Furax": [
+          "Furax"
+        ],
+        "Furax Wraith": [
+          "Furax Wraith"
+        ],
+        "Furis": [
+          "Furis"
+        ],
+        "Fusilai": [
+          "Fusilai"
+        ],
+        "Galariak Prime": [
+          "Galariak Prime"
+        ],
+        "Galatine": [
+          "Galatine"
+        ],
+        "Galatine Prime": [
+          "Galatine Prime"
+        ],
+        "Galvacord": [
+          "Galvacord"
+        ],
+        "Gammacor": [
+          "Gammacor"
+        ],
+        "Gazal Machete": [
+          "Gazal Machete"
+        ],
+        "Gaze": [
+          "Gaze",
+          "เหลียวมอง"
+        ],
+        "Gaze (Primary)": [
+          "Gaze",
+          "เหลียวมอง"
+        ],
+        "Gaze (Secondary)": [
+          "Gaze",
+          "เหลียวมอง"
+        ],
+        "Ghoulsaw": [
+          "Ghoulsaw"
+        ],
+        "Glaive": [
+          "Glaive"
+        ],
+        "Glaive Prime": [
+          "Glaive Prime"
+        ],
+        "Glaxion": [
+          "Glaxion"
+        ],
+        "Glaxion Vandal": [
+          "Glaxion Vandal"
+        ],
+        "Gorgon": [
+          "Gorgon"
+        ],
+        "Gorgon Wraith": [
+          "Gorgon Wraith"
+        ],
+        "Gotva Prime": [
+          "Gotva Prime"
+        ],
+        "Grakata": [
+          "Grakata"
+        ],
+        "Gram": [
+          "Gram"
+        ],
+        "Gram Prime": [
+          "Gram Prime"
+        ],
+        "Grattler": [
+          "Grattler"
+        ],
+        "Grimoire": [
+          "Grimoire"
+        ],
+        "Grinlok": [
+          "Grinlok"
+        ],
+        "Guandao": [
+          "Guandao"
+        ],
+        "Guandao Prime": [
+          "Guandao Prime"
+        ],
+        "Gunsen": [
+          "Gunsen"
+        ],
+        "Gunsen Prime": [
+          "Gunsen Prime"
+        ],
+        "Haalvu": [
+          "Haalvu"
+        ],
+        "Halikar": [
+          "Halikar"
+        ],
+        "Halikar Wraith": [
+          "Halikar Wraith"
+        ],
+        "Harmony": [
+          "Harmony"
+        ],
+        "Harpak": [
+          "Harpak"
+        ],
+        "Hate": [
+          "Hate"
+        ],
+        "Heat Dagger": [
+          "Heat Dagger"
+        ],
+        "Heat Sword": [
+          "Heat Sword"
+        ],
+        "Hek": [
+          "Hek"
+        ],
+        "Heliocor": [
+          "Heliocor"
+        ],
+        "Helstrum": [
+          "Helstrum"
+        ],
+        "Hema": [
+          "Hema"
+        ],
+        "Hespar": [
+          "Hespar"
+        ],
+        "Higasa": [
+          "Higasa"
+        ],
+        "Hikou": [
+          "Hikou"
+        ],
+        "Hikou Prime": [
+          "Hikou Prime"
+        ],
+        "Hind": [
+          "Hind"
+        ],
+        "Hirudo": [
+          "Hirudo"
+        ],
+        "Hystrix": [
+          "Hystrix"
+        ],
+        "Hystrix Prime": [
+          "Hystrix Prime"
+        ],
+        "Ignis": [
+          "Ignis"
+        ],
+        "Ignis Wraith": [
+          "Ignis Wraith"
+        ],
+        "Imperator": [
+          "Imperator"
+        ],
+        "Imperator Vandal": [
+          "Imperator Vandal"
+        ],
+        "Innodem": [
+          "Innodem"
+        ],
+        "Jat Kittag": [
+          "Jat Kittag"
+        ],
+        "Jat Kusar": [
+          "Jat Kusar"
+        ],
+        "Javlok": [
+          "Javlok"
+        ],
+        "Jaw Sword": [
+          "Jaw Sword"
+        ],
+        "Kama": [
+          "Kama"
+        ],
+        "Karak": [
+          "Karak"
+        ],
+        "Karak Wraith": [
+          "Karak Wraith"
+        ],
+        "Karyst": [
+          "Karyst"
+        ],
+        "Karyst Prime": [
+          "Karyst Prime"
+        ],
+        "Keratinos": [
+          "Keratinos"
+        ],
+        "Kesheg": [
+          "Kesheg"
+        ],
+        "Kestrel": [
+          "Kestrel"
+        ],
+        "Kestrel Prime": [
+          "Kestrel Prime"
+        ],
+        "Knell": [
+          "Knell"
+        ],
+        "Knell Prime": [
+          "Knell Prime"
+        ],
+        "Kogake": [
+          "Kogake"
+        ],
+        "Kogake Prime": [
+          "Kogake Prime"
+        ],
+        "Kohm": [
+          "Kohm"
+        ],
+        "Kohmak": [
+          "Kohmak"
+        ],
+        "Komorex": [
+          "Komorex"
+        ],
+        "Kompressa": [
+          "Kompressa"
+        ],
+        "Kompressa Prime": [
+          "Kompressa Prime"
+        ],
+        "Korrudo": [
+          "Korrudo"
+        ],
+        "Korumm": [
+          "Korumm"
+        ],
+        "Kraken": [
+          "Kraken"
+        ],
+        "Kreska": [
+          "Kreska"
+        ],
+        "Krohkur": [
+          "Krohkur"
+        ],
+        "Kronen": [
+          "Kronen"
+        ],
+        "Kronen Prime": [
+          "Kronen Prime"
+        ],
+        "Kronsh": [
+          "Kronsh"
+        ],
+        "Kulstar": [
+          "Kulstar"
+        ],
+        "Kunai": [
+          "Kunai"
+        ],
+        "Kuva Ayanga": [
+          "Kuva Ayanga"
+        ],
+        "Kuva Brakk": [
+          "Kuva Brakk"
+        ],
+        "Kuva Bramma": [
+          "Kuva Bramma"
+        ],
+        "Kuva Chakkhurr": [
+          "Kuva Chakkhurr"
+        ],
+        "Kuva Drakgoon": [
+          "Kuva Drakgoon"
+        ],
+        "Kuva Ghoulsaw": [
+          "Kuva Ghoulsaw"
+        ],
+        "Kuva Grattler": [
+          "Kuva Grattler"
+        ],
+        "Kuva Hek": [
+          "Kuva Hek"
+        ],
+        "Kuva Hind": [
+          "Kuva Hind"
+        ],
+        "Kuva Karak": [
+          "Kuva Karak"
+        ],
+        "Kuva Kohm": [
+          "Kuva Kohm"
+        ],
+        "Kuva Kraken": [
+          "Kuva Kraken"
+        ],
+        "Kuva Nukor": [
+          "Kuva Nukor"
+        ],
+        "Kuva Ogris": [
+          "Kuva Ogris"
+        ],
+        "Kuva Quartakk": [
+          "Kuva Quartakk"
+        ],
+        "Kuva Seer": [
+          "Kuva Seer"
+        ],
+        "Kuva Shildeg": [
+          "Kuva Shildeg"
+        ],
+        "Kuva Sobek": [
+          "Kuva Sobek"
+        ],
+        "Kuva Tonkor": [
+          "Kuva Tonkor"
+        ],
+        "Kuva Twin Stubbas": [
+          "Kuva Twin Stubbas"
+        ],
+        "Kuva Zarr": [
+          "Kuva Zarr"
+        ],
+        "Lacera": [
+          "Lacera"
+        ],
+        "Lacerten": [
+          "Lacerten"
+        ],
+        "Laetum": [
+          "Laetum"
+        ],
+        "Lanka": [
+          "Lanka"
+        ],
+        "Larkspur": [
+          "Larkspur"
+        ],
+        "Larkspur Prime": [
+          "Larkspur Prime"
+        ],
+        "Laser Rifle": [
+          "Laser Rifle"
+        ],
+        "Lato": [
+          "Lato"
+        ],
+        "Lato Prime": [
+          "Lato Prime"
+        ],
+        "Lato Vandal": [
+          "Lato Vandal"
+        ],
+        "Latron": [
+          "Latron"
+        ],
+        "Latron Prime": [
+          "Latron Prime"
+        ],
+        "Latron Wraith": [
+          "Latron Wraith"
+        ],
+        "Lecta": [
+          "Lecta"
+        ],
+        "Lenz": [
+          "Lenz"
+        ],
+        "Lesion": [
+          "Lesion"
+        ],
+        "Lex": [
+          "Lex"
+        ],
+        "Lex Prime": [
+          "Lex Prime"
+        ],
+        "MK1-Bo": [
+          "MK1-Bo"
+        ],
+        "MK1-Braton": [
+          "MK1-Braton"
+        ],
+        "MK1-Furax": [
+          "MK1-Furax"
+        ],
+        "MK1-Furis": [
+          "MK1-Furis"
+        ],
+        "MK1-Kunai": [
+          "MK1-Kunai"
+        ],
+        "MK1-Paris": [
+          "MK1-Paris"
+        ],
+        "MK1-Strun": [
+          "MK1-Strun"
+        ],
+        "Machete": [
+          "Machete"
+        ],
+        "Machete Wraith": [
+          "Machete Wraith"
+        ],
+        "Magistar": [
+          "Magistar"
+        ],
+        "Magnus": [
+          "Magnus"
+        ],
+        "Magnus Prime": [
+          "Magnus Prime"
+        ],
+        "Mandonel": [
+          "Mandonel"
+        ],
+        "Mara Detron": [
+          "Mara Detron"
+        ],
+        "Marelok": [
+          "Marelok"
+        ],
+        "Masseter": [
+          "Masseter"
+        ],
+        "Masseter Prime": [
+          "Masseter Prime"
+        ],
+        "Mausolon": [
+          "Mausolon"
+        ],
+        "Mewan": [
+          "Mewan"
+        ],
+        "Mios": [
+          "Mios"
+        ],
+        "Mire": [
+          "Mire"
+        ],
+        "Miter": [
+          "Miter"
+        ],
+        "Morgha": [
+          "Morgha"
+        ],
+        "Multron": [
+          "Multron"
+        ],
+        "Mutalist Cernos": [
+          "Mutalist Cernos"
+        ],
+        "Mutalist Quanta": [
+          "Mutalist Quanta"
+        ],
+        "Nagantaka": [
+          "Nagantaka"
+        ],
+        "Nagantaka Prime": [
+          "Nagantaka Prime"
+        ],
+        "Nami Skyla": [
+          "Nami Skyla"
+        ],
+        "Nami Skyla Prime": [
+          "Nami Skyla Prime"
+        ],
+        "Nami Solo": [
+          "Nami Solo"
+        ],
+        "Nataruk": [
+          "Nataruk"
+        ],
+        "Nepheri": [
+          "Nepheri"
+        ],
+        "Nikana": [
+          "Nikana"
+        ],
+        "Nikana Prime": [
+          "Nikana Prime"
+        ],
+        "Ninkondi": [
+          "Ninkondi"
+        ],
+        "Ninkondi Prime": [
+          "Ninkondi Prime"
+        ],
+        "Nukor": [
+          "Nukor"
+        ],
+        "Nunchasa": [
+          "Nunchasa"
+        ],
+        "Obex": [
+          "Obex"
+        ],
+        "Ocucor": [
+          "Ocucor"
+        ],
+        "Ogris": [
+          "Ogris"
+        ],
+        "Ohma": [
+          "Ohma"
+        ],
+        "Okina": [
+          "Okina"
+        ],
+        "Okina Prime": [
+          "Okina Prime"
+        ],
+        "Onos": [
+          "Onos"
+        ],
+        "Ooltha": [
+          "Ooltha"
+        ],
+        "Opticor": [
+          "Opticor"
+        ],
+        "Opticor Vandal": [
+          "Opticor Vandal"
+        ],
+        "Orthos": [
+          "Orthos"
+        ],
+        "Orthos Prime": [
+          "Orthos Prime"
+        ],
+        "Orvius": [
+          "Orvius"
+        ],
+        "Pandero": [
+          "Pandero"
+        ],
+        "Pandero Prime": [
+          "Pandero Prime"
+        ],
+        "Pangolin Prime": [
+          "Pangolin Prime"
+        ],
+        "Pangolin Sword": [
+          "Pangolin Sword"
+        ],
+        "Panthera": [
+          "Panthera"
+        ],
+        "Panthera Prime": [
+          "Panthera Prime"
+        ],
+        "Paracesis": [
+          "Paracesis"
+        ],
+        "Paracyst": [
+          "Paracyst"
+        ],
+        "Paris": [
+          "Paris"
+        ],
+        "Paris Prime": [
+          "Paris Prime"
+        ],
+        "Pathocyst": [
+          "Pathocyst"
+        ],
+        "Pennant": [
+          "Pennant"
+        ],
+        "Penta": [
+          "Penta"
+        ],
+        "Perigale": [
+          "Perigale"
+        ],
+        "Perigale Prime": [
+          "Perigale Prime"
+        ],
+        "Phaedra": [
+          "Phaedra"
+        ],
+        "Phage": [
+          "Phage"
+        ],
+        "Phantasma": [
+          "Phantasma"
+        ],
+        "Phantasma Prime": [
+          "Phantasma Prime"
+        ],
+        "Phenmor": [
+          "Phenmor"
+        ],
+        "Plague Keewar": [
+          "Plague Keewar"
+        ],
+        "Plague Kripath": [
+          "Plague Kripath"
+        ],
+        "Plasma Sword": [
+          "Plasma Sword"
+        ],
+        "Plinx": [
+          "Plinx"
+        ],
+        "Pox": [
+          "Pox"
+        ],
+        "Praedos": [
+          "Praedos"
+        ],
+        "Pride": [
+          "Pride"
+        ],
+        "Prime Laser Rifle": [
+          "Prime Laser Rifle"
+        ],
+        "Prisma Angstrum": [
+          "Prisma Angstrum"
+        ],
+        "Prisma Burst Laser": [
+          "Prisma Burst Laser"
+        ],
+        "Prisma Dual Cleavers": [
+          "Prisma Dual Cleavers"
+        ],
+        "Prisma Dual Decurions": [
+          "Prisma Dual Decurions"
+        ],
+        "Prisma Gorgon": [
+          "Prisma Gorgon"
+        ],
+        "Prisma Grakata": [
+          "Prisma Grakata"
+        ],
+        "Prisma Grinlok": [
+          "Prisma Grinlok"
+        ],
+        "Prisma Lenz": [
+          "Prisma Lenz"
+        ],
+        "Prisma Machete": [
+          "Prisma Machete"
+        ],
+        "Prisma Obex": [
+          "Prisma Obex"
+        ],
+        "Prisma Ohma": [
+          "Prisma Ohma"
+        ],
+        "Prisma Skana": [
+          "Prisma Skana"
+        ],
+        "Prisma Tetra": [
+          "Prisma Tetra"
+        ],
+        "Prisma Twin Gremlins": [
+          "Prisma Twin Gremlins"
+        ],
+        "Proboscis Cernos": [
+          "Proboscis Cernos"
+        ],
+        "Prova": [
+          "Prova"
+        ],
+        "Prova Vandal": [
+          "Prova Vandal"
+        ],
+        "Pulmonars": [
+          "Pulmonars"
+        ],
+        "Pupacyst": [
+          "Pupacyst"
+        ],
+        "Purgator 1": [
+          "Purgator 1"
+        ],
+        "Pyrana": [
+          "Pyrana"
+        ],
+        "Pyrana Prime": [
+          "Pyrana Prime"
+        ],
+        "Quanta": [
+          "Quanta"
+        ],
+        "Quanta Vandal": [
+          "Quanta Vandal"
+        ],
+        "Quartakk": [
+          "Quartakk"
+        ],
+        "Quassus": [
+          "Quassus"
+        ],
+        "Quassus Prime": [
+          "Quassus Prime"
+        ],
+        "Quatz": [
+          "Quatz"
+        ],
+        "Quellor": [
+          "Quellor"
+        ],
+        "Rabvee": [
+          "Rabvee"
+        ],
+        "Rakta Ballistica": [
+          "Rakta Ballistica"
+        ],
+        "Rakta Cernos": [
+          "Rakta Cernos"
+        ],
+        "Rakta Dark Dagger": [
+          "Rakta Dark Dagger"
+        ],
+        "Rattleguts": [
+          "Rattleguts"
+        ],
+        "Rattleguts (Primary)": [
+          "Rattleguts"
+        ],
+        "Rattleguts (Secondary)": [
+          "Rattleguts"
+        ],
+        "Rauta": [
+          "Rauta"
+        ],
+        "Reaper Prime": [
+          "Reaper Prime"
+        ],
+        "Reconifex": [
+          "Reconifex"
+        ],
+        "Redeemer": [
+          "Redeemer"
+        ],
+        "Redeemer Prime": [
+          "Redeemer Prime"
+        ],
+        "Riot-848": [
+          "Riot-848"
+        ],
+        "Ripkas": [
+          "Ripkas"
+        ],
+        "Rubico": [
+          "Rubico"
+        ],
+        "Rubico Prime": [
+          "Rubico Prime"
+        ],
+        "Rumblejack": [
+          "Rumblejack"
+        ],
+        "Ruvox": [
+          "Ruvox"
+        ],
+        "Sagek Prime": [
+          "Sagek Prime"
+        ],
+        "Sampotes": [
+          "Sampotes"
+        ],
+        "Sancti Castanas": [
+          "Sancti Castanas"
+        ],
+        "Sancti Magistar": [
+          "Sancti Magistar"
+        ],
+        "Sancti Tigris": [
+          "Sancti Tigris"
+        ],
+        "Sarofang": [
+          "Sarofang"
+        ],
+        "Sarofang Prime": [
+          "Sarofang Prime"
+        ],
+        "Sarpa": [
+          "Sarpa"
+        ],
+        "Scindo": [
+          "Scindo"
+        ],
+        "Scindo Prime": [
+          "Scindo Prime"
+        ],
+        "Scoliac": [
+          "Scoliac"
+        ],
+        "Scourge": [
+          "Scourge"
+        ],
+        "Scourge Prime": [
+          "Scourge Prime"
+        ],
+        "Scyotid": [
+          "Scyotid"
+        ],
+        "Secura Dual Cestra": [
+          "Secura Dual Cestra"
+        ],
+        "Secura Lecta": [
+          "Secura Lecta"
+        ],
+        "Secura Penta": [
+          "Secura Penta"
+        ],
+        "Seer": [
+          "Seer"
+        ],
+        "Sepfahn": [
+          "Sepfahn"
+        ],
+        "Sepulcrum": [
+          "Sepulcrum"
+        ],
+        "Serro": [
+          "Serro"
+        ],
+        "Shaku": [
+          "Shaku"
+        ],
+        "Shedu": [
+          "Shedu"
+        ],
+        "Sheev": [
+          "Sheev"
+        ],
+        "Sibear": [
+          "Sibear"
+        ],
+        "Sicarus": [
+          "Sicarus"
+        ],
+        "Sicarus Prime": [
+          "Sicarus Prime"
+        ],
+        "Sigma & Octantis": [
+          "Sigma & Octantis"
+        ],
+        "Silva & Aegis": [
+          "Silva & Aegis"
+        ],
+        "Silva & Aegis Prime": [
+          "Silva & Aegis Prime"
+        ],
+        "Simulor": [
+          "Simulor"
+        ],
+        "Skana": [
+          "Skana"
+        ],
+        "Skana Prime": [
+          "Skana Prime"
+        ],
+        "Skiajati": [
+          "Skiajati"
+        ],
+        "Slaytra": [
+          "Slaytra"
+        ],
+        "Snipetron": [
+          "Snipetron"
+        ],
+        "Snipetron Vandal": [
+          "Snipetron Vandal"
+        ],
+        "Sobek": [
+          "Sobek"
+        ],
+        "Soma": [
+          "Soma"
+        ],
+        "Soma Prime": [
+          "Soma Prime"
+        ],
+        "Sonicor": [
+          "Sonicor"
+        ],
+        "Spectra": [
+          "Spectra"
+        ],
+        "Spectra Vandal": [
+          "Spectra Vandal"
+        ],
+        "Spinnerex": [
+          "Spinnerex"
+        ],
+        "Spira": [
+          "Spira"
+        ],
+        "Spira Prime": [
+          "Spira Prime"
+        ],
+        "Sporelacer": [
+          "Sporelacer"
+        ],
+        "Sporelacer (Primary)": [
+          "Sporelacer"
+        ],
+        "Sporelacer (Secondary)": [
+          "Sporelacer"
+        ],
+        "Sporothrix": [
+          "Sporothrix"
+        ],
+        "Stahlta": [
+          "Stahlta"
+        ],
+        "Staticor": [
+          "Staticor"
+        ],
+        "Steflos": [
+          "Steflos"
+        ],
+        "Steflos Prime": [
+          "Steflos Prime"
+        ],
+        "Stinger": [
+          "Stinger"
+        ],
+        "Stradavar": [
+          "Stradavar"
+        ],
+        "Stradavar Prime": [
+          "Stradavar Prime"
+        ],
+        "Stropha": [
+          "Stropha"
+        ],
+        "Strun": [
+          "Strun"
+        ],
+        "Strun Prime": [
+          "Strun Prime"
+        ],
+        "Strun Wraith": [
+          "Strun Wraith"
+        ],
+        "Stubba": [
+          "Stubba"
+        ],
+        "Stug": [
+          "Stug"
+        ],
+        "Sun & Moon": [
+          "Sun & Moon"
+        ],
+        "Supra": [
+          "Supra"
+        ],
+        "Supra Vandal": [
+          "Supra Vandal"
+        ],
+        "Sweeper": [
+          "Sweeper"
+        ],
+        "Sweeper Prime": [
+          "Sweeper Prime"
+        ],
+        "Syam": [
+          "Syam"
+        ],
+        "Sybaris": [
+          "Sybaris"
+        ],
+        "Sybaris Prime": [
+          "Sybaris Prime"
+        ],
+        "Sydon": [
+          "Sydon"
+        ],
+        "Synapse": [
+          "Synapse"
+        ],
+        "Synoid Gammacor": [
+          "Synoid Gammacor"
+        ],
+        "Synoid Heliocor": [
+          "Synoid Heliocor"
+        ],
+        "Synoid Simulor": [
+          "Synoid Simulor"
+        ],
+        "Tak & Lug": [
+          "Tak & Lug"
+        ],
+        "Talons": [
+          "Talons"
+        ],
+        "Tatsu": [
+          "Tatsu"
+        ],
+        "Tatsu Prime": [
+          "Tatsu Prime"
+        ],
+        "Tazicor": [
+          "Tazicor"
+        ],
+        "Tekko": [
+          "Tekko"
+        ],
+        "Tekko Prime": [
+          "Tekko Prime"
+        ],
+        "Telos Akbolto": [
+          "Telos Akbolto"
+        ],
+        "Telos Boltace": [
+          "Telos Boltace"
+        ],
+        "Telos Boltor": [
+          "Telos Boltor"
+        ],
+        "Tenet Agendus": [
+          "Tenet Agendus"
+        ],
+        "Tenet Arca Plasmor": [
+          "Tenet Arca Plasmor"
+        ],
+        "Tenet Cycron": [
+          "Tenet Cycron"
+        ],
+        "Tenet Detron": [
+          "Tenet Detron"
+        ],
+        "Tenet Diplos": [
+          "Tenet Diplos"
+        ],
+        "Tenet Envoy": [
+          "Tenet Envoy"
+        ],
+        "Tenet Exec": [
+          "Tenet Exec"
+        ],
+        "Tenet Ferrox": [
+          "Tenet Ferrox"
+        ],
+        "Tenet Flux Rifle": [
+          "Tenet Flux Rifle"
+        ],
+        "Tenet Glaxion": [
+          "Tenet Glaxion"
+        ],
+        "Tenet Grigori": [
+          "Tenet Grigori"
+        ],
+        "Tenet Livia": [
+          "Tenet Livia"
+        ],
+        "Tenet Plinx": [
+          "Tenet Plinx"
+        ],
+        "Tenet Quanta": [
+          "Tenet Quanta"
+        ],
+        "Tenet Spirex": [
+          "Tenet Spirex"
+        ],
+        "Tenet Tetra": [
+          "Tenet Tetra"
+        ],
+        "Tenora": [
+          "Tenora"
+        ],
+        "Tenora Prime": [
+          "Tenora Prime"
+        ],
+        "Tetra": [
+          "Tetra"
+        ],
+        "Thalys": [
+          "Thalys"
+        ],
+        "Thornbak": [
+          "Thornbak"
+        ],
+        "Tiberon": [
+          "Tiberon"
+        ],
+        "Tiberon Prime": [
+          "Tiberon Prime"
+        ],
+        "Tigris": [
+          "Tigris"
+        ],
+        "Tigris Prime": [
+          "Tigris Prime"
+        ],
+        "Tipedo": [
+          "Tipedo"
+        ],
+        "Tipedo Prime": [
+          "Tipedo Prime"
+        ],
+        "Tombfinger": [
+          "Tombfinger"
+        ],
+        "Tombfinger (Primary)": [
+          "Tombfinger"
+        ],
+        "Tombfinger (Secondary)": [
+          "Tombfinger"
+        ],
+        "Tonbo": [
+          "Tonbo"
+        ],
+        "Tonkkatt": [
+          "Tonkkatt"
+        ],
+        "Tonkor": [
+          "Tonkor"
+        ],
+        "Torid": [
+          "Torid"
+        ],
+        "Trumna": [
+          "Trumna"
+        ],
+        "Trumna Prime": [
+          "Trumna Prime"
+        ],
+        "Twin Basolk": [
+          "Twin Basolk"
+        ],
+        "Twin Grakatas": [
+          "Twin Grakatas"
+        ],
+        "Twin Gremlins": [
+          "Twin Gremlins"
+        ],
+        "Twin Kohmak": [
+          "Twin Kohmak"
+        ],
+        "Twin Krohkur": [
+          "Twin Krohkur"
+        ],
+        "Twin Rogga": [
+          "Twin Rogga"
+        ],
+        "Twin Vipers": [
+          "Twin Vipers"
+        ],
+        "Twin Vipers Wraith": [
+          "Twin Vipers Wraith"
+        ],
+        "Tysis": [
+          "Tysis"
+        ],
+        "Vadarya Prime": [
+          "Vadarya Prime"
+        ],
+        "Vastilok": [
+          "Vastilok"
+        ],
+        "Vasto": [
+          "Vasto"
+        ],
+        "Vasto Prime": [
+          "Vasto Prime"
+        ],
+        "Vaykor Hek": [
+          "Vaykor Hek"
+        ],
+        "Vaykor Marelok": [
+          "Vaykor Marelok"
+        ],
+        "Vaykor Sydon": [
+          "Vaykor Sydon"
+        ],
+        "Vectis": [
+          "Vectis"
+        ],
+        "Vectis Prime": [
+          "Vectis Prime"
+        ],
+        "Veldt": [
+          "Veldt"
+        ],
+        "Velocitus": [
+          "Velocitus"
+        ],
+        "Velox": [
+          "Velox"
+        ],
+        "Velox Prime": [
+          "Velox Prime"
+        ],
+        "Venato": [
+          "Venato"
+        ],
+        "Venato Prime": [
+          "Venato Prime"
+        ],
+        "Venka": [
+          "Venka"
+        ],
+        "Venka Prime": [
+          "Venka Prime"
+        ],
+        "Verdilac": [
+          "Verdilac"
+        ],
+        "Verglas": [
+          "Verglas"
+        ],
+        "Verglas Prime": [
+          "Verglas Prime"
+        ],
+        "Vericres": [
+          "Vericres"
+        ],
+        "Vermisplicer": [
+          "Vermisplicer"
+        ],
+        "Vermisplicer (Primary)": [
+          "Vermisplicer"
+        ],
+        "Vermisplicer (Secondary)": [
+          "Vermisplicer"
+        ],
+        "Vesper 77": [
+          "Vesper 77"
+        ],
+        "Vinquibus": [
+          "Vinquibus"
+        ],
+        "Vinquibus (Melee)": [
+          "Vinquibus"
+        ],
+        "Vinquibus (Rifle)": [
+          "Vinquibus"
+        ],
+        "Viper": [
+          "Viper"
+        ],
+        "Viper Wraith": [
+          "Viper Wraith"
+        ],
+        "Vitrica": [
+          "Vitrica"
+        ],
+        "Volnus": [
+          "Volnus"
+        ],
+        "Volnus Prime": [
+          "Volnus Prime"
+        ],
+        "Vulcax": [
+          "Vulcax"
+        ],
+        "Vulkar": [
+          "Vulkar"
+        ],
+        "Vulkar Wraith": [
+          "Vulkar Wraith"
+        ],
+        "Vulklok": [
+          "Vulklok"
+        ],
+        "War": [
+          "War"
+        ],
+        "War Prime": [
+          "War Prime"
+        ],
+        "Wolf Sledge": [
+          "Wolf Sledge"
+        ],
+        "Wrath": [
+          "Wrath"
+        ],
+        "Xoris": [
+          "Xoris"
+        ],
+        "Zakti": [
+          "Zakti"
+        ],
+        "Zakti Prime": [
+          "Zakti Prime"
+        ],
+        "Zarr": [
+          "Zarr"
+        ],
+        "Zenistar": [
+          "Zenistar"
+        ],
+        "Zenith": [
+          "Zenith"
+        ],
+        "Zhuge": [
+          "Zhuge"
+        ],
+        "Zhuge Prime": [
+          "Zhuge Prime"
+        ],
+        "Zylok": [
+          "Zylok"
+        ],
+        "Zylok Prime": [
+          "Zylok Prime"
+        ],
+        "Zymos": [
+          "Zymos"
+        ]
+      },
+      "stats": [
+        {
+          "id": "puncture",
+          "name": "Puncture",
+          "unit": "%",
+          "template": "|val|% <DT_PUNCTURE_COLOR>การเจาะ"
+        },
+        {
+          "id": "critical-chance",
+          "name": "Critical Chance",
+          "unit": "%",
+          "template": "โอกาสคริติคอล |val|%"
+        },
+        {
+          "id": "critical-chance",
+          "name": "Critical Chance",
+          "unit": "%",
+          "template": "โอกาสคริติคอล |val|% (x2 สำหรับการโจมตีหนัก)"
+        },
+        {
+          "id": "critical-damage",
+          "name": "Critical Damage",
+          "unit": "%",
+          "template": "ความเสียหายคริติคอล |val|%"
+        },
+        {
+          "id": "electricity",
+          "name": "Electricity",
+          "unit": "%",
+          "template": "|val|% <DT_ELECTRICITY_COLOR>ไฟฟ้า"
+        },
+        {
+          "id": "heat",
+          "name": "Heat",
+          "unit": "%",
+          "template": "|val|% <DT_FIRE_COLOR>ไฟ"
+        },
+        {
+          "id": "fire-rate-attack-speed",
+          "name": "Fire Rate",
+          "unit": "%",
+          "template": "อัตราการยิง |val|% (x2 สำหรับธนู)"
+        },
+        {
+          "id": "fire-rate-attack-speed",
+          "name": "Fire Rate",
+          "unit": "%",
+          "template": "อัตราการยิง |val|%"
+        },
+        {
+          "id": "cold",
+          "name": "Cold",
+          "unit": "%",
+          "template": "|val|% <DT_FREEZE_COLOR>น้ำแข็ง"
+        },
+        {
+          "id": "impact",
+          "name": "Impact",
+          "unit": "%",
+          "template": "|val|% <DT_IMPACT_COLOR>การกระแทก"
+        },
+        {
+          "id": "status-duration",
+          "name": "Status Duration",
+          "unit": "%",
+          "template": "ระยะเวลาของสถานะ |val|%"
+        },
+        {
+          "id": "slash",
+          "name": "Slash",
+          "unit": "%",
+          "template": "|val|% <DT_SLASH_COLOR>เฉือนฟัน"
+        },
+        {
+          "id": "status-chance",
+          "name": "Status Chance",
+          "unit": "%",
+          "template": "โอกาสสถานะ |val|%"
+        },
+        {
+          "id": "toxin",
+          "name": "Toxin",
+          "unit": "%",
+          "template": "|val|% <DT_POISON_COLOR>พิษ"
+        },
+        {
+          "id": "ammo-maximum",
+          "name": "Ammo Maximum",
+          "unit": "%",
+          "template": "กระสุนสูงสุด |val|%"
+        },
+        {
+          "id": "magazine-capacity",
+          "name": "Magazine Capacity",
+          "unit": "%",
+          "template": "ความจุแม็กกาซีน |val|%"
+        },
+        {
+          "id": "damage",
+          "name": "Damage",
+          "unit": "%",
+          "template": "ความเสียหาย |val|%"
+        },
+        {
+          "id": "multishot",
+          "name": "Multishot",
+          "unit": "%",
+          "template": "มัลติช็อต |val|%"
+        },
+        {
+          "id": "punch-through",
+          "name": "Punch Through",
+          "unit": "m",
+          "template": "เจาะทะลุ: |val|"
+        },
+        {
+          "id": "weapon-recoil",
+          "name": "Weapon Recoil",
+          "unit": "%",
+          "template": "แรงถีบของอาวุธ |val|%"
+        },
+        {
+          "id": "reload-speed",
+          "name": "Reload Speed",
+          "unit": "%",
+          "template": "ความเร็วในการรีโหลด |val|%"
+        },
+        {
+          "id": "damage-to-corpus",
+          "name": "Damage to Corpus",
+          "unit": "x",
+          "template": "สร้างความเสียหายต่อ Corpus: |val|"
+        },
+        {
+          "id": "damage-to-grineer",
+          "name": "Damage to Grineer",
+          "unit": "x",
+          "template": "สร้างความเสียหายต่อ Grineer: |val|"
+        },
+        {
+          "id": "zoom",
+          "name": "Zoom",
+          "unit": "%",
+          "template": "ซูม |val|%"
+        },
+        {
+          "id": "damage-to-infested",
+          "name": "Damage to Infested",
+          "unit": "x",
+          "template": "สร้างความเสียหายต่อ Infested: |val|"
+        },
+        {
+          "id": "projectile-speed",
+          "name": "Projectile Speed",
+          "unit": "%",
+          "template": "ความเร็วกระสุน |val|%"
+        },
+        {
+          "id": "melee-damage",
+          "name": "Melee Damage",
+          "unit": "%",
+          "template": "ความเสียหายระยะประชิด |val|%"
+        },
+        {
+          "id": "fire-rate-attack-speed",
+          "name": "Fire Rate",
+          "unit": "%",
+          "template": "ความเร็วในการโจมตี |val|%"
+        },
+        {
+          "id": "combo-duration",
+          "name": "Combo Duration",
+          "unit": "s",
+          "template": "ระยะเวลาคอมโบ |val| วินาที"
+        },
+        {
+          "id": "critical-chance-for-slide-attack",
+          "name": "Critical Chance for Slide Attack",
+          "unit": "%",
+          "template": "เมื่อไถลตัวโจมตีมีโอกาสเกิดคริติคอล |STAT1|%"
+        },
+        {
+          "id": "range",
+          "name": "Range",
+          "unit": "m",
+          "template": "ระยะขอบเขต: |val|"
+        },
+        {
+          "id": "finisher-damage",
+          "name": "Finisher Damage",
+          "unit": "%",
+          "template": "ความเสียหายจากท่าฟินิชเชอร์ |val|%"
+        },
+        {
+          "id": "heavy-attack-efficiency",
+          "name": "Heavy Attack Efficiency",
+          "unit": "%",
+          "template": "ประสิทธิภาพในการโจมตีหนัก |val|%"
+        },
+        {
+          "id": "initial-combo",
+          "name": "Initial Combo",
+          "unit": "",
+          "template": "คอมโบเริ่มต้น |val|"
+        },
+        {
+          "id": "chance-to-gain-combo-count",
+          "name": "Chance to Gain Combo Count",
+          "unit": "%",
+          "template": "โอกาสที่จะเพิ่มตัวนับคอมโบ |val|%"
+        },
+        {
+          "id": "additional-combo-count-chance",
+          "name": "Additional Combo Count Chance",
+          "unit": "%",
+          "template": "มีโอกาสนับคอมโบเพิ่มขึ้น |val|%"
+        },
+        {
+          "id": "blast",
+          "name": "Blast",
+          "unit": "%",
+          "template": "|val|% <DT_EXPLOSION_COLOR>การระเบิด"
+        },
+        {
+          "id": "corrosive",
+          "name": "Corrosive",
+          "unit": "%",
+          "template": "<DT_CORROSIVE_COLOR>กัดกร่อน |val|%"
+        },
+        {
+          "id": "gas",
+          "name": "Gas",
+          "unit": "%",
+          "template": "|val|% <DT_GAS_COLOR>แก๊ส"
+        },
+        {
+          "id": "magnetic",
+          "name": "Magnetic",
+          "unit": "%",
+          "template": "|val|% <DT_MAGNETIC_COLOR>แม่เหล็ก"
+        },
+        {
+          "id": "radiation",
+          "name": "Radiation",
+          "unit": "%",
+          "template": "|val|% <DT_RADIATION_COLOR>รังสี"
+        },
+        {
+          "id": "viral",
+          "name": "Viral",
+          "unit": "%",
+          "template": "|val|% <DT_VIRAL_COLOR>ไวรัส"
+        },
+        {
+          "id": "damage-to-orokin",
+          "name": "Damage to Orokin",
+          "unit": "x",
+          "template": "สร้างความเสียหายต่อ Orokin: |val|"
+        },
+        {
+          "id": "damage-to-techrot",
+          "name": "Damage to Techrot",
+          "unit": "x",
+          "template": "สร้างความเสียหายต่อ Techrot: |val|"
+        },
+        {
+          "id": "damage-to-scaldra",
+          "name": "Damage to Scaldra",
+          "unit": "x",
+          "template": "สร้างความเสียหายต่อ Scaldra: |val|"
+        },
+        {
+          "id": "weakpoint-damage",
+          "name": "Weakpoint Damage",
+          "unit": "%",
+          "template": "ความเสียหายที่จุดอ่อน |val|%"
+        },
+        {
+          "id": "weakpoint-critical-chance",
+          "name": "Weakpoint Critical Chance",
+          "unit": "%",
+          "template": "โอกาสติดคริติคอลที่จุดอ่อน |val|%"
+        },
+        {
+          "id": "ammo-efficiency",
+          "name": "Ammo Efficiency",
+          "unit": "%",
+          "template": "ประสิทธิภาพของกระสุน |val|%"
+        },
+        {
+          "id": "magazine-reload-while-holstered",
+          "name": "Magazine Reload While Holstered",
+          "unit": "%",
+          "template": "รีโหลดแม็กกาซีน |val|% ทุกวินาทีที่อยู่ในซอง"
+        },
+        {
+          "id": "status-damage",
+          "name": "Status Damage",
+          "unit": "%",
+          "template": "ความเสียหายจากสถานะ |val|%"
+        },
+        {
+          "id": "heavy-attack-damage",
+          "name": "Heavy Attack Damage",
+          "unit": "%",
+          "template": "ความเสียหายระยะประชิด |val|% เมื่อโจมตีหนัก"
+        },
+        {
+          "id": "heavy-attack-windup-speed",
+          "name": "Heavy Attack Windup Speed",
+          "unit": "%",
+          "template": "ความเร็วในการเหวี่ยงเมื่อโจมตีหนัก |val|%"
+        },
+        {
+          "id": "parry-angle",
+          "name": "Parry Angle",
+          "unit": "%",
+          "template": "มุมในการปัดป้อง |val|%"
+        },
+        {
+          "id": "parry-angle",
+          "name": "Parry Angle",
+          "unit": "°",
+          "template": "มุมในการปัดป้อง: |val|"
+        },
+        {
+          "id": "slam-damage",
+          "name": "Slam Damage",
+          "unit": "%",
+          "template": "ความเสียหายจากการโจมตีแบบทุบพื้น |val|%"
+        }
+      ],
+      "statLabels": {
+        "Puncture": "การเจาะ",
+        "Critical Chance": "โอกาสคริติคอล",
+        "Critical Damage": "ความเสียหายคริติคอล",
+        "Electricity": "ไฟฟ้า",
+        "Heat": "ไฟ",
+        "Fire Rate": "อัตราการยิง",
+        "Cold": "น้ำแข็ง",
+        "Impact": "การกระแทก",
+        "Status Duration": "ระยะเวลาของสถานะ",
+        "Slash": "เฉือนฟัน",
+        "Status Chance": "โอกาสสถานะ",
+        "Toxin": "พิษ",
+        "Ammo Maximum": "กระสุนสูงสุด",
+        "Magazine Capacity": "ความจุแม็กกาซีน",
+        "Damage": "ความเสียหาย",
+        "Multishot": "มัลติช็อต",
+        "Punch Through": "เจาะทะลุ:",
+        "Weapon Recoil": "แรงถีบของอาวุธ",
+        "Reload Speed": "ความเร็วในการรีโหลด",
+        "Damage to Corpus": "สร้างความเสียหายต่อ Corpus:",
+        "Damage to Grineer": "สร้างความเสียหายต่อ Grineer:",
+        "Zoom": "ซูม",
+        "Damage to Infested": "สร้างความเสียหายต่อ Infested:",
+        "Projectile Speed": "ความเร็วกระสุน",
+        "Melee Damage": "ความเสียหายระยะประชิด",
+        "Combo Duration": "ระยะเวลาคอมโบ  วินาที",
+        "Critical Chance for Slide Attack": "เมื่อไถลตัวโจมตีมีโอกาสเกิดคริติคอล",
+        "Range": "ระยะขอบเขต:",
+        "Finisher Damage": "ความเสียหายจากท่าฟินิชเชอร์",
+        "Heavy Attack Efficiency": "ประสิทธิภาพในการโจมตีหนัก",
+        "Initial Combo": "คอมโบเริ่มต้น",
+        "Chance to Gain Combo Count": "โอกาสที่จะเพิ่มตัวนับคอมโบ",
+        "Additional Combo Count Chance": "มีโอกาสนับคอมโบเพิ่มขึ้น",
+        "Blast": "การระเบิด",
+        "Corrosive": "กัดกร่อน",
+        "Gas": "แก๊ส",
+        "Magnetic": "แม่เหล็ก",
+        "Radiation": "รังสี",
+        "Viral": "ไวรัส",
+        "Damage to Orokin": "สร้างความเสียหายต่อ Orokin:",
+        "Damage to Techrot": "สร้างความเสียหายต่อ Techrot:",
+        "Damage to Scaldra": "สร้างความเสียหายต่อ Scaldra:",
+        "Weakpoint Damage": "ความเสียหายที่จุดอ่อน",
+        "Weakpoint Critical Chance": "โอกาสติดคริติคอลที่จุดอ่อน",
+        "Ammo Efficiency": "ประสิทธิภาพของกระสุน",
+        "Magazine Reload While Holstered": "รีโหลดแม็กกาซีน % ทุกวินาทีที่อยู่ในซอง",
+        "Status Damage": "ความเสียหายจากสถานะ",
+        "Heavy Attack Damage": "ความเสียหายระยะประชิด % เมื่อโจมตีหนัก",
+        "Heavy Attack Windup Speed": "ความเร็วในการเหวี่ยงเมื่อโจมตีหนัก",
+        "Parry Angle": "มุมในการปัดป้อง",
+        "Slam Damage": "ความเสียหายจากการโจมตีแบบทุบพื้น",
+        "Attack Speed": "ความเร็วในการโจมตี"
+      },
+      "ui": {
+        "fits": "เหมาะกับ",
+        "confirm": "ยืนยัน",
+        "cycle": "หมุนเวียนในราคา <KUVA>|PRICE|",
+        "footer": "MR |LEVEL|",
+        "yes": "ใช่",
+        "no": "ไม่",
+        "ranked": "แสดงอันดับ <CHECKMARK>"
+      }
+    }
+  }
+}

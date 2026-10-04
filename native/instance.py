@@ -7,6 +7,8 @@
 import ctypes
 import errno
 import hashlib
+import os
+import sys
 from pathlib import Path
 from uuid import UUID
 
@@ -44,13 +46,22 @@ def local_appdata():
 
 def data_directory():
     """The same location for application settings, leases and update recovery."""
+    if sys.platform != "win32":
+        configured = os.environ.get("XDG_DATA_HOME", "")
+        base = (
+            Path(configured)
+            if configured and Path(configured).is_absolute()
+            else Path.home() / ".local/share"
+        )
+        return base / "Arbitrations/RivenLens Native"
     return local_appdata() / "Arbitrations" / "RivenLens Native"
 
 
 class InstallationLease:
     def __init__(self, root, directory=None):
+        resolved = str(Path(root).resolve())
         identity = hashlib.sha256(
-            str(Path(root).resolve()).casefold().encode()
+            (resolved.casefold() if sys.platform == "win32" else resolved).encode()
         ).hexdigest()[:24]
         directory = (
             Path(directory) if directory is not None else data_directory() / "locks"
@@ -60,8 +71,6 @@ class InstallationLease:
 
     def acquire(self):
         """A crashed process releases this byte lock automatically, including on reboot."""
-        import msvcrt
-
         if self.stream is not None:
             return True
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -71,7 +80,14 @@ class InstallationLease:
                 stream.write(b"\0")
                 stream.flush()
             stream.seek(0)
-            msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
+            if sys.platform == "win32":
+                import msvcrt
+
+                msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
+            else:
+                import fcntl
+
+                fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         except OSError as exc:
             stream.close()
             if exc.errno in (errno.EACCES, errno.EAGAIN, errno.EDEADLK):
@@ -81,13 +97,18 @@ class InstallationLease:
         return True
 
     def close(self):
-        import msvcrt
-
         stream, self.stream = self.stream, None
         if stream is not None:
             try:
                 stream.seek(0)
-                msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
+                if sys.platform == "win32":
+                    import msvcrt
+
+                    msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
+                else:
+                    import fcntl
+
+                    fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
             finally:
                 stream.close()
 

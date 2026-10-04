@@ -2,8 +2,10 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # See LICENSE in the project root for the license and warranty disclaimer.
 
-"""Monitor pixels through Windows desktop APIs, with no application handles."""
+"""Selected-monitor desktop pixels, with no application handles or hooks."""
 
+import os
+import sys
 import time
 
 from PIL import Image
@@ -15,6 +17,25 @@ class CaptureUnavailable(RuntimeError):
 
 class CapturePending(CaptureUnavailable):
     """The desktop camera is starting; retain it for the next short retry."""
+
+
+def desktop_supported():
+    """Do not mistake XWayland for an unrestricted X11 desktop capture session."""
+    if sys.platform == "win32":
+        return
+    if sys.platform != "linux":
+        raise CaptureUnavailable(
+            "Desktop capture is currently supported on Windows and Linux X11 only."
+        )
+    if (
+        os.environ.get("WAYLAND_DISPLAY")
+        or os.environ.get("XDG_SESSION_TYPE", "").lower() == "wayland"
+    ):
+        raise CaptureUnavailable(
+            "Wayland capture is not supported yet. Use an X11 desktop session."
+        )
+    if not os.environ.get("DISPLAY", "").strip():
+        raise CaptureUnavailable("No X11 display is available.")
 
 
 def monitor_token(monitor):
@@ -93,14 +114,15 @@ class DesktopCapture:
     """A single selected monitor, synchronous grabs and explicit resource release."""
 
     def __init__(self, screen, monitor, backend="auto"):
+        desktop_supported()
         self.screen = screen
         self.monitor = dict(monitor)
         self.camera = None
-        self.backend = "gdi"
+        self.backend = "gdi" if sys.platform == "win32" else "x11"
         self.fallback = False
         self.allow_fallback = backend == "auto"
         self.pending_since = None
-        if backend != "gdi":
+        if sys.platform == "win32" and backend != "gdi":
             try:
                 self.camera = create_desktop_camera(monitor)
                 self.backend = "dxgi"

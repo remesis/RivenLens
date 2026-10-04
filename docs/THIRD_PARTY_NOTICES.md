@@ -9,7 +9,7 @@ It does not grant rights to third-party trademarks or content.
 The source release does not bundle Python, Qt libraries, third-party wheels or
 a virtual environment. The launcher installs dependencies separately. Their
 copyright and license notices remain with their packages and upstream sources.
-If standard 64-bit Python 3.13 or 3.14 is missing, the launcher can download the
+On Windows, if standard 64-bit Python 3.13 or 3.14 is missing, the launcher can download the
 official Python 3.13 installer with permission. Python remains covered by the
 [PSF license](https://docs.python.org/3/license.html).
 
@@ -28,6 +28,32 @@ Python and Windows' installed OCR feature are prerequisites, not part of this
 source distribution. If you package an executable or redistribute dependencies,
 include the exact packages' licenses, copyright notices and required source or
 source-access information. This table does not replace those obligations.
+
+## Optional local OCR
+
+RapidOCR's packages and models are downloaded separately, with permission;
+they are not bundled in RivenLens updates. The installed packages retain their
+own license files. The recognizers use PaddleOCR models distributed by RapidAI.
+
+| Component | License | Upstream source |
+| --- | --- | --- |
+| RapidOCR and PaddleOCR models | Apache-2.0 | [RapidOCR](https://github.com/RapidAI/RapidOCR) and [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) |
+| ONNX Runtime | MIT, with bundled-component notices | [ONNX Runtime](https://github.com/microsoft/onnxruntime) |
+| OpenCV Python | Apache-2.0; wheels include additional component notices | [OpenCV Python](https://github.com/opencv/opencv-python) |
+| Shapely and GEOS | BSD-3-Clause; GEOS LGPL-2.1 | [Shapely](https://github.com/shapely/shapely) and [GEOS](https://libgeos.org/) |
+| Pyclipper | MIT | [Pyclipper](https://github.com/fonttools/pyclipper) |
+| OmegaConf and ANTLR runtime | BSD-3-Clause | [OmegaConf](https://github.com/omry/omegaconf) and [ANTLR](https://github.com/antlr/antlr4) |
+| Requests and FlatBuffers | Apache-2.0 | [Requests](https://github.com/psf/requests) and [FlatBuffers](https://github.com/google/flatbuffers) |
+| Certifi | MPL-2.0 | [Certifi](https://github.com/certifi/python-certifi) |
+| Protobuf | BSD-3-Clause, with bundled-component notices | [Protobuf](https://github.com/protocolbuffers/protobuf) |
+| PyYAML, charset-normalizer, colorlog, urllib3 and six | MIT or MIT-style licenses | Package license files |
+| colorama and idna | BSD-3-Clause | Package license files |
+| tqdm | MPL-2.0 and MIT | [tqdm](https://github.com/tqdm/tqdm) |
+| Packaging, setuptools and wheel (setup tools) | Apache-2.0/BSD-2-Clause, MIT and MIT | [Packaging](https://github.com/pypa/packaging), [setuptools](https://github.com/pypa/setuptools) and [wheel](https://github.com/pypa/wheel) |
+
+NumPy and Pillow are covered in the dependency table above. The included
+[RapidOCR license](licenses/APACHE-2.0.txt) preserves its upstream copyright
+notice and the Apache-2.0 terms also used by the PaddleOCR models.
 
 ## Reference values and branding
 

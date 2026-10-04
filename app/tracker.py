@@ -130,6 +130,7 @@ class RollTracker:
             # Selection changes size/position, never left-to-right role order.
             raw = sorted(raw, key=lambda card: card.get("screenX", 0.5))
         mode = result.get("mode", "unknown")
+        strict_roles = result.get("strictRoles", False)
         warning = self.stat_warning.update(raw, mode, now, (self.current, self.new))
         observations = {"current": None, "new": None}
         cycle = self._centered_card(raw) if mode == "current" else None
@@ -149,7 +150,11 @@ class RollTracker:
             observations["current"] = cycle
         elif len(raw) == 2:
             observations = {"current": raw[0], "new": raw[1]}
-        elif len(raw) == 1 and raw[0].get("complete"):
+        elif (
+            len(raw) == 1
+            and raw[0].get("complete")
+            and (not strict_roles or mode == "comparison")
+        ):
             card = raw[0]
             position = card.get("screenX", -1)
             if mode == "comparison" and 0 <= position < 0.43:
@@ -158,9 +163,13 @@ class RollTracker:
                 observations["new"] = card
             elif self.current and key(card) == key(self.current):
                 observations["current"] = card
-            elif self.new and key(card) == key(self.new):
+            elif not strict_roles and self.new and key(card) == key(self.new):
                 observations["new"] = card
-            elif self.current and card["weapon"] == self.current["weapon"]:
+            elif (
+                not strict_roles
+                and self.current
+                and card["weapon"] == self.current["weapon"]
+            ):
                 # A new card is revealed in the center before the comparison
                 # settles. Promote it only on CYCLE FOR or as a verified left card.
                 observations["new"] = card

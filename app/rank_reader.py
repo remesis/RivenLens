@@ -4,6 +4,7 @@
 
 """Read the eight rank pips from captured card pixels, never from game state."""
 
+import numpy as np
 from PIL import Image, ImageChops, ImageFilter
 
 MAX_RANK = 8
@@ -44,8 +45,13 @@ def detect_rank(image, card):
     cyan = ImageChops.darker(
         ImageChops.subtract(green, red), ImageChops.subtract(blue, red)
     ).filter(ImageFilter.BoxBlur(1))
-    cyan_pixels = cyan.tobytes()
     width, rows = area.size
+    # Signed arrays prevent byte overflow in subtraction and paired-tip sums.
+    cyan_pixels = (
+        np.frombuffer(cyan.tobytes(), dtype=np.uint8)
+        .reshape(rows, width)
+        .astype(np.int16)
+    )
     expected_center = round((center - box[0]) * scale)
     best = None
     for spacing in range(24, 36):
@@ -60,28 +66,47 @@ def detect_rank(image, card):
             ImageChops.offset(tips, -spacing // 2, 0),
             scale=2,
         )
-        contrasts = ImageChops.subtract(tips, gaps, offset=128).tobytes()
-        for x_center in range(expected_center - 16, expected_center + 17, 2):
-            xs = [
-                round(x_center + (index - 3.5) * spacing) for index in range(MAX_RANK)
-            ]
-            if xs[0] - spacing // 2 < 0 or xs[-1] + spacing // 2 >= width:
-                continue
-            for y in range(12, min(rows - offset - 2, 57)):
-                scores = [contrasts[y * width + x] - 128 for x in xs]
-                weakest = min(scores)
-                merit = sum(scores) / MAX_RANK + weakest
-                if weakest < 12 or merit < 24 or best and merit <= best[0]:
-                    continue
-                colors = [
-                    (
-                        cyan_pixels[(y - offset) * width + x]
-                        + cyan_pixels[(y + offset) * width + x]
-                    )
-                    / 2
-                    for x in xs
+        contrasts = (
+            np.frombuffer(
+                ImageChops.subtract(tips, gaps, offset=128).tobytes(), dtype=np.uint8
+            )
+            .reshape(rows, width)
+            .astype(np.int16)
+            - 128
+        )
+        columns = [
+            xs
+            for x_center in range(expected_center - 16, expected_center + 17, 2)
+            if (
+                xs := [
+                    round(x_center + (index - 3.5) * spacing)
+                    for index in range(MAX_RANK)
                 ]
-                best = (merit, colors)
+            )
+            and xs[0] - spacing // 2 >= 0
+            and xs[-1] + spacing // 2 < width
+        ]
+        ys = np.arange(12, min(rows - offset - 2, 57))
+        if not columns or not len(ys):
+            continue
+        xs = np.asarray(columns)
+        scores = contrasts[ys[None, :, None], xs[:, None, :]]
+        weakest = scores.min(axis=2)
+        merits = scores.sum(axis=2) / MAX_RANK + weakest
+        valid = (weakest >= 12) & (merits >= 24)
+        if not valid.any():
+            continue
+        merits = np.where(valid, merits, -np.inf)
+        # C-order is x-center then y; argmax keeps the first exact tie.
+        column, row = np.unravel_index(merits.argmax(), merits.shape)
+        merit = float(merits[column, row])
+        if best and merit <= best[0]:
+            continue
+        y = ys[row]
+        colors = (
+            cyan_pixels[y - offset, xs[column]] + cyan_pixels[y + offset, xs[column]]
+        ) / 2
+        best = (merit, colors)
     if not best:
         return None
     colors = best[1]
@@ -89,7 +114,7 @@ def detect_rank(image, card):
     # from being silently assigned to either side of a rank boundary.
     if any(3 < value < 9 for value in colors):
         return None
-    lit = [value >= 9 for value in colors]
+    lit = [bool(value >= 9) for value in colors]
     rank = sum(lit)
     if lit != [True] * rank + [False] * (MAX_RANK - rank):
         return None

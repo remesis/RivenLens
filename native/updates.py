@@ -5,6 +5,7 @@
 """One startup check and a user-approved download, install and restart flow."""
 
 import json
+import sys
 from pathlib import Path
 from PySide6.QtCore import QObject, Qt, QTimer
 from PySide6.QtWidgets import (
@@ -29,6 +30,8 @@ def source_checkout():
 def installation_issue():
     if source_checkout():
         return "This is a Git checkout. Update it through Git."
+    if sys.platform != "win32":
+        return "On Linux, download the new release and extract it into a new folder. Your saved settings and OCR models stay in place."
     try:
         installed_files(Path(__file__).resolve().parent.parent)
     except (UpdateError, OSError):

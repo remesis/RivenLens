@@ -1,5 +1,7 @@
 # Copyright (C) 2026 remesis and RivenLens contributors.
 # SPDX-License-Identifier: GPL-3.0-only
+# See LICENSE in the project root for the license and warranty disclaimer.
+
 """Local interface translations; never change canonical grading identities."""
 
 import html
@@ -57,12 +59,15 @@ def default_language(tags=None):
     return "en"
 
 
-@lru_cache(maxsize=13)
+@lru_cache(maxsize=15)
 def tables(code):
     if code == "en":
         return {}, []
-    column = DATA["languages"].index(code)
-    messages = {key: values[column] for key, values in DATA["strings"].items()}
+    column = DATA["languages"].index(code) if code in DATA["languages"] else None
+    messages = {
+        key: values[column] if column is not None else key
+        for key, values in DATA["strings"].items()
+    }
     patterns = []
     for key, value in messages.items():
         if "{" not in key:

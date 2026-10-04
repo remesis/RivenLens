@@ -4,6 +4,7 @@
 
 """Native settings, with the heading and Close button outside the scroll area."""
 
+import sys
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QDoubleSpinBox,
@@ -20,6 +21,7 @@ from PySide6.QtWidgets import (
 from appearance import theme_for
 from catalog import variant_label
 from dialogs import ModalDialog
+from ocr_engine import backend_for
 from widgets import Combo, box, label, options
 from ui_text import QCheckBox, QFrame, QPushButton, translate
 
@@ -199,10 +201,16 @@ class SettingsDialog(ModalDialog):
                 ("Automatic", "auto"),
                 ("Desktop duplication", "dxgi"),
                 ("Compatibility", "gdi"),
-            ],
+            ]
+            if sys.platform == "win32"
+            else [("X11 desktop", "auto")],
             config["backend"],
         )
         capture.content.addWidget(field_row("Method", self.backend))
+        if backend_for(config["language"]) == "rapid":
+            capture.content.addWidget(
+                label("RapidOCR · local CPU recognition · 4 threads", "muted", True)
+            )
         self.interval = QDoubleSpinBox()
         self.interval.setRange(0.1, 5)
         self.interval.setSingleStep(0.1)

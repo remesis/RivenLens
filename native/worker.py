@@ -15,7 +15,13 @@ import mss
 from PIL import ImageOps
 from PySide6.QtCore import QThread, Signal
 
-from capture import CapturePending, CaptureUnavailable, DesktopCapture, monitor_token
+from capture import (
+    CapturePending,
+    CaptureUnavailable,
+    DesktopCapture,
+    desktop_supported,
+    monitor_token,
+)
 from ocr_engine import LocalOCR
 from ocr_budget import FrameBudget
 from reader import read_frame, reset_layout
@@ -25,6 +31,7 @@ from catalog import Catalog
 
 
 def enumerate_monitors():
+    desktop_supported()
     keys = ("left", "top", "width", "height", "unique_id", "name", "is_primary")
     with mss.MSS() as probe:
         return [{k: m[k] for k in keys if k in m} for m in probe.monitors[1:]]
@@ -163,6 +170,7 @@ class CaptureWorker(QThread):
                         if engine:
                             reset_layout(engine)
                             if engine.language != config["language"]:
+                                engine.close()
                                 engine = None
                         tracker, last_cards = RollTracker(), []
                         prior_revision, retry_at = revision, 0
@@ -266,3 +274,5 @@ class CaptureWorker(QThread):
         finally:
             if camera:
                 camera.close()
+            if engine:
+                engine.close()

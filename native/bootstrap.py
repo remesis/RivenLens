@@ -95,6 +95,10 @@ class ErrorReporter:
 
 
 def log_path():
+    if sys.platform != "win32":
+        from instance import data_directory
+
+        return data_directory() / "logs/application.log"
     base = Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData/Local"))
     return base / "Arbitrations/RivenLens Native/logs/application.log"
 

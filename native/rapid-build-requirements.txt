@@ -1,0 +1,9 @@
+# Copyright (C) 2026 remesis and RivenLens contributors.
+# SPDX-License-Identifier: GPL-3.0-only
+# Build tools for ANTLR's pure-Python package. No compiler is required.
+packaging==26.3 \
+    --hash=sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c
+setuptools==83.0.0 \
+    --hash=sha256:29b23c360f22f414dc7336bb39178cc7bcbf6021ed2733cde173f09dba19abb3
+wheel==0.46.3 \
+    --hash=sha256:4b399d56c9d9338230118d705d9737a2a468ccca63d5e813e2a4fc7815d8bc4d

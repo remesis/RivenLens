@@ -11,8 +11,10 @@ from copy import deepcopy
 
 from PIL import Image, ImageChops, ImageFilter, ImageOps
 
-from parser import CATALOG, NAME_KEYS, FOOTER, clean_text, fingerprint, parse_cards
+from parser import NAME_KEYS, FOOTER, clean_text, fingerprint, parse_cards
+from localization import LATIN_UI_LANGUAGES
 from rank_reader import detect_rank
+from variants import VARIANT_CHOICES
 from ocr_budget import allow_retry, primary_read, reserve_verifications
 from layout import (
     action_line,
@@ -22,19 +24,6 @@ from layout import (
     map_lines,
     read_tiles,
 )
-
-VARIANT_GROUPS = {}
-for family_index, _, variants in CATALOG["weapons"]:
-    family = CATALOG["families"][family_index][0]
-    group_name = re.sub(
-        r"\s*\((?:Primary|Secondary|Rifle|Melee)\)$", "", family, flags=re.I
-    )
-    VARIANT_GROUPS.setdefault(group_name, set()).update(
-        [family, *[v[0] for v in variants]]
-    )
-VARIANT_CHOICES = {
-    name: choices for choices in VARIANT_GROUPS.values() for name in choices
-}
 
 
 def caption_variant(lines):
@@ -113,6 +102,12 @@ def defer_variant_search(engine):
 
 async def variant_hint(engine, image, *, discover=True):
     """Read only the visible Fits In panel, without game/window introspection."""
+    if getattr(engine, "backend", None) == "rapid":
+        from rapid_text import caption_namespace
+
+        observed = caption_namespace()
+        if observed:
+            return observed[0] if len(observed) == 1 else None
     marker = getattr(engine, "_fits_marker", None)
     localized = getattr(engine, "language", "en") != "en"
     treatment_count = 4 if localized else 3
@@ -240,7 +235,13 @@ async def variant_hint(engine, image, *, discover=True):
                 ),
                 Image.Resampling.LANCZOS,
             )
-        lines = await engine.read(sample)
+        lines = (
+            await engine.read_caption(sample)
+            if treatment == 1
+            and getattr(engine, "language", "en") in LATIN_UI_LANGUAGES
+            and getattr(engine, "backend", None) == "rapid"
+            else await engine.read(sample)
+        )
         attempted = True
         hint = caption_variant(lines)
         located = fits_marker(lines)
@@ -909,6 +910,36 @@ async def read_frame(
     validate_stats=None,
     auto_rank=True,
 ):
+    arguments = dict(
+        focus=focus,
+        require_current=require_current,
+        rank_image=rank_image,
+        budget=budget,
+        previous_new=previous_new,
+        variant_mismatch=variant_mismatch,
+        validate_stats=validate_stats,
+        auto_rank=auto_rank,
+    )
+    if getattr(engine, "backend", None) == "rapid":
+        with engine.frame_scope():
+            return await _read_frame(engine, image, **arguments)
+    return await _read_frame(engine, image, **arguments)
+
+
+async def _read_frame(
+    engine,
+    image,
+    focus=True,
+    require_current=True,
+    rank_image=None,
+    budget=None,
+    previous_new=None,
+    variant_mismatch=None,
+    validate_stats=None,
+    auto_rank=True,
+):
+    if getattr(engine, "backend", None) == "rapid":
+        engine.automatic_rank = auto_rank
     if getattr(engine, "_layout_size", None) != image.size:
         reset_layout(engine)
         engine._layout_size = image.size
@@ -978,6 +1009,18 @@ async def read_frame(
         on_verified=annotate,
         previous_new=previous_new,
     )
+    if getattr(engine, "backend", None) == "rapid":
+        from rapid_text import caption_namespace
+
+        observed = caption_namespace()
+        if observed:
+            # An exact caption in this frame takes precedence over retained
+            # metadata. Conflicting panel observations cannot select a variant.
+            hint = observed[0] if len(observed) == 1 else None
+            engine._session_variant_hint = hint
+            if hint is None:
+                for card in result["cards"]:
+                    card.pop("variantHint", None)
     action = engine._frame_action
     for card in result["cards"]:
         title = card.get("titleBounds") or card["bounds"]
@@ -1014,12 +1057,18 @@ async def read_frame(
     engine._variant_pending = bool(result["cards"]) and not any(
         hint in VARIANT_CHOICES.get(card["weapon"], set()) for card in result["cards"]
     )
+    result["strictRoles"] = getattr(engine, "backend", None) == "rapid"
     return result
 
 
 async def read_rank(engine, image, card):
     """Retry an unreadable footer locally; ordinary pip reads need no extra OCR."""
-    rank = detect_rank(image, card)
+    detector = detect_rank
+    if getattr(engine, "backend", None) == "rapid":
+        from rapid_rank import annotation_rank
+
+        detector = annotation_rank
+    rank = detector(image, card)
     if rank is not None or not card.get("titleBounds"):
         return rank
     title, bounds = card["titleBounds"], card["bounds"]
@@ -1055,7 +1104,7 @@ async def read_rank(engine, image, card):
 
     def candidate_rank():
         ranks = {
-            detect_rank(image, {**card, "footerBounds": candidate})
+            detector(image, {**card, "footerBounds": candidate})
             for candidate in candidates
         }
         ranks.discard(None)
@@ -1111,6 +1160,17 @@ async def read_rank(engine, image, card):
     return rank
 
 
+def defer_transition(result):
+    """A confirmation dialog does not establish a kept/proposed card role."""
+    result = deepcopy(result)
+    result["complete"] = False
+    result["reason"] = "Transition dialog: card verification deferred."
+    for card in result["cards"]:
+        card["complete"] = False
+        card["unreadable"] = [result["reason"]]
+    return result
+
+
 async def read_cards(
     engine,
     image,
@@ -1125,10 +1185,11 @@ async def read_cards(
     if focus and (learned or image.width >= 1200 and image.width > image.height):
         # Ordinary image cropping only. Both cards, the MR footers and action label
         # remain inside this region in the cycling layout. No game/window access.
-        # Narrower text-only strip for normal wide cycling screens. Keep the
-        # broad crop for screenshots/custom layouts; full-frame fallback stays.
+        # Trim unused side panels on wide cycling screens. Neural text boxes
+        # need a wider margin; custom layouts retain the full-frame fallback.
         wide = image.width / image.height >= 1.5
-        region = (0.20, 0.50, 0.68, 0.97) if wide else (0.16, 0.44, 0.85, 0.97)
+        right = 0.85 if getattr(engine, "backend", None) == "rapid" else 0.68
+        region = (0.20, 0.50, right, 0.97) if wide else (0.16, 0.44, 0.85, 0.97)
         box = learned or tuple(
             int(v * (image.width if i % 2 == 0 else image.height))
             for i, v in enumerate(region)
@@ -1152,6 +1213,11 @@ async def read_cards(
         result["mode"] = observe_mode(engine, map_lines(lines, box[:2], actual_scale))
         if result["mode"] == "unknown":
             result["mode"] = await read_action_mode(engine, image)
+        if (
+            result["mode"] == "transition"
+            and getattr(engine, "backend", None) == "rapid"
+        ):
+            return defer_transition(source_coordinates(result, box[:2], actual_scale))
         # Recover and verify the proposed card before spending retries on the
         # dim old card. Preserve the focused OCR scale for the first recovery.
         new_ready = False
@@ -1261,6 +1327,8 @@ async def read_cards(
         result["mode"] = (
             focused["mode"] if focused else await read_action_mode(engine, image)
         )
+    if result["mode"] == "transition" and getattr(engine, "backend", None) == "rapid":
+        return defer_transition(result)
     verified = set()
     if (
         focused

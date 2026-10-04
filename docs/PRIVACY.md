@@ -3,8 +3,8 @@
 ## Screen pixels only
 
 RivenLens captures the selected monitor or region through Windows desktop
-capture. Windows' installed OCR engine for the selected game language reads
-those images locally.
+capture or Linux X11 capture. Windows' installed OCR engine reads supported
+languages locally; RapidOCR handles Linux, and Ukrainian and Thai on Windows.
 It does not read game memory, inspect game files, obtain account credentials,
 send game input, attach to the game or contact Warframe servers.
 
@@ -28,13 +28,15 @@ added by the app. GitHub receives normal connection information such as your
 IP address. Git checkouts and copies with an empty repository or asset setting
 do not make update requests.
 
-A newer stable release offers **Yes, update** or **No**. Yes authorizes downloading
+A newer stable Windows release offers **Yes, update** or **No**. Yes authorizes downloading
 and installing that release, then reopening RivenLens. The updater validates and
 stages the archive locally before closing the app. If dependencies changed, it
 prepares a separate Python environment using the configured package index.
 Only verified, release-managed files are replaced. Local modifications and file
 collisions stop installation; unrelated files are preserved. It does not interact with Warframe.
 Failed or cancelled downloads are not treated as completed updates.
+Linux displays a release link for manual updates instead of running the Windows
+installer.
 
 The footer links open their external sites only when clicked. Installing
 dependencies uses the configured Python package index. These services have
@@ -65,6 +67,15 @@ policies and privacy practices apply. Windows records servicing diagnostics in
 its standard DISM logs. Closing RivenLens does not interrupt an already-approved
 Windows feature installation; it does not restart Windows automatically.
 
+RapidOCR setup requires explicit approval to download its pinned packages from
+PyPI and recognition models from ModelScope over HTTPS. Package archives are
+hash-checked during installation; installed versions and model hashes are checked
+before recognition. No screen pixels or recognized text are sent. Package setup
+has a time limit, and model downloads have size and time limits. Failures stop
+the attempt rather than retrying in a loop. Closing RivenLens requests cancellation;
+an in-progress network operation may take up to 30 seconds to finish. These
+services receive normal connection information such as your IP address.
+
 ## Local storage
 
 Preferences and explicitly chosen sound copies are stored under
@@ -72,9 +83,15 @@ Preferences and explicitly chosen sound copies are stored under
 kept so earlier Python-version settings continue to work. Removing a saved
 custom sound does not delete your original audio file.
 
+On Linux, local settings and runtimes use `$XDG_DATA_HOME/Arbitrations/RivenLens Native`,
+or `~/.local/share/Arbitrations/RivenLens Native` when that variable is unset.
+RapidOCR packages and models live in the `ocr` subfolder of the platform's
+app-data directory, separate from the application and reused across updates.
+
 Downloaded updates, installation logs and source backups stay in the `updates`
-subfolder of that same app-data directory. Python dependencies live in
-`native/.venv` or `native/.runtimes`, separate from preferences. Existing runtimes
+subfolder of that same app-data directory. Windows Python dependencies live in
+`native/.venv` or `native/.runtimes`; Linux uses the app-data `runtime` subfolder.
+These remain separate from preferences. Existing runtimes
 are kept intact so installation failures can restore the previous version.
 
 Launch failures and unexpected application errors are logged locally in

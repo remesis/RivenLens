@@ -1,5 +1,7 @@
 # Copyright (C) 2026 remesis and RivenLens contributors.
 # SPDX-License-Identifier: GPL-3.0-only
+# See LICENSE in the project root for the license and warranty disclaimer.
+
 """Exact, offline game-text adapters. Grading identities always stay canonical.
 
 No automatic language guessing and no machine translation. Unknown or ambiguous
@@ -18,6 +20,14 @@ DATA = json.loads(
     )
 )
 LANGUAGES = DATA["languages"]
+LANGUAGES.update(
+    json.loads(
+        (
+            Path(__file__).resolve().parents[1] / "native/data/rapid_languages.json"
+        ).read_text("utf-8")
+    )["languages"]
+)
+LATIN_UI_LANGUAGES = frozenset(("de", "es", "fr", "it", "pl", "pt", "tr"))
 UI_TEXT = json.loads(
     (Path(__file__).resolve().parents[1] / "native/data/ui_strings.json").read_text(
         "utf-8"
@@ -136,10 +146,12 @@ class Profile:
         self.names = {}
         self.title_names = {}
         for canonical, aliases in self.data["weapons"].items():
-            # Kitgun/Zaw type qualifiers are catalog metadata, not visible names.
+            # Keep a type qualifier when it is visibly part of this alias;
+            # otherwise it is catalog metadata, not a printed weapon name.
             plain = re.sub(r" \((Primary|Secondary|Rifle|Melee)\)$", "", canonical)
             for alias in aliases:
-                self.names.setdefault(name_key(alias), set()).add(plain)
+                observed_name = canonical if "(" in alias and ")" in alias else plain
+                self.names.setdefault(name_key(alias), set()).add(observed_name)
                 alias = " ".join(unicodedata.normalize("NFKC", alias).split())
                 pattern = re.compile(
                     r"\s*".join(re.escape(c) for c in alias if not c.isspace())
@@ -147,12 +159,16 @@ class Profile:
                     re.I,
                 )
                 self.title_names.setdefault(alias[0].casefold(), []).append(
-                    (pattern, plain, len(alias))
+                    (pattern, observed_name, len(alias))
                 )
         for bucket in self.title_names.values():
             bucket.sort(key=lambda row: row[2], reverse=True)
         self.ui = self.data["ui"]
-        column = UI_TEXT["languages"].index(language) if language != "en" else None
+        column = (
+            UI_TEXT["languages"].index(language)
+            if language in UI_TEXT["languages"]
+            else None
+        )
         self.companion_headers = {
             canonical: UI_TEXT["strings"][canonical][column]
             if column is not None
@@ -241,6 +257,10 @@ class Profile:
     def weapon(self, text):
         choices = self.names.get(name_key(re.sub(r"\s*\[\d+\]$", "", text)), set())
         return next(iter(choices)) if len(choices) == 1 else None
+
+    def title_prefix(self, text):
+        key = name_key(text)
+        return len(key) >= 2 and any(alias.startswith(key) for alias in self.names)
 
     def title(self, text):
         """Return a canonical title anchor while preserving the visible name."""
@@ -356,12 +376,12 @@ class Profile:
         return None
 
 
-@lru_cache(maxsize=13)
+@lru_cache(maxsize=15)
 def profile(language):
     return Profile(language)
 
 
-def adapt_lines(lines, language):
+def adapt_lines(lines, language, *, locale=None):
     """Turn exact localized observations into the existing English parser grammar.
 
     Preserve all pixel bounds and display titles. Whole stat templates can span
@@ -372,13 +392,12 @@ def adapt_lines(lines, language):
         return lines
     from parser import game_card_headers, clean_text, join_title_lines
 
-    locale = profile(language)
+    locale = locale or profile(language)
     # A long localized weapon name can wrap before its generated suffix. Join
     # only exact name prefixes, with the same geometry limits as English titles.
     joined_headers, title_rows = {}, set()
     for index, line in enumerate(lines):
-        key = name_key(line["text"])
-        if len(key) < 2 or not any(alias.startswith(key) for alias in locale.names):
+        if not locale.title_prefix(line["text"]):
             continue
         header, used = dict(line), []
         for _ in range(2):

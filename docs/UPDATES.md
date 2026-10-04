@@ -4,6 +4,13 @@ Release copies check [remesis/RivenLens](https://github.com/remesis/RivenLens)
 once at startup. A newer stable release prompts the user. **No** dismisses it for
 that launch. **Yes, update** downloads, installs and reopens RivenLens with
 capture paused and saved settings unchanged. Git checkouts update through Git.
+Linux shows a release-page link for manual updates; the automatic installer is
+Windows-only. Optional RapidOCR packages and models stay in the user's app-data
+directory and are not bundled in release ZIPs.
+
+Windows versions 0.2.13 and earlier cannot install the renamed launchers directly.
+Install the [0.2.15 compatibility release](https://github.com/remesis/RivenLens/releases/tag/v0.2.15)
+first, then update normally, or extract the latest ZIP into a new folder.
 
 Versions 0.1.0 and 0.1.1 used GitHub's generated source archive, which has no
 managed-file manifest. For those versions, download **RivenLens.zip** once and

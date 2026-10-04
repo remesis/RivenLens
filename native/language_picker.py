@@ -1,5 +1,7 @@
 # Copyright (C) 2026 remesis and RivenLens contributors.
 # SPDX-License-Identifier: GPL-3.0-only
+# See LICENSE in the project root for the license and warranty disclaimer.
+
 """Compact, keyboard-accessible language picker with original vector flag badges."""
 
 from functools import lru_cache
@@ -22,18 +24,20 @@ from widgets import Combo
 
 NAMES = {
     "en": "English",
-    "de": "Deutsch",
     "fr": "Français",
     "it": "Italiano",
-    "ko": "한국어",
-    "ru": "Русский",
-    "ja": "日本語",
-    "pl": "Polski",
+    "de": "Deutsch",
     "es": "Español",
     "pt": "Português (BR)",
+    "ru": "Русский",
+    "pl": "Polski",
+    "uk": "Українська",
+    "tr": "Türkçe",
+    "ja": "日本語",
     "zh": "简体中文",
     "tc": "繁體中文",
-    "tr": "Türkçe",
+    "ko": "한국어",
+    "th": "ไทย",
 }
 
 
@@ -50,6 +54,10 @@ def flag_svg(code):
             f'<rect y="{i * 8}" width="24" height="8" fill="{color}"/>'
             for i, color in enumerate(bars[code])
         )
+    elif code == "uk":
+        body = '<rect width="24" height="12" fill="#2468b5"/><rect y="12" width="24" height="12" fill="#f8d349"/>'
+    elif code == "th":
+        body = '<rect width="24" height="24" fill="#b72c43"/><rect y="4" width="24" height="16" fill="#fff"/><rect y="8" width="24" height="8" fill="#292c69"/>'
     elif code in ("fr", "it"):
         colors = ("#1951ae" if code == "fr" else "#23925d", "#fff", "#db3547")
         body = "".join(

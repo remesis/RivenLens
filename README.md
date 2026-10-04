@@ -31,15 +31,19 @@ https://forums.warframe.com/topic/1320042-third-party-software-and-you/
 
 ## Getting started
 
-You'll need **64-bit Windows and Windows' OCR feature for your game's language**.
-See [Language support](#language-support) below for supported languages and setup.
-
 Download the [latest release](https://github.com/remesis/RivenLens/releases/latest)
 and extract **RivenLens.zip** into a folder you can keep.
-Double-click **Start Riven Lens.cmd**. If a standard 64-bit Python 3.13 or 3.14
+
+**Windows:** double-click **Launch RivenLens - Windows.cmd**. If a standard 64-bit Python 3.13 or 3.14
 install is missing, the launcher offers to download and install Python 3.13 for
-you. Existing compatible installs are left alone. The first launch then installs
-the required packages into RivenLens' own environment.
+you. Existing compatible installs are left alone.
+
+**Linux:** on an x86-64 X11 desktop, install Python 3.12–3.14 with its `venv`
+package, Qt's X11 libraries (`libxcb-cursor0` on Debian/Ubuntu) and fonts for
+your chosen language, then run
+`sh "Launch RivenLens - Linux.sh"` from the extracted folder. The launcher
+asks before downloading dependencies into your user folder. Wayland capture is
+not supported yet; live Warframe capture on Linux still needs user testing.
 
 Choose your monitor and press **Start OCR**. Put RivenLens beside the cards or
 on a second monitor. Capture always starts paused. **Pause OCR** stops scanning;
@@ -47,9 +51,9 @@ closing the window or choosing **Quit** exits the app.
 
 ## What's included
 
-- Current and new rolls side by side, with rank-8 grading by default and automatic
-  variant detection. Automatic rank detection is available in Settings.
-- Collapsible splice, manual-lock and final-odds stages, shown when relevant.
+- Current and new grades side by side, automatic variant detection and rank 8
+  by default. Automatic rank detection is available in Settings.
+- Collapsible splice, manual-lock and final-odds stages with roll and Kuva estimates.
 - A platinum-icon seed finder for matching Warframe Market listings, sorted by
   the lowest listed price, with a remembered listing-age filter.
 - Multiple acceptable targets per unlocked stat slot, with odds for distinct
@@ -59,67 +63,50 @@ closing the window or choosing **Quit** exits the app.
 - **Always on top** in Settings for an overlay-style window. Use windowed or
   borderless play; exclusive fullscreen may cover it.
 
-In stat lists, check all acceptable targets; press Enter or click outside to close.
-The field shows the first selection and how many more are selected. A `*` marks
-a stat selected in another unlocked slot. Overlapping targets are allowed, but
-each actual rolled stat must be different, and each matching combination counts
-only once.
-Locking a slot keeps only its first selection and makes that list single-select.
-That stat becomes unavailable in every other slot, including the opposite sign.
-Existing duplicates are removed; a slot with no remaining targets becomes **Any**.
-Splices and vintage stats remain single selections.
+Check all acceptable targets in an unlocked stat list; press Enter or click
+outside to close it. A `*` marks a target used in another slot. Each rolled stat
+must be distinct, and overlapping combinations count only once. Locking a slot
+keeps its first selection and removes that stat from other slots. Splices and
+vintage stats stay single-select.
 
-Enable **Ding** in the final-odds stage to hear when a fully read new roll matches
-the whole target. Locked and spliced stats must also meet their selected grades.
-This toggle is independent of the splice-ingredient and lock-stat dings.
-The final-odds stage also shows estimated combined rolls and Kuva for the
-applicable setup stages and final target. Hover over the figures for assumptions;
-Kuva estimates use the selected language's compact units and number formatting.
-English uses whole thousands (`135k`) and two decimal places for millions
-(`1.23m`); other languages use their familiar abbreviations or units, such as
-`1,23 млн` in Russian and `123万` in Japanese.
+Each stage has its own **Ding** toggle. The final stage alerts only for a fully
+read new roll matching the whole target, including the selected lock and splice
+grades. Hover over the roll and Kuva figures for their assumptions.
+
+## Finding a starting seed
 
 Select a splice or manual lock, then click the **platinum button** beside the
 eligibility legend to open **Purchase Ideal Starting Seed**. Without either
-selection, the button does nothing. Searches run from your PC only when you open
-the window or explicitly press **Refresh** in it. Changing planner stats,
-grades, weapons or categories never sends Market requests; changing the age
-filter uses downloaded results. Reopening within five minutes reuses cached
-listings, including after grade changes; **Refresh** fetches listings again.
-Search progress and request waits are shown in the window.
-Requests are spaced at least 6.1 seconds apart. Failures stop the search rather
-than automatically retrying, and rate-limit responses preserve their cooldown.
-The window remembers its size and position. Each listing appears only in its
-highest matching stage, rather than repeating across sections.
-Searches never place bids, buy items or message
-sellers.
+selection, the button does nothing. Searches run from your machine only when
+you open this window or press **Refresh**. Planner changes never send requests;
+age and grade changes reuse downloaded listings. Results are cached for five
+minutes. Progress is shown while searching, with at least 6.1 seconds between
+requests and no automatic retries. The window remembers its placement, and each
+listing appears only in its highest matching stage. RivenLens never buys, bids
+or messages sellers.
 
 For a splice, Stage 1 finds either ingredient at the selected splice grade or
 better. With a manual lock too, Stage 2 requires that lock at its selected grade
 and both ingredients, with at least one meeting the splice grade (the partner
 can be any grade), or the qualifying splice itself. Both ingredient grades are
 shown when present: S + F still produces an S splice. Without a
-splice, Stage 1 finds the selected lock. All sections require the selected
-format. Market currently does not advertise the new splice stats, so ingredient
-listings are available but already-spliced listings cannot yet be verified.
+splice, Stage 1 finds the selected lock. All sections require the selected format.
 
 The default age filter is **Less than 30 days**, measured from original creation,
-not the seller's latest refresh. Options also include 15 days, 3 months, 6 months
-and **Show All**; your preference is saved. Results include PC listings and
-crossplay-enabled Xbox, PlayStation and mobile listings, including offline
-sellers. Nintendo Switch listings are excluded. Searches use a five-minute
-cache and may be limited by Market's search API. Seller-entered stats are
-graded at the listed rank using Market's
-base-weapon disposition. Inaccurate listings may be excluded; verify the Riven
-with its seller. Auction prices show the lower listed endpoint, not a promise
-that the item can be purchased for that amount.
+not the seller's latest refresh. You can save a different age filter. Results
+include PC and crossplay-enabled Xbox, PlayStation and mobile listings, but not
+Switch. Market may limit results and does not yet expose splice stats; ingredient
+listings remain searchable. Seller-entered values are graded at the listed
+rank using Market's base-weapon disposition; verify them with the seller.
+Auction prices show the lower listed endpoint, not a guaranteed purchase price.
 
 ## Language support
 
 Select your game's language in the **bottom-center language picker**.
-This changes OCR and the RivenLens interface together. The first
-launch follows your Windows language when supported; your saved choice takes
-priority afterward.
+The first launch follows your system language when supported; your saved choice
+takes priority afterward. Windows uses its installed OCR engine for the original
+13 languages. Linux uses **RapidOCR on four CPU threads**, as do Ukrainian and
+Thai on Windows. No particular GPU is required.
 
 | Language | Warframe support | RivenLens support |
 | --- | :---: | --- |
@@ -131,26 +118,28 @@ priority afterward.
 | Portuguese - Brazil | ✅ | ✅ |
 | Russian | ✅ | ✅ |
 | Polish | ✅ | ✅ |
-| Ukrainian | ✅ | ❌ No Windows OCR support at this time |
+| Ukrainian | ✅ | ✅ RapidOCR |
 | Turkish | ✅ | ✅ |
 | Japanese | ✅ | ✅ |
 | Simplified Chinese | ✅ | ✅ |
 | Traditional Chinese | ✅ | ✅ |
 | Korean | ✅ | ✅ |
-| Thai | ✅ | ❌ No Windows OCR support at this time |
+| Thai | ✅ | ✅ RapidOCR |
 
 If the matching Windows OCR feature is missing, RivenLens offers to download and
 install it. This needs your approval, Windows administrator permission and an
 internet connection; your display language and keyboard stay unchanged.
-Support does not guarantee every roll will be read correctly.
+
+RapidOCR asks before downloading its pinned CPU runtime and selected language's
+models from PyPI and ModelScope. These files are cached **outside the application**
+and reused by updates; they are not bundled into each release. Recognition stays
+local. Support does not guarantee every roll will be read correctly.
 
 ## A few things to know
 
 Grading defaults to **Manual rank 8/8**. Keep **Show Ranked** enabled in Warframe
 when using this setting. If viewing lower-rank values, choose **Auto-detect rank
 pips** under **Settings → Grading → Riven rank**. Your saved choice is remembered.
-Existing installations switch to rank 8 once when upgrading; choices made
-afterward remain saved.
 
 Keep the stat text, card footer and bottom-right **Fits In** label visible; rank
 pips must also be visible when using automatic rank detection. Small
@@ -164,13 +153,16 @@ planner odds are estimates, not guarantees.
 
 Images and readings stay in memory and are not uploaded or automatically saved.
 Settings, chosen sound copies and diagnostic logs are saved locally. Startup update
-checks contact GitHub, never Warframe. Choose **Yes, update** to download, install
-and reopen RivenLens automatically. Settings and custom sounds are preserved,
-and the previous version is backed up. [Privacy details](docs/PRIVACY.md).
+checks contact GitHub, never Warframe. Windows can download, install and reopen
+an update with permission, preserving settings and backing up the previous
+version. Linux updates are manual for now. [Privacy details](docs/PRIVACY.md).
 
 Updates come from [remesis/RivenLens](https://github.com/remesis/RivenLens/releases).
 Only newer published releases prompt for an update. [Release configuration](docs/UPDATES.md).
 Git checkouts are updated through Git instead of the automatic installer.
+On Windows, copies from 0.2.13 or earlier need the
+[0.2.15 compatibility release](https://github.com/remesis/RivenLens/releases/tag/v0.2.15)
+first, or a fresh extraction of the latest ZIP, because the launchers were renamed.
 For copies from 0.1.0 or 0.1.1, download **RivenLens.zip** once and extract it into
 a new folder to enable the updated installer. Your saved settings stay available.
 
