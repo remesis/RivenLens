@@ -836,9 +836,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "corrosive": {
         "id": "corrosive",
@@ -853,9 +853,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "gas": {
         "id": "gas",
@@ -870,9 +870,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "magnetic": {
         "id": "magnetic",
@@ -887,9 +887,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "radiation": {
         "id": "radiation",
@@ -904,9 +904,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "viral": {
         "id": "viral",
@@ -921,9 +921,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "damage-to-orokin": {
         "id": "damage-to-orokin",
@@ -938,9 +938,9 @@
         "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "damage-to-techrot": {
         "id": "damage-to-techrot",
@@ -955,9 +955,9 @@
         "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "damage-to-scaldra": {
         "id": "damage-to-scaldra",
@@ -972,9 +972,9 @@
         "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "weakpoint-damage": {
         "id": "weakpoint-damage",
@@ -989,9 +989,9 @@
         "value": 0.025,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "weakpoint-critical-chance": {
         "id": "weakpoint-critical-chance",
@@ -1006,9 +1006,9 @@
         "value": 0.0275,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "ammo-efficiency": {
         "id": "ammo-efficiency",
@@ -1019,13 +1019,13 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 9,
-        "value": 0.001,
+        "baseValue": 45,
+        "value": 0.005,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "magazine-reload-while-holstered": {
         "id": "magazine-reload-while-holstered",
@@ -1042,7 +1042,7 @@
         "rounding": "RM_ROUND",
         "baselineStatus": "unknown",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "status-damage": {
         "id": "status-damage",
@@ -1057,9 +1057,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "heavy-attack-damage": null,
       "heavy-attack-windup-speed": null,
@@ -1076,12 +1076,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "cold",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "corrosive": {
@@ -1093,12 +1093,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "electricity",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "gas": {
@@ -1110,12 +1110,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "heat",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "magnetic": {
@@ -1127,12 +1127,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "cold",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "radiation": {
@@ -1144,12 +1144,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "heat",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "viral": {
@@ -1161,12 +1161,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "cold",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "damage-to-orokin": {
@@ -1178,12 +1178,12 @@
         "negative": false,
         "reverse": false,
         "unit": "x",
-        "baseValue": 0.449999991,
-        "value": 0.0049999999,
+        "baseValue": 0.45,
+        "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "damage-to-corpus",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "damage-to-techrot": {
@@ -1195,12 +1195,12 @@
         "negative": false,
         "reverse": false,
         "unit": "x",
-        "baseValue": 0.449999991,
-        "value": 0.0049999999,
+        "baseValue": 0.45,
+        "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "damage-to-corpus",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "damage-to-scaldra": {
@@ -1212,12 +1212,12 @@
         "negative": false,
         "reverse": false,
         "unit": "x",
-        "baseValue": 0.449999991,
-        "value": 0.0049999999,
+        "baseValue": 0.45,
+        "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "damage-to-infested",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "weakpoint-damage": {
@@ -1229,13 +1229,13 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": null,
-        "value": null,
+        "baseValue": 225,
+        "value": 0.025,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "unknown",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "weakpoint-critical-chance": {
         "id": "weakpoint-critical-chance",
@@ -1246,13 +1246,13 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": null,
-        "value": null,
+        "baseValue": 247.5,
+        "value": 0.0275,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "unknown",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "ammo-efficiency": {
         "id": "ammo-efficiency",
@@ -1263,13 +1263,13 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": null,
-        "value": null,
+        "baseValue": 45,
+        "value": 0.005,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "unknown",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "magazine-reload-while-holstered": {
         "id": "magazine-reload-while-holstered",
@@ -1280,13 +1280,13 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": null,
-        "value": null,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "unknown",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "status-damage": {
         "id": "status-damage",
@@ -1297,13 +1297,13 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": null,
-        "value": null,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "unknown",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "heavy-attack-damage": null,
       "heavy-attack-windup-speed": null,
@@ -1320,12 +1320,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "cold",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "corrosive": {
@@ -1337,12 +1337,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "electricity",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "gas": {
@@ -1354,12 +1354,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "heat",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "magnetic": {
@@ -1371,12 +1371,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "cold",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "radiation": {
@@ -1388,12 +1388,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "heat",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "viral": {
@@ -1405,12 +1405,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "cold",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "damage-to-orokin": {
@@ -1422,12 +1422,12 @@
         "negative": false,
         "reverse": false,
         "unit": "x",
-        "baseValue": 0.449999991,
-        "value": 0.0049999999,
+        "baseValue": 0.45,
+        "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "damage-to-corpus",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "damage-to-techrot": {
@@ -1439,12 +1439,12 @@
         "negative": false,
         "reverse": false,
         "unit": "x",
-        "baseValue": 0.449999991,
-        "value": 0.0049999999,
+        "baseValue": 0.45,
+        "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "damage-to-corpus",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "damage-to-scaldra": {
@@ -1456,12 +1456,12 @@
         "negative": false,
         "reverse": false,
         "unit": "x",
-        "baseValue": 0.449999991,
-        "value": 0.0049999999,
+        "baseValue": 0.45,
+        "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "damage-to-infested",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "weakpoint-damage": null,
@@ -1477,13 +1477,13 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": null,
-        "value": null,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "unknown",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "heavy-attack-damage": {
         "id": "heavy-attack-damage",
@@ -1498,9 +1498,9 @@
         "value": 0.013300000000000001,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "heavy-attack-windup-speed": {
         "id": "heavy-attack-windup-speed",
@@ -1515,9 +1515,9 @@
         "value": 0.013300000000000001,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "parry-angle": {
         "id": "parry-angle",
@@ -1527,14 +1527,14 @@
         "positive": true,
         "negative": false,
         "reverse": false,
-        "unit": "%",
-        "baseValue": null,
-        "value": null,
+        "unit": "",
+        "baseValue": 81,
+        "value": 0.9,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "unknown",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "slam-damage": {
         "id": "slam-damage",
@@ -1549,9 +1549,9 @@
         "value": 0.013300000000000001,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       }
     },
     "Pistol": {
@@ -1568,9 +1568,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "corrosive": {
         "id": "corrosive",
@@ -1585,9 +1585,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "gas": {
         "id": "gas",
@@ -1602,9 +1602,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "magnetic": {
         "id": "magnetic",
@@ -1619,9 +1619,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "radiation": {
         "id": "radiation",
@@ -1636,9 +1636,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "viral": {
         "id": "viral",
@@ -1653,9 +1653,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "damage-to-orokin": {
         "id": "damage-to-orokin",
@@ -1670,9 +1670,9 @@
         "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "damage-to-techrot": {
         "id": "damage-to-techrot",
@@ -1687,9 +1687,9 @@
         "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "damage-to-scaldra": {
         "id": "damage-to-scaldra",
@@ -1704,9 +1704,9 @@
         "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "weakpoint-damage": {
         "id": "weakpoint-damage",
@@ -1717,13 +1717,13 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 90,
-        "value": 0.01,
+        "baseValue": 225,
+        "value": 0.025,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "weakpoint-critical-chance": {
         "id": "weakpoint-critical-chance",
@@ -1734,13 +1734,13 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 90,
-        "value": 0.01,
+        "baseValue": 247.5,
+        "value": 0.0275,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "ammo-efficiency": {
         "id": "ammo-efficiency",
@@ -1751,13 +1751,13 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 9,
-        "value": 0.001,
+        "baseValue": 45,
+        "value": 0.005,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "magazine-reload-while-holstered": {
         "id": "magazine-reload-while-holstered",
@@ -1772,9 +1772,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "status-damage": {
         "id": "status-damage",
@@ -1789,9 +1789,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "heavy-attack-damage": null,
       "heavy-attack-windup-speed": null,
@@ -1812,9 +1812,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "corrosive": {
         "id": "corrosive",
@@ -1829,9 +1829,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "gas": {
         "id": "gas",
@@ -1846,9 +1846,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "magnetic": {
         "id": "magnetic",
@@ -1863,9 +1863,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "radiation": {
         "id": "radiation",
@@ -1880,9 +1880,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "viral": {
         "id": "viral",
@@ -1897,9 +1897,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "damage-to-orokin": {
         "id": "damage-to-orokin",
@@ -1914,9 +1914,9 @@
         "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "damage-to-techrot": {
         "id": "damage-to-techrot",
@@ -1931,9 +1931,9 @@
         "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "damage-to-scaldra": {
         "id": "damage-to-scaldra",
@@ -1948,9 +1948,9 @@
         "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "weakpoint-damage": {
         "id": "weakpoint-damage",
@@ -1965,9 +1965,9 @@
         "value": 0.025,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "weakpoint-critical-chance": {
         "id": "weakpoint-critical-chance",
@@ -1982,9 +1982,9 @@
         "value": 0.0275,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "ammo-efficiency": {
         "id": "ammo-efficiency",
@@ -1995,13 +1995,13 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 9,
-        "value": 0.001,
+        "baseValue": 45,
+        "value": 0.005,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "magazine-reload-while-holstered": {
         "id": "magazine-reload-while-holstered",
@@ -2016,9 +2016,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "status-damage": {
         "id": "status-damage",
@@ -2033,9 +2033,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "heavy-attack-damage": null,
       "heavy-attack-windup-speed": null,
@@ -2056,9 +2056,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "corrosive": {
         "id": "corrosive",
@@ -2073,9 +2073,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "gas": {
         "id": "gas",
@@ -2090,9 +2090,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "magnetic": {
         "id": "magnetic",
@@ -2107,9 +2107,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "radiation": {
         "id": "radiation",
@@ -2124,9 +2124,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "viral": {
         "id": "viral",
@@ -2141,9 +2141,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "damage-to-orokin": {
         "id": "damage-to-orokin",
@@ -2158,9 +2158,9 @@
         "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "damage-to-techrot": {
         "id": "damage-to-techrot",
@@ -2175,9 +2175,9 @@
         "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "damage-to-scaldra": {
         "id": "damage-to-scaldra",
@@ -2192,9 +2192,9 @@
         "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "weakpoint-damage": {
         "id": "weakpoint-damage",
@@ -2209,9 +2209,9 @@
         "value": 0.025,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "weakpoint-critical-chance": {
         "id": "weakpoint-critical-chance",
@@ -2226,9 +2226,9 @@
         "value": 0.0275,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "ammo-efficiency": {
         "id": "ammo-efficiency",
@@ -2239,13 +2239,13 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 9,
-        "value": 0.001,
+        "baseValue": 45,
+        "value": 0.005,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "magazine-reload-while-holstered": {
         "id": "magazine-reload-while-holstered",
@@ -2260,9 +2260,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "status-damage": {
         "id": "status-damage",
@@ -2277,9 +2277,9 @@
         "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "heavy-attack-damage": null,
       "heavy-attack-windup-speed": null,
@@ -2296,12 +2296,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "cold",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "corrosive": {
@@ -2313,12 +2313,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "electricity",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "gas": {
@@ -2330,12 +2330,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "heat",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "magnetic": {
@@ -2347,12 +2347,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "cold",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "radiation": {
@@ -2364,12 +2364,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "heat",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "viral": {
@@ -2381,12 +2381,12 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": 89.9999982,
-        "value": 0.0099999998,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "cold",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "damage-to-orokin": {
@@ -2398,12 +2398,12 @@
         "negative": false,
         "reverse": false,
         "unit": "x",
-        "baseValue": 0.449999991,
-        "value": 0.0049999999,
+        "baseValue": 0.45,
+        "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "damage-to-corpus",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "damage-to-techrot": {
@@ -2415,12 +2415,12 @@
         "negative": false,
         "reverse": false,
         "unit": "x",
-        "baseValue": 0.449999991,
-        "value": 0.0049999999,
+        "baseValue": 0.45,
+        "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "damage-to-corpus",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "damage-to-scaldra": {
@@ -2432,12 +2432,12 @@
         "negative": false,
         "reverse": false,
         "unit": "x",
-        "baseValue": 0.449999991,
-        "value": 0.0049999999,
+        "baseValue": 0.45,
+        "value": 0.005,
         "roundTo": 0.01,
         "rounding": "RM_ROUND",
-        "baselineStatus": "assumed",
-        "baselineReference": "damage-to-infested",
+        "baselineStatus": "current",
+        "baselineReference": null,
         "baselineSource": null
       },
       "weakpoint-damage": null,
@@ -2453,13 +2453,13 @@
         "negative": false,
         "reverse": false,
         "unit": "%",
-        "baseValue": null,
-        "value": null,
+        "baseValue": 90,
+        "value": 0.01,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "unknown",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "heavy-attack-damage": {
         "id": "heavy-attack-damage",
@@ -2474,9 +2474,9 @@
         "value": 0.013300000000000001,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "heavy-attack-windup-speed": {
         "id": "heavy-attack-windup-speed",
@@ -2491,9 +2491,9 @@
         "value": 0.013300000000000001,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "parry-angle": {
         "id": "parry-angle",
@@ -2503,14 +2503,14 @@
         "positive": true,
         "negative": false,
         "reverse": false,
-        "unit": "%",
-        "baseValue": null,
-        "value": null,
+        "unit": "",
+        "baseValue": 81,
+        "value": 0.9,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "unknown",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       },
       "slam-damage": {
         "id": "slam-damage",
@@ -2525,9 +2525,9 @@
         "value": 0.013300000000000001,
         "roundTo": 0.1,
         "rounding": "RM_ROUND",
-        "baselineStatus": "provisional",
+        "baselineStatus": "current",
         "baselineReference": null,
-        "baselineSource": "https://wiki.warframe.com/w/Riven_Mods#Spliced_Values"
+        "baselineSource": null
       }
     }
   },

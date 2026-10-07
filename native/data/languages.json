@@ -2266,13 +2266,7 @@
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "%",
-          "template": "|val|% Parry Angle"
-        },
-        {
-          "id": "parry-angle",
-          "name": "Parry Angle",
-          "unit": "°",
+          "unit": "",
           "template": "|val| Parry Angle"
         },
         {
@@ -4611,13 +4605,7 @@
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "%",
-          "template": "|val| % Parierwinkel"
-        },
-        {
-          "id": "parry-angle",
-          "name": "Parry Angle",
-          "unit": "°",
+          "unit": "",
           "template": "|val| Parierwinkel"
         },
         {
@@ -6956,13 +6944,7 @@
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "%",
-          "template": "|val|% Angle de parade"
-        },
-        {
-          "id": "parry-angle",
-          "name": "Parry Angle",
-          "unit": "°",
+          "unit": "",
           "template": "|val| Angle de parade"
         },
         {
@@ -9301,13 +9283,7 @@
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "%",
-          "template": "|val|% Angolo Parata"
-        },
-        {
-          "id": "parry-angle",
-          "name": "Parry Angle",
-          "unit": "°",
+          "unit": "",
           "template": "|val| Angolo Parata"
         },
         {
@@ -11646,13 +11622,7 @@
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "%",
-          "template": "|val|% 막기 각도"
-        },
-        {
-          "id": "parry-angle",
-          "name": "Parry Angle",
-          "unit": "°",
+          "unit": "",
           "template": "|val| 막기 각도"
         },
         {
@@ -13991,13 +13961,13 @@
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "%",
-          "template": "|val|% к углу блокирования"
+          "unit": "",
+          "template": "|val| к углу блокирования"
         },
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "°",
+          "unit": "",
           "template": "|val| Угол Блокирования"
         },
         {
@@ -16336,13 +16306,7 @@
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "%",
-          "template": "|val|% パリィアングル"
-        },
-        {
-          "id": "parry-angle",
-          "name": "Parry Angle",
-          "unit": "°",
+          "unit": "",
           "template": "|val| パリィアングル"
         },
         {
@@ -18681,13 +18645,7 @@
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "%",
-          "template": "|val|% Kąt Parowania"
-        },
-        {
-          "id": "parry-angle",
-          "name": "Parry Angle",
-          "unit": "°",
+          "unit": "",
           "template": "|val| Kąt Parowania"
         },
         {
@@ -21026,13 +20984,7 @@
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "%",
-          "template": "|val|% de ángulo de bloqueo"
-        },
-        {
-          "id": "parry-angle",
-          "name": "Parry Angle",
-          "unit": "°",
+          "unit": "",
           "template": "|val| de ángulo de bloqueo"
         },
         {
@@ -23371,13 +23323,13 @@
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "%",
-          "template": "|val|% de Ângulo da Aparada"
+          "unit": "",
+          "template": "|val| de Ângulo da Aparada"
         },
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "°",
+          "unit": "",
           "template": "|val| Ângulo da Aparada"
         },
         {
@@ -25716,13 +25668,7 @@
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "%",
-          "template": "|val|% 招架角度"
-        },
-        {
-          "id": "parry-angle",
-          "name": "Parry Angle",
-          "unit": "°",
+          "unit": "",
           "template": "|val| 招架角度"
         },
         {
@@ -28061,13 +28007,7 @@
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "%",
-          "template": "|val|% 招架角度"
-        },
-        {
-          "id": "parry-angle",
-          "name": "Parry Angle",
-          "unit": "°",
+          "unit": "",
           "template": "|val| 招架角度"
         },
         {
@@ -30406,13 +30346,7 @@
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "%",
-          "template": "%|val| Savuşturma Açısı"
-        },
-        {
-          "id": "parry-angle",
-          "name": "Parry Angle",
-          "unit": "°",
+          "unit": "",
           "template": "|val| Savuşturma Açısı"
         },
         {

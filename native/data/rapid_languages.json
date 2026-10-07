@@ -2283,13 +2283,7 @@
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "%",
-          "template": "|val| % до кута парирування"
-        },
-        {
-          "id": "parry-angle",
-          "name": "Parry Angle",
-          "unit": "°",
+          "unit": "",
           "template": "|val| до кута парирування"
         },
         {
@@ -4620,13 +4614,13 @@
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "%",
-          "template": "มุมในการปัดป้อง |val|%"
+          "unit": "",
+          "template": "มุมในการปัดป้อง |val|"
         },
         {
           "id": "parry-angle",
           "name": "Parry Angle",
-          "unit": "°",
+          "unit": "",
           "template": "มุมในการปัดป้อง: |val|"
         },
         {

@@ -137,6 +137,7 @@ for alias, original in {
     TRAITS[normalize(alias)] = TRAITS[normalize(original)]
 for identity in COMBINED_IDS - {"parry-angle"}:
     TRAIT_UNITS[identity] = {"x" if identity.startswith("damage-to-") else "%"}
+TRAIT_UNITS["parry-angle"] = {""}
 TRAITS[normalize("Chance to gain additional combo count")] = TRAITS[
     normalize("Additional Combo Count Chance")
 ]
