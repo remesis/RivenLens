@@ -162,7 +162,7 @@ class SeedDialog(ModalDialog):
 
     def failed(self, message):
         self.refresh.setEnabled(True)
-        self.status.setText(message)
+        self.status.setText(self.client.step + "\n" + message)
 
     def age_changed(self):
         self.owner.state["seedListingAge"] = self.age.currentData()

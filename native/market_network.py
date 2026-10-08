@@ -34,6 +34,18 @@ def retry_delay(value, now=None):
     return max(60, delay) if math.isfinite(delay) else 60
 
 
+def request_error(status, error):
+    if type(status) is int and 500 <= status <= 599:
+        return f"Market server error (HTTP {status}). Try again later."
+    if type(status) is int and 300 <= status <= 499:
+        return f"Market request failed (HTTP {status})."
+    if error == QNetworkReply.NetworkError.TimeoutError:
+        return "Market request timed out."
+    if error != QNetworkReply.NetworkError.NoError:
+        return f"Could not reach Warframe Market. ({error.name})"
+    return "Could not reach Warframe Market."
+
+
 class MarketClient(QObject):
     completed = Signal(object, object)
     failed = Signal(str)
@@ -169,7 +181,7 @@ class MarketClient(QObject):
             self.fail("Market access is unavailable. Try again later.")
             return
         if status != 200 or reply.error() != QNetworkReply.NetworkError.NoError:
-            self.fail("Could not reach Warframe Market.")
+            self.fail(request_error(status, reply.error()))
             return
         try:
             data = json.loads(self.data)
