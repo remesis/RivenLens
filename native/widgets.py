@@ -23,7 +23,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from grading import GRADE_COLORS, grade_stat, grading_rank
+from grading import GRADE_COLORS, NEGATIVE_GRADE_NOTE, grade_stat, grading_rank
 from appearance import scaled_pixels
 from compact_numbers import compact_number
 from ui_text import (
@@ -694,6 +694,8 @@ class RollCard(QFrame):
                 )
                 if variant["source"] == "shared":
                     tip += " All compatible variants share these ranges; the exact variant is still being read."
+                if stat["polarity"] == "negative":
+                    tip += "\n" + NEGATIVE_GRADE_NOTE
             else:
                 missing = (
                     "Variant?"

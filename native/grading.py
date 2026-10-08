@@ -21,6 +21,9 @@ GRADES = [
     ("F", -10, -9.5),
 ]
 GRADE_NAMES = [g[0] for g in GRADES]
+NEGATIVE_GRADE_NOTE = (
+    "Higher negative grades mean a stronger penalty, not a better negative."
+)
 GRADE_COLORS = dict(
     zip(
         GRADE_NAMES,
@@ -111,11 +114,7 @@ def trait_range(trait, disposition, fmt, polarity, model, rank=8, variation=None
 
 def grade_range(trait, disposition, fmt, polarity, model, grade, rank=8):
     _, lo, hi = next(g for g in GRADES if g[0] == grade)
-    variation = (
-        [1 - hi / 100, 1 - lo / 100]
-        if polarity == "negative"
-        else [1 + lo / 100, 1 + hi / 100]
-    )
+    variation = [1 + lo / 100, 1 + hi / 100]
     return trait_range(trait, disposition, fmt, polarity, model, rank, variation)
 
 
@@ -157,15 +156,12 @@ def grade_stat(stat, trait, disposition, fmt, model, rank=8):
         else stat["value"]
     )
     mean = value_range["mean"] - shift
-    direction = -1 if stat["polarity"] == "negative" else 1
-    quality = ((displayed - shift) / mean - 1) * 100 * direction
+    quality = ((displayed - shift) / mean - 1) * 100
     step = trait.get("roundTo") or 0.1
     floor = trait.get("rounding") == "RM_FLOOR"
     lower = displayed if floor else displayed - step / 2
     upper = displayed + step if floor else displayed + step / 2
-    endpoints = sorted(
-        ((v - shift) / mean - 1) * 100 * direction for v in (lower, upper)
-    )
+    endpoints = sorted(((v - shift) / mean - 1) * 100 for v in (lower, upper))
     if (
         endpoints[0] > 10 + 1e-7
         or endpoints[1] < -10 - 1e-7

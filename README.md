@@ -138,6 +138,9 @@ local. Support does not guarantee every roll will be read correctly.
 
 ## A few things to know
 
+Grades measure rolled strength. A higher negative grade means a stronger penalty,
+not a more desirable negative; the same scale applies to splice ingredients.
+
 Grading defaults to **Manual rank 8/8**. Keep **Show Ranked** enabled in Warframe
 when using this setting. If viewing lower-rank values, choose **Auto-detect rank
 pips** under **Settings → Grading → Riven rank**. Your saved choice is remembered.

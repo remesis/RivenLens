@@ -23,7 +23,7 @@ from PySide6.QtWidgets import (
 
 from catalog import SPLICE_IDS, splices_for, variant_label
 from dialogs import ModalDialog
-from grading import FORMATS, GRADE_NAMES, format_range
+from grading import FORMATS, GRADE_NAMES, NEGATIVE_GRADE_NOTE, format_range
 from market_network import MarketClient
 from market_view import SeedDialog
 from planner import Planner
@@ -655,6 +655,13 @@ class PlannerView(Section):
                 "No single optimal route is available for this pool and format."
             )
         lock = result["lock"]
+        negative_note = (
+            NEGATIVE_GRADE_NOTE
+            if lock and model.lock_target["polarity"] == "negative"
+            else ""
+        )
+        self.lock_grade.setToolTip(negative_note)
+        self.lock_metrics.setToolTip(negative_note)
         if lock:
             target = model.lock_target
             self.lock_info.setText(
