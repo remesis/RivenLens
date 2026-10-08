@@ -133,7 +133,8 @@ class RollTracker:
         strict_roles = result.get("strictRoles", False)
         warning = self.stat_warning.update(raw, mode, now, (self.current, self.new))
         observations = {"current": None, "new": None}
-        cycle = self._centered_card(raw) if mode == "current" else None
+        single_card = mode in ("current", "inspection")
+        cycle = self._centered_card(raw) if single_card else None
         cycle_identity = key(cycle) if cycle and cycle.get("complete") else None
         self.cycle_hits = (
             self.cycle_hits + 1
@@ -146,7 +147,7 @@ class RollTracker:
         )
         if mode == "transition":
             pass  # Dialogs/animations do not tell us which card the user kept.
-        elif mode == "current":
+        elif single_card:
             observations["current"] = cycle
         elif len(raw) == 2:
             observations = {"current": raw[0], "new": raw[1]}
@@ -177,7 +178,7 @@ class RollTracker:
         previous_new = key(self.new)
         fresh = set()
         for slot, card in observations.items():
-            can_commit = mode != "current" or cycle_resolved
+            can_commit = not single_card or cycle_resolved
             if self._observe(slot, card, now, can_commit):
                 fresh.add(slot)
         if (

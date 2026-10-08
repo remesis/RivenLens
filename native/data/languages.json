@@ -2337,7 +2337,9 @@
         "footer": "MR |LEVEL|",
         "yes": "YES",
         "no": "NO",
-        "ranked": "SHOW RANKED <CHECKMARK>"
+        "ranked": "SHOW RANKED <CHECKMARK>",
+        "details": "ITEM DETAILS",
+        "tradeable": "Tradeable"
       }
     },
     "de": {
@@ -4676,7 +4678,9 @@
         "footer": "MR |LEVEL|",
         "yes": "JA",
         "no": "NEIN",
-        "ranked": "ZEIGE MIT RANG <CHECKMARK>"
+        "ranked": "ZEIGE MIT RANG <CHECKMARK>",
+        "details": "GEGENSTAND DETAILS",
+        "tradeable": "Handelbar"
       }
     },
     "fr": {
@@ -7015,7 +7019,9 @@
         "footer": "PM |LEVEL|",
         "yes": "OUI",
         "no": "NON",
-        "ranked": "MONTRER MAÎTRISÉS <CHECKMARK>"
+        "ranked": "MONTRER MAÎTRISÉS <CHECKMARK>",
+        "details": "DÉTAILS DE L'OBJET",
+        "tradeable": "Échangeable"
       }
     },
     "it": {
@@ -9354,7 +9360,9 @@
         "footer": "MR |LEVEL|",
         "yes": "SÌ",
         "no": "NO",
-        "ranked": "MOSTRA AL GRADO MASSIMO <CHECKMARK>"
+        "ranked": "MOSTRA AL GRADO MASSIMO <CHECKMARK>",
+        "details": "DETTAGLI OGGETTO",
+        "tradeable": "Scambiabile"
       }
     },
     "ko": {
@@ -11693,7 +11701,9 @@
         "footer": "MR |LEVEL|",
         "yes": "예",
         "no": "아니오",
-        "ranked": "최대 랭크 보기 <CHECKMARK>"
+        "ranked": "최대 랭크 보기 <CHECKMARK>",
+        "details": "아이템 상세설명",
+        "tradeable": "거래 가능"
       }
     },
     "ru": {
@@ -14038,7 +14048,9 @@
         "footer": "|LEVEL| УР. М.",
         "yes": "ДА",
         "no": "НЕТ",
-        "ranked": "ПОКАЗАТЬ УЛУЧШЕННЫМ <CHECKMARK>"
+        "ranked": "ПОКАЗАТЬ УЛУЧШЕННЫМ <CHECKMARK>",
+        "details": "ИНФОРМАЦИЯ О ТОВАРЕ",
+        "tradeable": "Можно передать"
       }
     },
     "ja": {
@@ -16377,7 +16389,9 @@
         "footer": "MR |LEVEL|",
         "yes": "はい",
         "no": "いいえ",
-        "ranked": "ランク付きを表示 <CHECKMARK>"
+        "ranked": "ランク付きを表示 <CHECKMARK>",
+        "details": "アイテム詳細",
+        "tradeable": "トレード可"
       }
     },
     "pl": {
@@ -18716,7 +18730,9 @@
         "footer": "MR |LEVEL|",
         "yes": "TAK",
         "no": "NIE",
-        "ranked": "POKAŻ MAKS. RANGĘ <CHECKMARK>"
+        "ranked": "POKAŻ MAKS. RANGĘ <CHECKMARK>",
+        "details": "SZCZEGÓŁY PRZEDMIOTU",
+        "tradeable": "Wymienialne"
       }
     },
     "es": {
@@ -21055,7 +21071,9 @@
         "footer": "RM |LEVEL|",
         "yes": "SÍ",
         "no": "NO",
-        "ranked": "MOSTRAR MAXIMIZADO <CHECKMARK>"
+        "ranked": "MOSTRAR MAXIMIZADO <CHECKMARK>",
+        "details": "DETALLES DEL ARTÍCULO",
+        "tradeable": "Intercambiable"
       }
     },
     "pt": {
@@ -23400,7 +23418,9 @@
         "footer": "NM |LEVEL|",
         "yes": "SIM",
         "no": "NÃO",
-        "ranked": "EXIBIR NÍVEL MÁXIMO <CHECKMARK>"
+        "ranked": "EXIBIR NÍVEL MÁXIMO <CHECKMARK>",
+        "details": "DETALHES DO ITEM",
+        "tradeable": "Negociáveis"
       }
     },
     "zh": {
@@ -25739,7 +25759,9 @@
         "footer": "段位 |LEVEL|",
         "yes": "是",
         "no": "否",
-        "ranked": "显示已升级 <CHECKMARK>"
+        "ranked": "显示已升级 <CHECKMARK>",
+        "details": "物品细节",
+        "tradeable": "可交易"
       }
     },
     "tc": {
@@ -28078,7 +28100,9 @@
         "footer": "精通段位 |LEVEL|",
         "yes": "是",
         "no": "否",
-        "ranked": "顯示已升級 <CHECKMARK>"
+        "ranked": "顯示已升級 <CHECKMARK>",
+        "details": "物品細節",
+        "tradeable": "可交易"
       }
     },
     "tr": {
@@ -30417,7 +30441,9 @@
         "footer": "Seviye |LEVEL|",
         "yes": "EVET",
         "no": "HAYIR",
-        "ranked": "SEVİYELİ GÖSTER <CHECKMARK>"
+        "ranked": "SEVİYELİ GÖSTER <CHECKMARK>",
+        "details": "ÜRÜN DETAYLARI",
+        "tradeable": "Takaslanabilir"
       }
     }
   }

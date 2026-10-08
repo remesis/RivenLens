@@ -43,7 +43,7 @@ class NewRollStatWarning:
         self.warning_id = None
 
     def update(self, raw, mode, now, known_cards=()):
-        if mode in ("current", "transition"):
+        if mode in ("current", "inspection", "transition"):
             self.reset()
             return None
         if mode != "comparison" and len(raw) != 2:

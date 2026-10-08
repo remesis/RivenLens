@@ -2354,7 +2354,9 @@
         "footer": "Майстерність: |LEVEL|",
         "yes": "ТАК",
         "no": "НІ",
-        "ranked": "ПОКАЗУВАТИ ПОЛІПШЕНІ <CHECKMARK>"
+        "ranked": "ПОКАЗУВАТИ ПОЛІПШЕНІ <CHECKMARK>",
+        "details": "ДАНІ ПРО ПРЕДМЕТ",
+        "tradeable": "Можна міняти"
       }
     },
     "th": {
@@ -4691,7 +4693,9 @@
         "footer": "MR |LEVEL|",
         "yes": "ใช่",
         "no": "ไม่",
-        "ranked": "แสดงอันดับ <CHECKMARK>"
+        "ranked": "แสดงอันดับ <CHECKMARK>",
+        "details": "รายละเอียดของไอเทม",
+        "tradeable": "สามารถแลกเปลี่ยนได้"
       }
     }
   }

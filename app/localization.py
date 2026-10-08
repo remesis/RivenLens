@@ -342,6 +342,8 @@ class Profile:
             ("confirm", "CONFIRM"),
             ("yes", "YES"),
             ("no", "NO"),
+            ("details", "ITEM DETAILS"),
+            ("tradeable", "TRADEABLE"),
         ):
             if control_key(text) == control_key(_markup(self.ui[name])):
                 return canonical

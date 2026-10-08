@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # See LICENSE in the project root for the license and warranty disclaimer.
 
-"""Read the cycling-screen text area, with a full-frame fallback for other layouts."""
+"""Read visible Riven cards and their rolling or item-details context."""
 
 import hashlib
 import re
@@ -17,6 +17,7 @@ from localization import LATIN_UI_LANGUAGES
 from rank_reader import detect_rank
 from variants import VARIANT_CHOICES
 from ocr_budget import allow_retry, primary_read, reserve_verifications
+from inspection import inspection_regions, read_inspection_mode
 from layout import (
     action_line,
     card_region,
@@ -880,6 +881,8 @@ def reset_layout(engine):
         "_frame_action",
         "_frame_region",
         "_session_variant_hint",
+        "_inspection_regions",
+        "_inspection_cache",
     ):
         setattr(engine, name, None)
     engine._next_tile_search = 0
@@ -888,6 +891,7 @@ def reset_layout(engine):
     engine._next_variant_search = 0
     engine._next_variant_retry = 0
     engine._next_action_retry = 0
+    engine._next_inspection_check = 0
     engine._action_retry_phase = 0
     engine._localized_variant_treatment = 0
     engine._variant_pending = False
@@ -987,6 +991,11 @@ async def read_frame(
             on_verified=annotate,
             previous_new=previous_new,
         )
+        if result.get("mode") == "inspection":
+            # Linked previews can switch variants within one weapon family.
+            # Recheck their visible caption rather than retaining a rolling hint.
+            hint = await variant_hint(engine, metadata_image)
+            engine._session_variant_hint = hint
         if getattr(engine, "backend", None) == "rapid":
             from rapid_text import caption_namespace
 
@@ -999,7 +1008,12 @@ async def read_frame(
         action = engine._frame_action
         for card in result["cards"]:
             title = card.get("titleBounds") or card["bounds"]
-            if action:
+            if result.get("mode") == "inspection":
+                # A preview has no centered cycling button. Exact item-details
+                # context establishes its role; the ordinary complete-card and
+                # repeated-read checks still decide whether it can be displayed.
+                card["screenX"] = 0.5 if len(result["cards"]) == 1 else -1
+            elif action:
                 # Normalize around the visible action button, never the monitor center.
                 width = max(title["w"], title["h"] * 8)
                 card["screenX"] = 0.5 + (
@@ -1278,7 +1292,9 @@ async def read_cards(
         ):
             return result
     if focused is not None:
-        expected_count = {"current": 1, "comparison": 2}.get(focused["mode"])
+        expected_count = {"current": 1, "comparison": 2, "inspection": 1}.get(
+            focused["mode"]
+        )
         if expected_count == len(focused["cards"]) and time.monotonic() < getattr(
             engine, "_next_scene_search", 0
         ):
@@ -1384,7 +1400,9 @@ async def read_cards(
 
 
 async def read_action_mode(engine, image):
-    """Retry the bottom action caption only when card OCR missed the screen phase."""
+    """Recheck learned preview context or the bottom rolling action caption."""
+    if await read_inspection_mode(engine, image):
+        return "inspection"
     box = getattr(engine, "_action_region", None) or (
         int(image.width * 0.32),
         int(image.height * 0.85),
@@ -1450,6 +1468,11 @@ async def read_action_mode(engine, image):
 
 def observe_mode(engine, lines):
     mode = mode_from_lines(lines)
+    if mode == "inspection":
+        engine._inspection_regions = inspection_regions(lines)
+    elif mode != "unknown":
+        engine._inspection_regions = None
+        engine._inspection_cache = None
     if line := action_line(lines, mode):
         engine._frame_action = line
         height = line["h"]
@@ -1471,4 +1494,6 @@ def mode_from_lines(lines):
         return "current"
     if any(re.fullmatch(r"\W*CONFIRM\W*", text) for text in texts):
         return "comparison"
+    if inspection_regions(lines):
+        return "inspection"
     return "unknown"

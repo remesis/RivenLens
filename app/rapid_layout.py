@@ -426,6 +426,24 @@ def normalize_controls(rows, locale):
     for row in output:
         text = row["text"]
         observed = control_key(text)
+        words = [word for piece in row.get("rawPieces", ()) for word in piece["words"]]
+        if (
+            len(words) == 2
+            and bounds(words[0])
+            and bounds(words[1])
+            and len(words[0]["text"]) == 1
+            and not words[0]["text"].isalpha()
+            and words[0]["w"] <= words[1]["h"]
+            and words[0]["x"] + words[0]["w"] <= words[1]["x"]
+            and locale.control(words[1]["text"]) == "TRADEABLE"
+        ):
+            # The trade glyph can be recognized as a separate character. Keep
+            # the complete, independently boxed label, not a substring guess.
+            row.setdefault("displayText", text)
+            row.update(
+                text="TRADEABLE",
+                **{key: words[1][key] for key in ("x", "y", "w", "h")},
+            )
         if (
             len(expected) >= 8
             and len(observed) == len(expected)

@@ -1,6 +1,6 @@
 # RivenLens
 
-A small desktop companion for grading Rivens as you roll.
+A small desktop companion for grading Rivens as you roll or view chat links.
 
 ![RivenLens example](https://raw.githubusercontent.com/remesis/RivenLens/main/assets/screenshots/example-image.png)
 
@@ -52,7 +52,8 @@ closing the window or choosing **Quit** exits the app.
 ## What's included
 
 - Current and new grades side by side, automatic variant detection and rank 8
-  by default. Automatic rank detection is available in Settings.
+  by default. Chat-linked previews are graded in the current-card panel.
+  Automatic rank detection is available in Settings.
 - Collapsible splice, manual-lock and final-odds stages with roll and Kuva estimates.
 - A platinum-icon seed finder for matching Warframe Market listings, sorted by
   the lowest listed price, with a remembered listing-age filter.
@@ -142,7 +143,8 @@ when using this setting. If viewing lower-rank values, choose **Auto-detect rank
 pips** under **Settings → Grading → Riven rank**. Your saved choice is remembered.
 
 Keep the stat text, card footer and bottom-right **Fits In** label visible; rank
-pips must also be visible when using automatic rank detection. Small
+pips must also be visible when using automatic rank detection. For chat-linked
+previews, keep **Item Details** or **Tradeable** visible too. Small
 text, animations and covered cards can confuse OCR. Previous grades stay visible
 during brief interruptions. On Windows, try another capture method if capture is
 blank.
