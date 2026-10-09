@@ -14,6 +14,7 @@ from odds import (
     enumerate_pools,
     evaluate,
     optimal_splice_setup,
+    retained_splice_setup,
     selected_lock_chance,
     staged_cost,
 )
@@ -365,8 +366,18 @@ class Planner:
             s["statAlternatives"][index] = choices[1:]
 
     @lru_cache(maxsize=64)
-    def setup(self, family_id, kind, identity, fmt, grade):
+    def setup(
+        self, family_id, kind, identity, fmt, grade, retained_id=None, polarity=None
+    ):
         family = next(f for f in self.catalog.families if f["id"] == family_id)
+        if retained_id:
+            return retained_splice_setup(
+                enumerate_pools(family),
+                recipes(identity, kind),
+                *FORMATS[fmt],
+                {"id": retained_id, "polarity": polarity},
+                grade_chance(grade),
+            )
         return optimal_splice_setup(
             enumerate_pools(family),
             recipes(identity, kind),
@@ -379,12 +390,19 @@ class Planner:
         pools = enumerate_pools(self.family)
         result = {"splice": None, "lock": None, "uncertain": len(pools) > 1}
         if self.splice:
+            lock = self.lock_target
+            retained = (
+                (lock["id"], lock["polarity"])
+                if lock and self.is_vintage(lock["id"], lock["polarity"])
+                else ()
+            )
             result["splice"] = self.setup(
                 self.family["id"],
                 self.weapon["kind"],
                 self.splice,
                 s["format"],
                 s["spliceGrade"],
+                *retained,
             )
         if self.lock_target:
             target = {

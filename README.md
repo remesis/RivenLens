@@ -74,6 +74,10 @@ Each stage has its own **Ding** toggle. The final stage alerts only for a fully
 read new roll matching the whole target, including the selected lock and splice
 grades. Hover over the roll and Kuva figures for their assumptions.
 
+With a vintage stat locked, splice setup searches for both ingredients on the
+same roll. Keep that lock in place; there is no separate partner-search step.
+The splice ding waits for a complete pair too.
+
 ## Finding a starting seed
 
 Select a splice or manual lock, then click the **platinum button** beside the

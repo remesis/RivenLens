@@ -41,10 +41,12 @@ def enumerate_pools(family):
     return result
 
 
-def setup_outcomes(pool, k, has_negative, lock):
+def setup_outcomes(pool, k, has_negative, lock, *, retained=False):
     positive = lock["polarity"] == "positive"
     identity = lock["id"]
-    if identity not in pool[lock["polarity"]] or (not positive and not has_negative):
+    if (not retained and identity not in pool[lock["polarity"]]) or (
+        not positive and not has_negative
+    ):
         return
     candidates = sorted(pool["positive"] - {identity})
     draws = k - int(positive)
@@ -214,6 +216,51 @@ def optimal_splice_setup(pools, recipes, k, has_negative, grade_chance=0.025):
     }
 
 
+def retained_splice_setup(pools, recipes, k, has_negative, lock, grade_chance=0.025):
+    """Find a complete pair without moving or consuming an existing vintage lock."""
+    result = {"available": False, "uncertain": len(pools) > 1, "singleStage": True}
+    if (
+        k not in (2, 3)
+        or not 0 < grade_chance <= 1
+        or lock["polarity"] not in ("positive", "negative")
+    ):
+        return result
+    # Using the retained line as an ingredient would destroy the vintage target.
+    partners = {}
+    for a, b in recipes:
+        if lock["id"] not in (a, b):
+            partners.setdefault(a, set()).add(b)
+            partners.setdefault(b, set()).add(a)
+    chances = []
+    for pool in pools:
+        chance = 0
+        for rolled, _, negative, weight in setup_outcomes(
+            pool, k, has_negative, lock, retained=True
+        ):
+            usable = sum(
+                bool(partners.get(i, set()).intersection(rolled))
+                or negative in partners.get(i, set())
+                for i in rolled
+            )
+            # Union over qualifying positives, including overlapping recipes.
+            chance += weight * (1 - (1 - grade_chance) ** usable)
+        chances.append(min(1, chance))
+    if not chances or min(chances) <= 0:
+        return result
+    mean = bounds(1 / chance for chance in chances)
+    return {
+        **result,
+        "available": True,
+        "lock": lock,
+        "chance": bounds(chances),
+        "first": mean,
+        "total": mean,
+        "additional": bounds([0]),
+        "ifMissing": bounds([0]),
+        "ready": bounds([1]),
+    }
+
+
 def selected_lock_chance(pool, target, assumptions):
     identity, polarity, k = target["id"], target["polarity"], target["positives"]
     negative = target["hasNegative"]
@@ -299,10 +346,11 @@ def staged_cost(result, assumptions, final_complete=False):
         if not setup["available"]:
             return None
         stages.append((setup["total"], locked))
-    if lock and lock["vintage"]:
+    vintage_held = lock and lock["vintage"] and setup and setup.get("singleStage")
+    if lock and lock["vintage"] and not vintage_held:
         return None
     for probability, cost, complete in (
-        (lock["probability"] if lock else None, base, False),
+        (lock["probability"] if lock and not vintage_held else None, base, False),
         (
             result["final"][result["strategy"]],
             locked if result["strategy"] != "none" else base,

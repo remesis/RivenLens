@@ -566,9 +566,11 @@ class PlannerView(Section):
     def refresh_stages(self):
         self.lock_choices.opened = self.state["startingLocksOpen"]
         self.lock_choices.refresh()
+        lock = self.model.lock_target
         available = {
             "splice": bool(self.model.splice),
-            "lock": bool(self.model.lock_target),
+            "lock": bool(lock)
+            and not self.model.is_vintage(lock["id"], lock["polarity"]),
             "final": True,
         }
         number = 1
@@ -593,6 +595,61 @@ class PlannerView(Section):
             else name
         )
 
+    def show_splice_setup(self, setup):
+        s, model = self.state, self.model
+        unit_separator = " " if language.code == "en" else "<br>"
+        if setup.get("singleStage"):
+            self.splice_metrics.setText(
+                f'<table width="100%"><tr><td>Find both ingredients · ≥{s["spliceGrade"]}</td><td>Keep Vintage Locked</td></tr>'
+                f'<tr><td><b style="font-size:22px;color:#80d4fc">{interval(setup["total"])}</b>'
+                f'{unit_separator}<span style="color:#8dabc0">avg rolls</span></td>'
+                f'<td style="color:#8dabc0">{html.escape(model.name(setup["lock"]["id"]))}</td></tr></table>'
+            )
+            self.splice_metrics.setToolTip(
+                "Keep the vintage stat locked. Both ingredients must be together on the same roll, with a positive ingredient at the selected grade or better."
+            )
+            self.splice_note.setText(
+                f"Start {s['format']} with {model.name(setup['lock']['id'])} locked. Acquisition excluded."
+            )
+            self.splice_note.setToolTip(
+                "The vintage line is retained throughout setup and is not consumed as an ingredient."
+            )
+            self.lock_choices.hide()
+            return
+        self.splice_metrics.setText(
+            f'<table width="100%"><tr><td>1a. Find ≥{s["spliceGrade"]} ingredient</td><td>1b. Find its partner</td></tr>'
+            f'<tr><td><b style="font-size:22px;color:#80d4fc">{interval(setup["first"])}</b>{unit_separator}<span style="color:#8dabc0">avg rolls</span></td>'
+            f'<td><b style="font-size:22px;color:#80d4fc">{interval(setup["additional"])}</b>{unit_separator}<span style="color:#8dabc0">extra</span></td></tr></table>'
+        )
+        self.splice_metrics.setToolTip(
+            f"Already together on {interval({k: v * 100 for k, v in setup['ready'].items()}, 2)}% of qualifying finds. Otherwise lock the positive: {interval(setup['ifMissing'])} rolls on average to find a partner."
+        )
+        self.splice_note.setText(
+            f"Start {s['format']} with a listed lock. Acquisition excluded."
+        )
+        self.splice_note.setToolTip(
+            "Use the listed positive or negative polarity. A lock preserves the format; acquiring the starting lock is not included in these estimates."
+        )
+        alternatives = setup["equivalentLocks"]
+        self.lock_choices.title.setText(
+            f"{len(alternatives)} equally optimal starting locks"
+            if len(alternatives) > 1
+            else "1 optimal starting lock"
+        )
+        text = []
+        for polarity in ("negative", "positive"):
+            names = sorted(
+                model.name(row["id"])
+                for row in alternatives
+                if row["polarity"] == polarity
+            )
+            if names:
+                text.append(
+                    f"<b>{polarity.title()}:</b> {html.escape(', '.join(names))}."
+                )
+        self.lock_names.setText("<br>".join(text))
+        self.lock_choices.show()
+
     def show_results(self, generation, result):
         if generation != self.generation:
             return
@@ -612,47 +669,15 @@ class PlannerView(Section):
         self.error.setVisible(bool(self.error.text()))
         setup = result["splice"]
         if setup and setup["available"]:
-            # Longer localized units need their own line at compact widths.
-            unit_separator = " " if language.code == "en" else "<br>"
-            self.splice_metrics.setText(
-                f'<table width="100%"><tr><td>1a. Find ≥{s["spliceGrade"]} ingredient</td><td>1b. Find its partner</td></tr>'
-                f'<tr><td><b style="font-size:22px;color:#80d4fc">{interval(setup["first"])}</b>{unit_separator}<span style="color:#8dabc0">avg rolls</span></td>'
-                f'<td><b style="font-size:22px;color:#80d4fc">{interval(setup["additional"])}</b>{unit_separator}<span style="color:#8dabc0">extra</span></td></tr></table>'
-            )
-            self.splice_metrics.setToolTip(
-                f"Already together on {interval({k: v * 100 for k, v in setup['ready'].items()}, 2)}% of qualifying finds. Otherwise lock the positive: {interval(setup['ifMissing'])} rolls on average to find a partner."
-            )
-            self.splice_note.setText(
-                f"Start {s['format']} with a listed lock. Acquisition excluded."
-            )
-            self.splice_note.setToolTip(
-                "Use the listed positive or negative polarity. A lock preserves the format; acquiring the starting lock is not included in these estimates."
-            )
-            alternatives = setup["equivalentLocks"]
-            self.lock_choices.title.setText(
-                f"{len(alternatives)} equally optimal starting locks"
-                if len(alternatives) > 1
-                else "1 optimal starting lock"
-            )
-            text = []
-            for polarity in ("negative", "positive"):
-                names = sorted(
-                    model.name(row["id"])
-                    for row in alternatives
-                    if row["polarity"] == polarity
-                )
-                if names:
-                    text.append(
-                        f"<b>{polarity.title()}:</b> {html.escape(', '.join(names))}."
-                    )
-            self.lock_names.setText("<br>".join(text))
-            self.lock_choices.show()
+            self.show_splice_setup(setup)
             self.stages["splice"].set_summary(
                 f"≥{s['spliceGrade']} · {interval(setup['total'])} avg rolls"
             )
         elif setup:
             self.splice_note.setText(
-                "No single optimal route is available for this pool and format."
+                "No complete ingredient pair can be confirmed for this pool and format while retaining the selected vintage stat."
+                if setup.get("singleStage")
+                else "No single optimal route is available for this pool and format."
             )
         lock = result["lock"]
         negative_note = (
@@ -662,24 +687,17 @@ class PlannerView(Section):
         )
         self.lock_grade.setToolTip(negative_note)
         self.lock_metrics.setToolTip(negative_note)
-        if lock:
+        if lock and not lock["vintage"]:
             target = model.lock_target
             self.lock_info.setText(
                 f"{model.name(target['id'])} · {target['polarity']} · {s['format']}"
             )
             self.lock_metrics.setText(
                 f'<table width="100%"><tr><td style="color:#8dabc0">{s["lockGrade"]} stat range</td><td style="color:#8dabc0">Odds · grade or better</td></tr>'
-                f'<tr><td>{html.escape(lock["range"])}</td><td><b style="color:#80d4fc">{"Not rollable" if lock["vintage"] else odds_text(lock["probability"])}</b></td></tr></table>'
-                + (
-                    '<span style="color:#ff757b">Existing line only; cannot roll anew.</span>'
-                    if lock["vintage"]
-                    else ""
-                )
+                f'<tr><td>{html.escape(lock["range"])}</td><td><b style="color:#80d4fc">{odds_text(lock["probability"])}</b></td></tr></table>'
             )
             p = lock["probability"]
-            if lock["vintage"]:
-                self.stages["lock"].set_summary("Not rollable")
-            elif p["max"] > 0:
+            if p["max"] > 0:
                 self.stages["lock"].set_summary(
                     f"≥{s['lockGrade']} · {interval({'min': 1 / p['max'], 'max': 1 / p['min'] if p['min'] else math.inf})} avg rolls"
                 )
@@ -723,8 +741,12 @@ class PlannerView(Section):
         base_cost = model.catalog.assumptions["kuvaPerRoll"]
         locked_cost = base_cost * model.catalog.assumptions["lockedKuvaMultiplier"]
         self.final_totals.setToolTip(
-            "Estimated combined cost of splice setup, acquiring the selected lock, and rolling the final target. Adds the applicable stage averages, not guarantees."
-            f"\nCapped costs: {number(base_cost, 0)} Kuva per unlocked roll; {number(locked_cost, 0)} with a manual lock. Splice retention is free."
+            (
+                "Estimated combined cost of splice setup and rolling the final target. The vintage lock is already present; its acquisition is excluded."
+                if setup and setup.get("singleStage")
+                else "Estimated combined cost of splice setup, acquiring the selected lock, and rolling the final target. Adds the applicable stage averages, not guarantees."
+            )
+            + f"\nCapped costs: {number(base_cost, 0)} Kuva per unlocked roll; {number(locked_cost, 0)} with a manual lock. Splice retention is free."
             "\nExcludes the starting Riven, starting setup lock and splicer acquisition."
             "\nLeft-hand odds assume the selected lock and splice are already available."
             + (

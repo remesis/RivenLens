@@ -663,6 +663,10 @@ async def refine_card(engine, image, card, force=False):
     )
     language = getattr(engine, "language", "en")
     cjk = language in ("ja", "ko", "zh", "tc")
+    if needs_recovery and title["h"] >= 32:
+        # Oversized glyphs can split even whole-number percentages. Read the
+        # same text at smaller scales too; full-card agreement still applies.
+        treatments = ((0.7, "original"), (0.75, "purple")) + treatments
     if not needs_recovery and language != "en":
         # The confirming read needs the same help as an incomplete translated
         # card: clean, enlarged glyphs, including compact CJK lettering. This

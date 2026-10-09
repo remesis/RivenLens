@@ -61,10 +61,14 @@ def find_matches(cards, catalog, preferences):
     weapon = catalog.by_id.get(preferences["weapon"])
     if not weapon:
         return []
-    watched = {
-        i
+    watched_pairs = [
+        pair
         for identity in preferences["spliceWatch"]
         for pair in recipes(identity, weapon["kind"])
+    ]
+    watched = {
+        i
+        for pair in watched_pairs
         for i in pair
         if weapon["family"]["traits"].get(i, {}).get("positive") == "allowed"
     }
@@ -80,6 +84,9 @@ def find_matches(cards, catalog, preferences):
         weapon["family"]["traits"].get(lock_identity, {}).get(polarity, "excluded")
         != "excluded"
     )
+    vintage_lock = not lock_rollable and weapon["family"]["traits"].get(
+        lock_identity, {}
+    ).get("vintage", False)
     matches = []
     planner = (
         Planner(catalog, dict(preferences)) if preferences.get("finalSound") else None
@@ -112,6 +119,22 @@ def find_matches(cards, catalog, preferences):
             ]
         )
         grades = []
+        ready_ingredients = set()
+        if (
+            vintage_lock
+            and card["format"] == preferences["format"]
+            and any(
+                s["id"] == lock_identity and s["polarity"] == polarity
+                for s in card["stats"]
+            )
+        ):
+            present = {s["id"] for s in card["stats"]}
+            ready_ingredients = {
+                i
+                for pair in watched_pairs
+                if lock_identity not in pair and set(pair).issubset(present)
+                for i in pair
+            }
         for stat in card["stats"]:
             grade = grade_stat(
                 stat,
@@ -126,6 +149,7 @@ def find_matches(cards, catalog, preferences):
                 preferences["spliceSound"]
                 and stat["polarity"] == "positive"
                 and stat["id"] in watched
+                and (not vintage_lock or stat["id"] in ready_ingredients)
                 and meets_grade(grade, preferences["spliceGrade"])
             ):
                 matches.append(("splice", identity))
