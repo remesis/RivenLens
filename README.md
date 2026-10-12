@@ -101,19 +101,20 @@ requests and no automatic retries. The window remembers its placement, and each
 listing appears only in its highest matching stage. RivenLens never buys, bids
 or messages sellers.
 
-For a splice, Stage 1 finds either ingredient at the selected splice grade or
-better. With a manual lock too, Stage 2 requires that lock at its selected grade
-and both ingredients, with at least one meeting the splice grade (the partner
-can be any grade), or the qualifying splice itself. Both ingredient grades are
-shown when present: S + F still produces an S splice. Without a
-splice, Stage 1 finds the selected lock. All sections require the selected format.
+For a splice, Stage 1 finds either ingredient or the already-spliced stat at the
+selected splice grade or better. With a manual lock too, Stage 2 requires that
+lock at its selected grade and both ingredients, with at least one meeting the
+splice grade (the partner can be any grade), or the qualifying splice itself.
+Both ingredient grades are shown when present: S + F still produces an S splice.
+Without a splice, Stage 1 finds the selected lock. All sections require the
+selected format.
 
 The default age filter is **Less than 30 days**, measured from original creation,
 not the seller's latest refresh. You can save a different age filter. Results
 include PC and crossplay-enabled Xbox, PlayStation and mobile listings, but not
-Switch. Market may limit results and does not yet expose splice stats; ingredient
-listings remain searchable. Seller-entered values are graded at the listed
-rank using Market's base-weapon disposition; verify them with the seller.
+Switch. Searches include both ingredient and already-spliced listings supported
+by Market. Market may limit results. Seller-entered values are graded at the
+listed rank using Market's base-weapon disposition; verify them with the seller.
 Auction prices show the lower listed endpoint, not a guaranteed purchase price.
 
 ## Language support

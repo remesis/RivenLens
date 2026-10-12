@@ -38,6 +38,12 @@ ATTRIBUTE_IDS = {
     "channeling_efficiency": "heavy-attack-efficiency",
     "critical_chance_on_slide_attack": "critical-chance-for-slide-attack",
     "chance_to_gain_extra_combo_count": "additional-combo-count-chance",
+    "weak_point_damage": "weakpoint-damage",
+    "weak_point_critical_chance": "weakpoint-critical-chance",
+    "magazine_reloaded_s_when_holstered": "magazine-reload-while-holstered",
+    "melee_damage_on_heavy_attack": "heavy-attack-damage",
+    "heavy_attack_wind_up_speed": "heavy-attack-windup-speed",
+    "slam_attack_damage": "slam-damage",
 }
 API_ROOT = "https://api.warframe.market/"
 CROSSPLAY_PLATFORMS = ("ps4", "xbox", "mobile")
@@ -55,7 +61,7 @@ def weapon_slug(name):
 def attribute_map(rows, definitions):
     """Only accept advertised Market slugs; new splice names can be recognized."""
     names = {row["name"].casefold(): row["id"] for row in [*definitions, *SPLICES]}
-    known = {row["id"] for row in definitions}
+    known = {row["id"] for row in [*definitions, *SPLICES]}
     result = {}
     for row in rows:
         if not isinstance(row, dict) or not valid_slug(row.get("slug")):
