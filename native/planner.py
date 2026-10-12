@@ -30,13 +30,39 @@ class Planner:
         weapons = [w for w in self.catalog.weapons if w["category"] == category]
         if not weapons or category == self.weapon["category"]:
             return False
-        plans = self.state.setdefault("categoryPlans", {})
-        plans[self.weapon["category"]] = planner_settings(self.state)
-        restored = planner_settings(plans.get(category))
+        restored = planner_settings(self.state["categoryPlans"].get(category))
         weapon = self.catalog.by_id.get(restored["weapon"])
         if weapon is None or weapon["category"] != category:
-            restored["weapon"] = weapons[0]["id"]
-            restored["variant"] = weapons[0]["variants"][0]["id"]
+            weapon = weapons[0]
+        return self.select_weapon(weapon["id"])
+
+    def select_weapon(self, identity, variant=None):
+        """Remember each weapon's plan; its variants share the same selections."""
+        weapon = self.catalog.by_id.get(identity)
+        if (
+            weapon is None
+            or variant is not None
+            and not any(v["id"] == variant for v in weapon["variants"])
+        ):
+            return False
+        if identity == self.weapon["id"]:
+            if variant is None or variant == self.variant["id"]:
+                return False
+            self.state["variant"] = variant
+            self.normalize(auto_lock=True)
+            return True
+        outgoing = planner_settings(self.state)
+        self.state["categoryPlans"][self.weapon["category"]] = outgoing
+        self.state["weaponPlans"][self.weapon["id"]] = planner_settings(outgoing)
+        fallback = (
+            self.state
+            if weapon["category"] == self.weapon["category"]
+            else self.state["categoryPlans"].get(weapon["category"])
+        )
+        restored = planner_settings(self.state["weaponPlans"].get(identity, fallback))
+        restored["weapon"] = identity
+        if variant is not None:
+            restored["variant"] = variant
         self.state.update(restored)
         self.normalize(auto_lock=True)
         return True

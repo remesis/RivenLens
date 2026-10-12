@@ -18,7 +18,12 @@ def inspection_regions(lines):
     marker = fits_marker(lines)
     if not marker:
         return None
-    for label in ("ITEM DETAILS", "TRADEABLE"):
+    if any(
+        re.fullmatch(r"\W*(?:SHOW RANKED|CANCEL)\W*", line["text"], re.I)
+        for line in lines
+    ):
+        return None
+    for label in ("EXIT", "ITEM DETAILS", "TRADEABLE"):
         headings = [
             line
             for line in lines
@@ -31,14 +36,22 @@ def inspection_regions(lines):
             key in line for line in (heading, marker) for key in ("x", "y", "w", "h")
         ):
             continue
-        if (
+        if label == "EXIT":
+            if (
+                heading["y"] <= marker["y"] + marker["h"]
+                or abs(heading["x"] + heading["w"] / 2 - marker["x"] - marker["w"] / 2)
+                > marker["h"] * 8
+            ):
+                continue
+        elif (
             marker["x"] <= heading["x"] + heading["w"]
             or marker["y"] <= heading["y"] + heading["h"]
         ):
             continue
         return tuple(
             (
-                line["x"] - line["h"],
+                line["x"]
+                - line["h"] * (18 if label == "EXIT" and line is heading else 1),
                 line["y"] - line["h"],
                 line["x"] + line["w"] + line["h"],
                 line["y"] + line["h"] * 2,
@@ -64,8 +77,9 @@ async def read_inspection_mode(engine, image):
     )
     offsets, top = [], 0
     for strip in strips:
-        offsets.append(top)
-        area.paste(strip, (0, top))
+        left = area.width - strip.width
+        offsets.append((left, top))
+        area.paste(strip, (left, top))
         top += strip.height + 20
     identity = (
         boxes,
@@ -80,12 +94,13 @@ async def read_inspection_mode(engine, image):
     lines = await primary_read(engine, ImageOps.autocontrast(area.convert("L")))
     positioned = []
     for box, strip, offset in zip(boxes, strips, offsets):
+        left, top = offset
         contained = [
             line
             for line in lines
-            if offset <= line["y"] and line["y"] + line["h"] <= offset + strip.height
+            if top <= line["y"] and line["y"] + line["h"] <= top + strip.height
         ]
-        positioned.extend(map_lines(contained, (box[0], box[1] - offset)))
+        positioned.extend(map_lines(contained, (box[0] - left, box[1] - top)))
     observed = inspection_regions(positioned) is not None
     engine._inspection_cache = (identity, observed)
     engine._next_inspection_check = time.monotonic() + (0 if observed else 0.5)

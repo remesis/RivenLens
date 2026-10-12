@@ -514,6 +514,7 @@ class MainWindow(QWidget):
         if self._closing or state["revision"] != self.revision:
             return
         self.cards = state.get("cards", [])
+        self.follow_graded_weapon()
         self.refresh_grades()
         warning = (
             state.get("newRollWarning")
@@ -579,6 +580,12 @@ class MainWindow(QWidget):
                 if v
             )
         )
+
+    def follow_graded_weapon(self):
+        card = next(
+            (card for card in reversed(self.cards) if not card.get("snapshot")), None
+        )
+        self.planner.follow_card(card)
 
     def refresh_grades(self):
         slots = {

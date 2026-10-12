@@ -178,6 +178,17 @@ class SettingsDialog(ModalDialog):
         )
         rank.activated.connect(lambda: self.rank_changed(rank.currentData()))
         grading.content.addWidget(field_row("Riven rank", rank))
+        follow = QCheckBox("Auto-select planner weapon")
+        follow.setChecked(self.state["followGradedWeapon"])
+        follow.toggled.connect(self.follow_changed)
+        grading.content.addWidget(follow)
+        grading.content.addWidget(
+            label(
+                "Switches to the detected weapon and variant and restores that weapon's saved targets. Off by default.",
+                "muted",
+                True,
+            )
+        )
         self.fallback = Combo()
         self.fallback_group_id = ""
         window.planner.changed.connect(self.fill_fallback)
@@ -305,6 +316,12 @@ class SettingsDialog(ModalDialog):
         self.state["rank"] = 8
         self.owner.apply_capture()
         self.owner.planner.render()
+        self.owner.persist()
+
+    def follow_changed(self, enabled):
+        self.state["followGradedWeapon"] = enabled
+        if enabled:
+            self.owner.follow_graded_weapon()
         self.owner.persist()
 
     def fill_fallback(self):

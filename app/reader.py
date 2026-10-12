@@ -1021,7 +1021,7 @@ async def read_frame(
         for card in result["cards"]:
             title = card.get("titleBounds") or card["bounds"]
             if result.get("mode") == "inspection":
-                # A preview has no centered cycling button. Exact item-details
+                # A preview has no centered cycling button. Verified preview
                 # context establishes its role; the ordinary complete-card and
                 # repeated-read checks still decide whether it can be displayed.
                 card["screenX"] = 0.5 if len(result["cards"]) == 1 else -1

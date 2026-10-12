@@ -28,6 +28,8 @@ DEFAULTS = {
     "positiveLockSlot": -1,
     "statAlternatives": [[], [], [], []],
     "categoryPlans": {},
+    "weaponPlans": {},
+    "followGradedWeapon": False,
     "rank": 8,
     "rankMode": "manual",
     "gradeVariants": {},
@@ -83,7 +85,7 @@ PLANNER_FIELDS = (
 
 
 def planner_settings(saved):
-    """Copy only category-specific selections, with safe defaults for older saves."""
+    """Copy only planner selections, with safe defaults for older saves."""
     saved = saved if isinstance(saved, dict) else {}
     state = {
         key: copy.deepcopy(
@@ -157,11 +159,14 @@ def sanitize(saved):
         if key in saved and type(saved[key]) is type(default):
             state[key] = copy.deepcopy(saved[key])
     state.update(planner_settings(state))
-    state["categoryPlans"] = {
-        category: planner_settings(plan)
-        for category, plan in state["categoryPlans"].items()
-        if isinstance(category, str) and len(category) <= 64 and isinstance(plan, dict)
-    }
+    for key in ("categoryPlans", "weaponPlans"):
+        state[key] = {
+            identity: planner_settings(plan)
+            for identity, plan in state[key].items()
+            if isinstance(identity, str)
+            and len(identity) <= (64 if key == "categoryPlans" else 256)
+            and isinstance(plan, dict)
+        }
     if state["rankMode"] not in ("manual", "auto"):
         state["rankMode"] = DEFAULTS["rankMode"]
     state["rank"] = 8
@@ -272,16 +277,16 @@ class Preferences:
             if changed & target:
                 changed |= target
             for key in changed:
-                if key == "categoryPlans":
-                    # Independent categories edited in another copy must survive.
-                    for category in data[key].keys() | self._saved[key].keys():
-                        if data[key].get(category) != self._saved[key].get(category):
-                            if category in data[key]:
-                                merged[key][category] = copy.deepcopy(
-                                    data[key][category]
+                if key in ("categoryPlans", "weaponPlans"):
+                    # Independent plans edited in another copy must survive.
+                    for identity in data[key].keys() | self._saved[key].keys():
+                        if data[key].get(identity) != self._saved[key].get(identity):
+                            if identity in data[key]:
+                                merged[key][identity] = copy.deepcopy(
+                                    data[key][identity]
                                 )
                             else:
-                                merged[key].pop(category, None)
+                                merged[key].pop(identity, None)
                 else:
                     merged[key] = data[key]
         content = json.dumps(

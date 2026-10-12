@@ -456,10 +456,39 @@ class PlannerView(Section):
             None,
         )
         if match:
-            if self.state["weapon"] != match["id"]:
-                self.save_value("weapon", match["id"])
+            self.select_weapon(match["id"])
         else:
             self.weapon.setEditText(self.weapon.itemText(self.weapon.currentIndex()))
+
+    def select_weapon(self, identity, variant=None):
+        if self.model.select_weapon(identity, variant):
+            self.render(auto_lock=True)
+            self.changed.emit()
+
+    def follow_card(self, card):
+        """Follow only a fresh card with an independently resolved variant."""
+        if (
+            not self.state["followGradedWeapon"]
+            or not card
+            or not card.get("complete")
+            or card.get("snapshot")
+            or card.get("displayStale")
+        ):
+            return
+        variant = self.catalog.variant(card)
+        group = self.catalog.group(card)
+        if variant is None or group is None:
+            return
+        members = [
+            self.catalog.by_id[identity]
+            for identity in group["memberIds"]
+            if any(
+                v["id"] == variant["id"]
+                for v in self.catalog.by_id[identity]["variants"]
+            )
+        ]
+        if len(members) == 1:
+            self.select_weapon(members[0]["id"], variant["id"])
 
     def choose_positive(self, index, choices=None):
         self.model.set_targets(

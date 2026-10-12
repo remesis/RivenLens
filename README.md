@@ -63,7 +63,9 @@ closing the window or choosing **Quit** exits the app.
 - Multiple acceptable targets per unlocked stat slot, with odds for distinct
   combinations. Choose **Any** at the bottom of a stat list to leave that slot open.
 - Separate good and warning dings, volume controls, ten presets each and custom audio.
-- Remembered targets, sounds, collapsed sections and window placement.
+- Remembered plans per weapon, shared across its variants, plus sounds, collapsed
+  sections and window placement. Settings can optionally make the planner follow
+  the graded weapon and variant; it stays independent by default.
 - **Always on top** in Settings for an overlay-style window. Use windowed or
   borderless play; exclusive fullscreen may cover it.
 
@@ -155,10 +157,10 @@ card's actual rank. Your saved rolling choice is remembered.
 
 Keep the stat text, card footer and bottom-right **Fits In** label visible; rank
 pips must also be visible when using automatic rank detection. For chat-linked
-previews, keep **Item Details** or **Tradeable** visible too. Small
-text, animations and covered cards can confuse OCR. Previous grades stay visible
-during brief interruptions. On Windows, try another capture method if capture is
-blank.
+previews, keep the bottom-right **Exit** button visible; the top-left heading can
+be covered. Small text, animations and covered cards can confuse OCR. Previous
+grades stay visible during brief interruptions. On Windows, try another capture
+method if capture is blank.
 
 **Double-check important rolls before discarding them.** The warning covers
 incomplete new-roll stat lines, not unreadable rank pips or variant labels.

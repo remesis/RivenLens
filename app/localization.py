@@ -344,6 +344,9 @@ class Profile:
             ("no", "NO"),
             ("details", "ITEM DETAILS"),
             ("tradeable", "TRADEABLE"),
+            ("exit", "EXIT"),
+            ("cancel", "CANCEL"),
+            ("ranked", "SHOW RANKED"),
         ):
             if control_key(text) == control_key(_markup(self.ui[name])):
                 return canonical
