@@ -334,9 +334,9 @@ class RapidOCR:
                 footer = profile.footer_bounds(words)
                 if footer:
                     entry["footerBounds"] = footer
-                counter = roll_counter_bounds(text, words)
-                if counter:
-                    entry["counterBounds"] = counter
+            counter = roll_counter_bounds(text, words)
+            if counter:
+                entry["counterBounds"] = counter
             lines.append(entry)
         lines = normalize_controls(lines, profile)
         lines = split_columns(lines, profile)

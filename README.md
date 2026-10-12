@@ -1,6 +1,7 @@
 # RivenLens
 
-A small desktop companion for grading Rivens as you roll or view chat links.
+A small desktop companion for grading Rivens as you roll, view chat links or
+hover over mods.
 
 ![RivenLens example](https://raw.githubusercontent.com/remesis/RivenLens/main/assets/screenshots/example-image.png)
 
@@ -52,11 +53,16 @@ the sharing chooser. Put RivenLens beside the cards or on a second monitor.
 Capture always starts paused. **Pause OCR** stops scanning;
 closing the window or choosing **Quit** exits the app.
 
+For mod-menu hovers, let the card expand and briefly keep the pointer off its
+text. The last good grades stay visible while you move around the card.
+
 ## What's included
 
 - Current and new grades side by side, automatic variant detection and rank 8
-  by default while rolling. Chat-linked previews use their detected rank in the
-  current-card panel.
+  by default while rolling. Chat links and expanded mod-menu hovers use the
+  card's actual rank. Hover grades stay visible through brief obstructions;
+  overlapping ranges show **Variant unsure** and can use a recent matching
+  hover's variant, clearly labeled.
 - Collapsible splice, manual-lock and final-odds stages with roll and Kuva estimates.
 - A platinum-icon seed finder for matching Warframe Market listings, sorted by
   the lowest listed price, with a remembered listing-age filter.

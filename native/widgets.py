@@ -32,6 +32,7 @@ from grading import (
 )
 from appearance import scaled_pixels
 from compact_numbers import compact_number
+from hover_variants import RECENT_HOVER_NOTE
 from ui_text import (
     QLabel,
     QPushButton,
@@ -631,7 +632,7 @@ class RollCard(QFrame):
                 and {
                     k: v
                     for k, v in card.items()
-                    if k in ("title", "weapon", "stats", "format")
+                    if k in ("title", "weapon", "stats", "format", "viewMode")
                 },
                 variant,
                 rank,
@@ -650,7 +651,8 @@ class RollCard(QFrame):
         rank_text = "RANK ?" if rank is None else f"RANK {rank}/8"
         if rank_mode == "manual":
             rank_text += " MANUAL"
-        self.meta.setText(f"{self.caption} · {card['format']} · {rank_text}")
+        caption = "HOVERED RIVEN" if card.get("viewMode") == "hover" else self.caption
+        self.meta.setText(f"{caption} · {card['format']} · {rank_text}")
         self.name.setText(card.get("title") or card["weapon"])
         self.name.setToolTip(self.name.text())
         for index, (row, text, grade_label) in enumerate(self.rows):
@@ -681,7 +683,9 @@ class RollCard(QFrame):
                 if variant
                 else {
                     "unknown": True,
-                    "message": "Waiting for the Fits In weapon variant. Keep its caption visible.",
+                    "message": "Variant unsure: these values do not identify one weapon variant."
+                    if card.get("viewMode") == "hover"
+                    else "Waiting for the Fits In weapon variant. Keep its caption visible.",
                 }
             )
             if result.get("grade"):
@@ -700,7 +704,13 @@ class RollCard(QFrame):
                     or "Relative to the mean"
                 )
                 if variant["source"] == "shared":
-                    tip += " All compatible variants share these ranges; the exact variant is still being read."
+                    tip += (
+                        " All compatible variants share these grading ranges."
+                        if card.get("viewMode") == "hover"
+                        else " All compatible variants share these ranges; the exact variant is still being read."
+                    )
+                elif variant["source"] == "recent-hover":
+                    tip += "\n" + RECENT_HOVER_NOTE.format(variant=variant["name"])
                 if stat["polarity"] == "negative":
                     tip += "\n" + NEGATIVE_GRADE_NOTE
             else:

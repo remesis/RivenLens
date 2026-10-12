@@ -162,19 +162,22 @@ class LocalOCR:
                     entry["footerBounds"] = original_box(
                         rect.x, rect.y, rect.width, rect.height
                     )
+                located_words = [
+                    {
+                        "text": word.text,
+                        **original_box(
+                            word.bounding_rect.x,
+                            word.bounding_rect.y,
+                            word.bounding_rect.width,
+                            word.bounding_rect.height,
+                        ),
+                    }
+                    for word in words
+                ]
+                counter = roll_counter_bounds(line.text, located_words)
+                if counter:
+                    entry["counterBounds"] = counter
                 if self.language != "en":
-                    located_words = [
-                        {
-                            "text": word.text,
-                            **original_box(
-                                word.bounding_rect.x,
-                                word.bounding_rect.y,
-                                word.bounding_rect.width,
-                                word.bounding_rect.height,
-                            ),
-                        }
-                        for word in words
-                    ]
                     if self.language == "ru":
                         repaired = repair_decimal_spacing(line.text, located_words)
                         if repaired != line.text:
@@ -183,9 +186,6 @@ class LocalOCR:
                     footer = profile(self.language).footer_bounds(located_words)
                     if footer:
                         entry["footerBounds"] = footer
-                    counter = roll_counter_bounds(line.text, located_words)
-                    if counter:
-                        entry["counterBounds"] = counter
                 lines.append(entry)
             return adapt_lines(lines, self.language)
         finally:

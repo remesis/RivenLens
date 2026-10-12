@@ -20,6 +20,7 @@ from alerts import History, find_matches
 from appearance import theme_for, window_scale
 from audio import SoundChannel
 from catalog import Catalog
+from hover_variants import RECENT_HOVER_NOTE
 from capture import monitor_token
 from desktop import ICON
 from planner_view import PlannerView
@@ -556,7 +557,11 @@ class MainWindow(QWidget):
         elif not self.running:
             text = "Capture paused"
         elif self.cards:
-            text = "Watching for rolls"
+            text = (
+                "Hover grades"
+                if self.cards[-1].get("viewMode") == "hover"
+                else "Watching for rolls"
+            )
         elif state.get("located"):
             text = "Reading Riven stats"
         else:
@@ -599,14 +604,22 @@ class MainWindow(QWidget):
         variant = (
             self.catalog.variant(card, self.state["gradeVariants"]) if card else None
         )
-        self.variant_label.setText(
-            variant["name"] if variant else "Reading variant..." if card else ""
-        )
-        self.variant_label.setToolTip(
-            f"{variant['source']} · disposition {variant['disposition']}"
-            if variant
-            else ""
-        )
+        if variant:
+            text = variant["name"]
+            tip = f"{variant['source']} · disposition {variant['disposition']}"
+        elif card and card.get("viewMode") == "hover":
+            fallback = self.catalog.grading_variant(card, self.state["gradeVariants"])
+            if fallback and fallback["source"] == "recent-hover":
+                text = f"{fallback['name']}\nVariant unsure"
+                tip = RECENT_HOVER_NOTE.format(variant=fallback["name"])
+            else:
+                text = "Variant unsure"
+                tip = "Variant unsure: these values do not identify one weapon variant."
+        else:
+            text = "Reading variant..." if card else ""
+            tip = ""
+        self.variant_label.setText(text)
+        self.variant_label.setToolTip(tip)
 
     def sound_toggled(self, enabled):
         self.stop_sounds()

@@ -2341,7 +2341,11 @@
         "details": "ITEM DETAILS",
         "tradeable": "Tradeable",
         "exit": "EXIT",
-        "cancel": "CANCEL"
+        "cancel": "CANCEL",
+        "fusion": "FUSION",
+        "transmute": "TRANSMUTE",
+        "mods": "MODS",
+        "removeAll": "REMOVE ALL"
       }
     },
     "de": {
@@ -4684,7 +4688,11 @@
         "details": "GEGENSTAND DETAILS",
         "tradeable": "Handelbar",
         "exit": "VERLASSEN",
-        "cancel": "ABBRECHEN"
+        "cancel": "ABBRECHEN",
+        "fusion": "FUSION",
+        "transmute": "UMWANDELN",
+        "mods": "MODS",
+        "removeAll": "ALLE AUSBAUEN"
       }
     },
     "fr": {
@@ -7027,7 +7035,11 @@
         "details": "DÉTAILS DE L'OBJET",
         "tradeable": "Échangeable",
         "exit": "QUITTER",
-        "cancel": "ANNULER"
+        "cancel": "ANNULER",
+        "fusion": "FUSIONNER",
+        "transmute": "TRANSMUTER",
+        "mods": "MODS",
+        "removeAll": "TOUT RETIRER"
       }
     },
     "it": {
@@ -9370,7 +9382,11 @@
         "details": "DETTAGLI OGGETTO",
         "tradeable": "Scambiabile",
         "exit": "ESCI",
-        "cancel": "ANNULLA"
+        "cancel": "ANNULLA",
+        "fusion": "FONDI",
+        "transmute": "TRASFORMA",
+        "mods": "MOD",
+        "removeAll": "RIMUOVI TUTTO"
       }
     },
     "ko": {
@@ -11713,7 +11729,11 @@
         "details": "아이템 상세설명",
         "tradeable": "거래 가능",
         "exit": "나가기",
-        "cancel": "취소"
+        "cancel": "취소",
+        "fusion": "합성",
+        "transmute": "모드 변환",
+        "mods": "모드",
+        "removeAll": "모두 장착 해제하기"
       }
     },
     "ru": {
@@ -14062,7 +14082,11 @@
         "details": "ИНФОРМАЦИЯ О ТОВАРЕ",
         "tradeable": "Можно передать",
         "exit": "ВЫХОД",
-        "cancel": "ОТМЕНА"
+        "cancel": "ОТМЕНА",
+        "fusion": "СЛИЯНИЕ",
+        "transmute": "ПРЕОБРАЗОВАНИЕ",
+        "mods": "МОДЫ",
+        "removeAll": "УБРАТЬ ВСЕ"
       }
     },
     "ja": {
@@ -16405,7 +16429,11 @@
         "details": "アイテム詳細",
         "tradeable": "トレード可",
         "exit": "閉じる",
-        "cancel": "キャンセル"
+        "cancel": "キャンセル",
+        "fusion": "合成選択",
+        "transmute": "変換",
+        "mods": "MOD",
+        "removeAll": "すべて解除"
       }
     },
     "pl": {
@@ -18748,7 +18776,11 @@
         "details": "SZCZEGÓŁY PRZEDMIOTU",
         "tradeable": "Wymienialne",
         "exit": "WYJŚCIE",
-        "cancel": "ANULUJ"
+        "cancel": "ANULUJ",
+        "fusion": "FUZJA",
+        "transmute": "TRANSMUTUJ",
+        "mods": "MODY",
+        "removeAll": "ZDEJMIJ MODY"
       }
     },
     "es": {
@@ -21091,7 +21123,11 @@
         "details": "DETALLES DEL ARTÍCULO",
         "tradeable": "Intercambiable",
         "exit": "SALIR",
-        "cancel": "CANCELAR"
+        "cancel": "CANCELAR",
+        "fusion": "FUSIÓN",
+        "transmute": "TRANSMUTAR",
+        "mods": "MODS",
+        "removeAll": "QUITAR TODO"
       }
     },
     "pt": {
@@ -23440,7 +23476,11 @@
         "details": "DETALHES DO ITEM",
         "tradeable": "Negociáveis",
         "exit": "SAIR",
-        "cancel": "CANCELAR"
+        "cancel": "CANCELAR",
+        "fusion": "FUSÃO",
+        "transmute": "TRANSMUTAR",
+        "mods": "MODS",
+        "removeAll": "REMOVER TUDO"
       }
     },
     "zh": {
@@ -25783,7 +25823,11 @@
         "details": "物品细节",
         "tradeable": "可交易",
         "exit": "退出",
-        "cancel": "取消"
+        "cancel": "取消",
+        "fusion": "融铸",
+        "transmute": "转换",
+        "mods": "MOD",
+        "removeAll": "全部移除"
       }
     },
     "tc": {
@@ -28126,7 +28170,11 @@
         "details": "物品細節",
         "tradeable": "可交易",
         "exit": "退出",
-        "cancel": "取消"
+        "cancel": "取消",
+        "fusion": "融合",
+        "transmute": "轉換",
+        "mods": "MOD",
+        "removeAll": "全部移除"
       }
     },
     "tr": {
@@ -30469,7 +30517,11 @@
         "details": "ÜRÜN DETAYLARI",
         "tradeable": "Takaslanabilir",
         "exit": "ÇIKIŞ",
-        "cancel": "İPTAL"
+        "cancel": "İPTAL",
+        "fusion": "FÜZYON",
+        "transmute": "DÖNÜŞTÜR",
+        "mods": "MODLAR",
+        "removeAll": "HEPSİNİ KALDIR"
       }
     }
   }

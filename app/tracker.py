@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # See LICENSE in the project root for the license and warranty disclaimer.
 
-"""Track kept/proposed rolls from visible card and action-label observations."""
+"""Track verified cards and kept/proposed roles from visible screen observations."""
 
 from parser import fingerprint
 from stat_warning import NewRollStatWarning, missing_known_stats
@@ -24,6 +24,7 @@ class RollTracker:
         self.seen = {"current": 0, "new": 0}
         self.cycle_key = None
         self.cycle_hits = 0
+        self.view_mode = None
         self.stat_warning = (
             stat_warning if stat_warning is not None else NewRollStatWarning()
         )
@@ -142,6 +143,14 @@ class RollTracker:
             # Selection changes size/position, never left-to-right role order.
             raw = sorted(raw, key=lambda card: card.get("screenX", 0.5))
         mode = result.get("mode", "unknown")
+        if mode == "hover" or mode == "unknown" and self.view_mode == "hover":
+            return self._hover_update(raw if mode == "hover" else [], now)
+        if self.view_mode == "hover" and mode != "unknown":
+            self.current = None
+            self._clear_new()
+            self.interrupt()
+        if mode != "unknown":
+            self.view_mode = mode
         strict_roles = result.get("strictRoles", False)
         warning = self.stat_warning.update(raw, mode, now, (self.current, self.new))
         observations = {"current": None, "new": None}
@@ -240,4 +249,46 @@ class RollTracker:
             else "Waiting for a clear reading; previous grades remain visible."
             if cards
             else result.get("reason") or "Checking the next frame...",
+        }
+
+    def _hover_update(self, raw, now):
+        """Retain only verified hover grades through cursor/tilt interruptions."""
+        if self.view_mode != "hover":
+            self.current = None
+            self._clear_new()
+            self.interrupt()
+        self.view_mode = "hover"
+        self.stat_warning.reset()
+        card = raw[0] if len(raw) == 1 else None
+        # Different cards cannot keep masquerading as the old hover. Identical
+        # verified stats can retain their title through a tilted glyph misread.
+        if (
+            card
+            and self.current
+            and (
+                card["weapon"] != self.current["weapon"]
+                or card["title"] != self.current["title"]
+                and key(card) != key(self.current)
+            )
+        ):
+            self.current = None
+            self.interrupt()
+        fresh = self._observe("current", card, now)
+        return {
+            "cards": [
+                {
+                    **self.current,
+                    "slot": "current",
+                    "snapshot": not fresh,
+                    "displayStale": False,
+                }
+            ]
+            if self.current
+            else [],
+            "located": bool(raw),
+            "newRollWarning": None,
+            "status": "reading" if fresh else "settling" if card else "waiting",
+            "message": "Live grades."
+            if fresh
+            else "Waiting for a clear reading; previous grades remain visible.",
         }

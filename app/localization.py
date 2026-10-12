@@ -129,7 +129,7 @@ def repair_decimal_spacing(text, words):
 
 def roll_counter_bounds(text, words):
     """Locate counter numerals separately from an OCR-decoded circular icon."""
-    match = re.fullmatch(r"\s*([oOоО↻])\s+([0-9]{1,7})\s*", text)
+    match = re.fullmatch(r"\s*([0oOоО↻])\s+([0-9]{1,7})\s*", text)
     if not match:
         return None
     if len(words) != 2 or words[0]["text"] != match[1] or words[1]["text"] != match[2]:
@@ -347,6 +347,10 @@ class Profile:
             ("exit", "EXIT"),
             ("cancel", "CANCEL"),
             ("ranked", "SHOW RANKED"),
+            ("fusion", "FUSION"),
+            ("transmute", "TRANSMUTE"),
+            ("mods", "MODS"),
+            ("removeAll", "REMOVE ALL"),
         ):
             if control_key(text) == control_key(_markup(self.ui[name])):
                 return canonical

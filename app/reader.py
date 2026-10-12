@@ -17,7 +17,8 @@ from localization import LATIN_UI_LANGUAGES
 from rank_reader import detect_rank
 from variants import VARIANT_CHOICES
 from ocr_budget import allow_retry, primary_read, reserve_verifications
-from inspection import inspection_regions, read_inspection_mode
+from inspection import inspection_regions, read_context_mode, read_inspection_mode
+from hover import hover_candidates, hover_controls, hover_region, hover_regions
 from layout import (
     action_line,
     card_region,
@@ -514,9 +515,10 @@ def recovery_text_box(image, card, margin):
     )
 
 
-def recovery_text_sample(image, card, treatment):
+def recovery_text_sample(image, card, treatment, *, factor=None):
     """Smooth small glyphs and keep a quiet border around the OCR input."""
-    factor, margin, stretch, tone = _RECOVERY_MODES[treatment]
+    default_factor, margin, stretch, tone = _RECOVERY_MODES[treatment]
+    factor = default_factor if factor is None else factor
     box = recovery_text_box(image, card, margin)
     area = image.crop(box)
     denoise = tone.startswith("median")
@@ -561,7 +563,7 @@ def counter_footer_complete(image, card):
     )
 
 
-async def refine_card(engine, image, card, force=False):
+async def refine_card(engine, image, card, force=False, *, hover=False):
     """Read small or incomplete text in place, requiring agreement for repairs."""
     counter_confirmed = counter_footer_complete(image, card)
     if counter_confirmed:
@@ -580,6 +582,7 @@ async def refine_card(engine, image, card, force=False):
         and validate
         and plausible
         and not cjk
+        and not force
     ):
         # Only the unit glyph was restored, using the known display precision.
         # Known stat ranges must fit one whole-card rank/variant combination. The
@@ -634,6 +637,7 @@ async def refine_card(engine, image, card, force=False):
         image.mode,
         fingerprint({"cards": [card]}),
         card["complete"],
+        hover,
         hashlib.blake2b(image.crop(cache_box).tobytes(), digest_size=16).digest(),
     )
     if cache_key in cache:
@@ -667,6 +671,13 @@ async def refine_card(engine, image, card, force=False):
         # Oversized glyphs can split even whole-number percentages. Read the
         # same text at smaller scales too; full-card agreement still applies.
         treatments = ((0.7, "original"), (0.75, "purple")) + treatments
+    if hover and needs_recovery:
+        # A tilted card's elemental/lock glyph can merge into the adjacent label.
+        # Long edge labels also need a quiet border. Try both pixel treatments
+        # early, still requiring complete agreement at independent text scales.
+        treatments = ((2, "purple"), (2, "color"), (2.5, "color")) + tuple(
+            item for item in treatments if item not in ((2, "purple"), (2, "color"))
+        )
     if not needs_recovery and language != "en":
         # The confirming read needs the same help as an incomplete translated
         # card: clean, enlarged glyphs, including compact CJK lettering. This
@@ -736,7 +747,7 @@ async def refine_card(engine, image, card, force=False):
         factor, treatment = treatments[index]
         if treatment in _RECOVERY_MODES:
             area, sample_offset, sample_scale = recovery_text_sample(
-                image, card, treatment
+                image, card, treatment, factor=factor
             )
         else:
             area = (
@@ -753,7 +764,13 @@ async def refine_card(engine, image, card, force=False):
             )
             sample_offset = box[:2]
             sample_scale = (area.width / crop.width, area.height / crop.height)
-        parsed = parse_cards(await engine.read(area), area.width, area.height)
+        lines = await engine.read(area)
+        parsed = parse_cards(lines, area.width, area.height)
+        if hover:
+            parsed["cards"] = hover_candidates(lines, area.width, area.height)
+            parsed["complete"] = bool(parsed["cards"]) and all(
+                item["complete"] for item in parsed["cards"]
+            )
         schedule[location] = treatments[(index + 1) % len(treatments)]
         if len(parsed["cards"]) == 1 and not parsed["complete"]:
             positioned = source_coordinates(
@@ -828,12 +845,16 @@ async def refine_result(
     for index in reversed(range(len(result["cards"]))):
         if index in verified:
             continue
-        if recover:
+        if recover and result.get("mode") != "hover":
             result["cards"][index] = await recover_card(
                 engine, image, result["cards"][index]
             )
         result["cards"][index] = await refine_card(
-            engine, image, result["cards"][index], force
+            engine,
+            image,
+            result["cards"][index],
+            force,
+            hover=result.get("mode") == "hover",
         )
         if on_verified and result["cards"][index]["complete"]:
             await on_verified(result["cards"][index], result.get("mode", "unknown"))
@@ -887,6 +908,9 @@ def reset_layout(engine):
         "_session_variant_hint",
         "_inspection_regions",
         "_inspection_cache",
+        "_hover_regions",
+        "_hover_cache",
+        "_hover_menu",
     ):
         setattr(engine, name, None)
     engine._next_tile_search = 0
@@ -896,6 +920,7 @@ def reset_layout(engine):
     engine._next_variant_retry = 0
     engine._next_action_retry = 0
     engine._next_inspection_check = 0
+    engine._next_hover_check = 0
     engine._action_retry_phase = 0
     engine._localized_variant_treatment = 0
     engine._variant_pending = False
@@ -950,9 +975,12 @@ async def read_frame(
         variant_attempted = priority_variant
 
         async def annotate_rank(card, mode):
-            # Linked previews show the item's actual rank, not Show Ranked values.
-            automatic = auto_rank or mode == "inspection"
+            # Previews and hovers show actual rank, not Show Ranked values.
+            automatic = auto_rank or mode in ("inspection", "hover")
+            card["viewMode"] = mode
             card["rankMode"] = "auto" if automatic else "manual"
+            if mode == "hover":
+                card["hoverMenu"] = getattr(engine, "_hover_menu", None)
             if getattr(engine, "backend", None) == "rapid":
                 engine.automatic_rank = automatic
             card["rank"] = (
@@ -962,6 +990,9 @@ async def read_frame(
         async def annotate(card, mode):
             nonlocal hint, variant_attempted
             await annotate_rank(card, mode)
+            if mode == "hover":
+                hint = engine._session_variant_hint = None
+                return
             compatible = hint in VARIANT_CHOICES.get(card["weapon"], set())
             if not compatible:
                 hint = engine._session_variant_hint = None
@@ -1008,7 +1039,12 @@ async def read_frame(
             # Recheck their visible caption rather than retaining a rolling hint.
             hint = await variant_hint(engine, metadata_image)
             engine._session_variant_hint = hint
-        if getattr(engine, "backend", None) == "rapid":
+        if result.get("mode") == "hover":
+            hint = engine._session_variant_hint = None
+        if (
+            result.get("mode") != "hover"
+            and getattr(engine, "backend", None) == "rapid"
+        ):
             from rapid_text import caption_namespace
 
             observed = caption_namespace()
@@ -1020,7 +1056,7 @@ async def read_frame(
         action = engine._frame_action
         for card in result["cards"]:
             title = card.get("titleBounds") or card["bounds"]
-            if result.get("mode") == "inspection":
+            if result.get("mode") in ("inspection", "hover"):
                 # A preview has no centered cycling button. Verified preview
                 # context establishes its role; the ordinary complete-card and
                 # repeated-read checks still decide whether it can be displayed.
@@ -1033,24 +1069,38 @@ async def read_frame(
                 ) / (width * 6)
             else:
                 card["screenX"] = -1
-        # A title alone can belong to the companion or a weapon selector. Only
-        # physical card footers may relocate the learned region during transitions.
+        # A title alone can belong to the companion or a weapon selector. Hover
+        # candidates already isolate a signed stat block and its footer; following
+        # that crop does not waive the full-read or physical rank checks.
         located = [
             card
             for card in result["cards"]
             if detect_rank(metadata_image, card) is not None
+            or result.get("mode") == "hover"
+            and card.get("titleBounds")
+            and (card.get("footerBounds") or card.get("counterBounds"))
         ]
-        if located and (action or not getattr(engine, "_card_region", None)):
-            engine._card_region = card_region(
-                image,
-                located,
-                action,
-                getattr(engine, "_card_region", None) or engine._frame_region,
+        if located and (
+            action
+            or result.get("mode") == "hover"
+            or not getattr(engine, "_card_region", None)
+        ):
+            engine._card_region = (
+                hover_region(image, located[0])
+                if result.get("mode") == "hover"
+                else card_region(
+                    image,
+                    located,
+                    action,
+                    getattr(engine, "_card_region", None) or engine._frame_region,
+                )
             )
         if any(card["complete"] for card in result["cards"]):
             engine._last_located_at = time.monotonic()
             rank_mode = (
-                "auto" if auto_rank or result.get("mode") == "inspection" else "manual"
+                "auto"
+                if auto_rank or result.get("mode") in ("inspection", "hover")
+                else "manual"
             )
             for card in reversed(result["cards"]):
                 if card["complete"]:
@@ -1059,11 +1109,17 @@ async def read_frame(
                     elif card.get("rankMode") != rank_mode:
                         await annotate_rank(card, result.get("mode", "unknown"))
             for card in result["cards"]:
-                if hint in VARIANT_CHOICES.get(card["weapon"], set()):
+                if result.get("mode") != "hover" and hint in VARIANT_CHOICES.get(
+                    card["weapon"], set()
+                ):
                     card["variantHint"] = hint
-        engine._variant_pending = bool(result["cards"]) and not any(
-            hint in VARIANT_CHOICES.get(card["weapon"], set())
-            for card in result["cards"]
+        engine._variant_pending = (
+            result.get("mode") != "hover"
+            and bool(result["cards"])
+            and not any(
+                hint in VARIANT_CHOICES.get(card["weapon"], set())
+                for card in result["cards"]
+            )
         )
         result["strictRoles"] = getattr(engine, "backend", None) == "rapid"
         return result
@@ -1085,7 +1141,7 @@ async def read_rank(engine, image, card):
     box = (
         max(0, round(center - title["h"] * 5.5)),
         max(0, round(footer["y"] - footer["h"] if footer else title["y"] + title["h"])),
-        min(image.width, round(center)),
+        min(image.width, round(center + title["h"] * 6)),
         min(
             image.height,
             round(
@@ -1099,7 +1155,7 @@ async def read_rank(engine, image, card):
     context_box = (
         box[0],
         max(0, round(title["y"])),
-        min(image.width, round(center + title["h"] * 2)),
+        box[2],
         box[3],
     )
     identity = (
@@ -1156,8 +1212,10 @@ async def read_rank(engine, image, card):
                 "h": line["h"] / sy,
             }
             for entry in await engine.read(sample)
-            if FOOTER.search(clean_text(entry["text"]))
-            for line in [entry.get("footerBounds") or entry]
+            if FOOTER.search(clean_text(entry["text"])) or entry.get("counterBounds")
+            for line in [
+                entry.get("footerBounds") or entry.get("counterBounds") or entry
+            ]
         ]
         attempt += 1
         if identity not in cache and len(cache) >= 8:
@@ -1221,6 +1279,12 @@ async def read_cards(
         result["mode"] = observe_mode(engine, map_lines(lines, box[:2], actual_scale))
         if result["mode"] == "unknown":
             result["mode"] = await read_action_mode(engine, image)
+        if result["mode"] == "hover":
+            result["cards"] = hover_candidates(lines, area.width, area.height)
+            reserve_verifications(engine, len(result["cards"]))
+            result["complete"] = bool(result["cards"]) and all(
+                card["complete"] for card in result["cards"]
+            )
         if (
             result["mode"] == "transition"
             and getattr(engine, "backend", None) == "rapid"
@@ -1237,8 +1301,11 @@ async def read_cards(
                 getattr(engine, "language", "en") != "en" and previous_new is not None
             )
         )
+        discover_context = (
+            result["mode"] == "unknown" and getattr(engine, "backend", None) == "rapid"
+        )
         for index in reversed(range(len(result["cards"]))):
-            if new_ready or discover_comparison:
+            if new_ready or discover_comparison or discover_context:
                 card = source_coordinates(
                     {"cards": [result["cards"][index]]}, box[:2], actual_scale
                 )["cards"][0]
@@ -1246,18 +1313,28 @@ async def read_cards(
                     **card,
                     "complete": False,
                     "unreadable": [
-                        "Locating both comparison cards."
+                        "Locating the card viewing screen."
+                        if discover_context
+                        else "Locating both comparison cards."
                         if discover_comparison
                         else "Current roll verification deferred for the new roll."
                     ],
                 }
                 continue
-            card = await recover_card(engine, area, result["cards"][index])
+            card = (
+                result["cards"][index]
+                if result["mode"] == "hover"
+                else await recover_card(engine, area, result["cards"][index])
+            )
             positioned = source_coordinates({"cards": [card]}, box[:2], actual_scale)[
                 "cards"
             ][0]
             result["cards"][index] = await refine_card(
-                engine, image, positioned, actual_scale[0] < 1
+                engine,
+                image,
+                positioned,
+                actual_scale[0] < 1 or result["mode"] == "hover",
+                hover=result["mode"] == "hover",
             )
             if on_verified and result["cards"][index]["complete"]:
                 await on_verified(result["cards"][index], result["mode"])
@@ -1310,21 +1387,24 @@ async def read_cards(
         ):
             return result
     if focused is not None:
-        expected_count = {"current": 1, "comparison": 2, "inspection": 1}.get(
-            focused["mode"]
-        )
+        expected_count = {
+            "current": 1,
+            "comparison": 2,
+            "inspection": 1,
+            "hover": 1,
+        }.get(focused["mode"])
         if expected_count == len(focused["cards"]) and time.monotonic() < getattr(
             engine, "_next_scene_search", 0
         ):
             # All expected cards are located. Give their local text retries time
             # to finish instead of repeatedly spending the budget on discovery.
             return focused
-        if not allow_retry(engine):
+        if focused["mode"] != "unknown" and not allow_retry(engine):
             return focused
     engine._next_scene_search = time.monotonic() + 0.75
     lines = (
         await engine.read(image)
-        if focused is not None
+        if focused is not None and focused["mode"] != "unknown"
         else await primary_read(engine, image)
     )
     engine._scene_lines = lines
@@ -1337,6 +1417,9 @@ async def read_cards(
         result["mode"] = (
             focused["mode"] if focused else await read_action_mode(engine, image)
         )
+    if result["mode"] == "hover":
+        result["cards"] = hover_candidates(lines, image.width, image.height)
+        reserve_verifications(engine, len(result["cards"]))
     if result["mode"] == "transition" and getattr(engine, "backend", None) == "rapid":
         return defer_transition(result)
     verified = set()
@@ -1363,7 +1446,7 @@ async def read_cards(
         engine,
         image,
         result,
-        max(image.size) > 2600,
+        max(image.size) > 2600 or result["mode"] == "hover",
         verified=verified,
         recover=True,
         on_verified=on_verified,
@@ -1392,13 +1475,20 @@ async def read_cards(
         if not getattr(engine, "_card_tile_cursor_pending", False):
             engine._next_tile_search = time.monotonic() + 2
         tiled = parse_cards(tiles, image.width, image.height)
+        if result["mode"] == "hover":
+            tiled["cards"] = hover_candidates(tiles, image.width, image.height)
         if tiled["cards"]:
             tiled["mode"] = mode_from_lines(tiles)
             if tiled["mode"] == "unknown":
                 tiled["mode"] = result["mode"]
             reserve_verifications(engine, len(tiled["cards"]))
             tiled = await refine_result(
-                engine, image, tiled, recover=True, on_verified=on_verified
+                engine,
+                image,
+                tiled,
+                tiled["mode"] == "hover",
+                recover=True,
+                on_verified=on_verified,
             )
             tiled["complete"] = all(card["complete"] for card in tiled["cards"])
             if (
@@ -1422,6 +1512,8 @@ async def read_action_mode(engine, image):
     """Recheck learned preview context or the bottom rolling action caption."""
     if await read_inspection_mode(engine, image):
         return "inspection"
+    if await read_context_mode(engine, image, "hover", hover_regions):
+        return "hover"
     box = getattr(engine, "_action_region", None) or (
         int(image.width * 0.32),
         int(image.height * 0.85),
@@ -1487,11 +1579,24 @@ async def read_action_mode(engine, image):
 
 def observe_mode(engine, lines):
     mode = mode_from_lines(lines)
+    if mode != "unknown" and (mode == "hover") != bool(
+        getattr(engine, "_hover_regions", None)
+    ):
+        # Hover text can be anywhere in a mod grid. Do not carry its tight crop
+        # into the centered preview or two-card rolling layout (or vice versa).
+        engine._card_region = None
+        engine._next_scene_search = 0
     if mode == "inspection":
         engine._inspection_regions = inspection_regions(lines)
     elif mode != "unknown":
         engine._inspection_regions = None
         engine._inspection_cache = None
+    if mode == "hover":
+        engine._hover_menu, engine._hover_regions = hover_controls(lines)
+    elif mode != "unknown":
+        engine._hover_regions = None
+        engine._hover_cache = None
+        engine._hover_menu = None
     if line := action_line(lines, mode):
         engine._frame_action = line
         height = line["h"]
@@ -1515,4 +1620,6 @@ def mode_from_lines(lines):
         return "comparison"
     if inspection_regions(lines):
         return "inspection"
+    if hover_regions(lines):
+        return "hover"
     return "unknown"

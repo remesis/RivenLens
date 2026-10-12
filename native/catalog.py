@@ -131,6 +131,11 @@ class Catalog:
         if not group:
             return None
         variants = group["variants"]
+        if card.get("viewMode") == "hover":
+            compatible = self.hover_variants(card)
+            return (
+                {**compatible[0], "source": "ranges"} if len(compatible) == 1 else None
+            )
         hint = next(
             (
                 v
@@ -162,6 +167,39 @@ class Catalog:
             return {**exact, "source": "title"}
         return None
 
+    def hover_variants(self, card):
+        """Resolve only whole-card ranges at the visibly detected hover rank."""
+        group = self.group(card)
+        rank = card.get("rank")
+        if (
+            not group
+            or not card.get("complete")
+            or type(rank) is not int
+            or not 0 <= rank <= 8
+        ):
+            return []
+        compatible = []
+        for variant in group["variants"]:
+            traits = [(stat, self.trait(variant, stat["id"])) for stat in card["stats"]]
+            if len(traits) < 2 or any(
+                not trait or trait.get("baselineStatus") in ("assumed", "provisional")
+                for _, trait in traits
+            ):
+                continue
+            if all(
+                grade_stat(
+                    stat,
+                    trait,
+                    variant["disposition"],
+                    card["format"],
+                    self.range_model,
+                    rank,
+                ).get("grade")
+                for stat, trait in traits
+            ):
+                compatible.append(variant)
+        return compatible
+
     def trait(self, variant, identity):
         if not variant:
             return None
@@ -173,12 +211,25 @@ class Catalog:
         return next((t for t in self.definitions[kind] if t["id"] == identity), None)
 
     def grading_variant(self, card, saved=None):
-        """Allow shared ranges without claiming which variant is on screen."""
+        """Choose display ranges without asserting an uncertain variant."""
         resolved = self.variant(card, saved)
         if resolved:
             return resolved
         group = self.group(card)
-        variants = group["variants"] if group else []
+        variants = (
+            self.hover_variants(card)
+            if card.get("viewMode") == "hover"
+            else group["variants"]
+            if group
+            else []
+        )
+        if card.get("viewMode") == "hover" and len(variants) > 1:
+            recent = next(
+                (v for v in variants if v["id"] == card.get("hoverVariantFallback")),
+                None,
+            )
+            if recent:
+                return {**recent, "source": "recent-hover"}
         if variants and len({(v["kind"], v["disposition"]) for v in variants}) == 1:
             return {
                 "id": None,

@@ -39,7 +39,9 @@ def footer(row, locale):
     )
 
 
-def anchors_for(title, rows, locale):
+def anchors_for(title, rows, locale, *, pieces=False):
+    if pieces:
+        rows = [piece for row in rows for piece in row.get("rawPieces") or (row,)]
     x, y, width, _ = bounds(title)
     height = title.get("fontHeight", title.get("glyphHeight", title["h"]))
     center = x + width / 2
@@ -79,6 +81,48 @@ def restored_piece(piece):
         "rawPieces": [deepcopy(piece)],
         "glyphHeight": piece["h"],
     }
+
+
+def anchored_grid_stat(pieces, rows, locale):
+    """Prove a complete stat belongs to one card beside collapsed mod titles."""
+    stats = [piece for piece in pieces if locale.stat(piece["text"])]
+    if len(stats) != 1:
+        return False
+    stat = stats[0]
+    center = stat["x"] + stat["w"] / 2
+    if not all(
+        not footer(piece, locale)
+        and not locale.stat(piece["text"])
+        and abs(piece["x"] + piece["w"] / 2 - center) >= stat["w"] * 0.65
+        and max(
+            stat["x"] - piece["x"] - piece["w"],
+            piece["x"] - stat["x"] - stat["w"],
+        )
+        >= max(stat["h"], piece["h"])
+        for piece in pieces
+        if piece is not stat
+    ):
+        return False
+    anchors = []
+    for row in rows:
+        for title in row.get("rawPieces") or (row,):
+            if not bounds(title) or not locale.title(title["text"]):
+                continue
+            end, body = anchors_for(title, rows, locale, pieces=True)
+            if (
+                end is not None
+                and independent_stats(
+                    [item for item in body if item is not stat], locale
+                )
+                and title["y"] + title["h"] * 0.6
+                < stat["y"]
+                < stat["y"] + stat["h"]
+                <= end["y"]
+                and abs(stat["x"] + stat["w"] / 2 - title["x"] - title["w"] / 2)
+                < title["w"] * 0.65
+            ):
+                anchors.append(title)
+    return len(anchors) == 1
 
 
 def split_columns(rows, locale):
@@ -132,25 +176,46 @@ def split_columns(rows, locale):
             ):
                 replacements[index] = [restored_piece(p) for p in (left, right)]
                 continue
-        raw_titles = [piece for piece in pieces if locale.title(piece["text"])]
-        if len(raw_titles) == 1 and not locale.title(row["text"]):
-            title = raw_titles[0]
-            end, body = anchors_for(title, rows, locale)
-            center = title["x"] + title["w"] / 2
-            separate = all(
-                max(
-                    title["x"] - piece["x"] - piece["w"],
-                    piece["x"] - title["x"] - title["w"],
+        if not locale.stat(row["text"]) and anchored_grid_stat(pieces, rows, locale):
+            replacements[index] = [restored_piece(p) for p in pieces]
+            continue
+        if len(pieces) == 2:
+            stat = next((p for p in pieces if locale.stat(p["text"])), None)
+            if stat:
+                other = next(p for p in pieces if p is not stat)
+                if re.fullmatch(r"\d{1,3}(?:[.,]\d+)?%?[-–]?", other["text"]) and max(
+                    stat["x"] - other["x"] - other["w"],
+                    other["x"] - stat["x"] - stat["w"],
+                ) >= max(stat["h"], other["h"]):
+                    # A separate capacity or weapon-panel number is not part of
+                    # a signed Riven stat. Preserve both independent text boxes.
+                    replacements[index] = [restored_piece(p) for p in pieces]
+                    continue
+        raw_titles = [
+            piece
+            for piece in pieces
+            if locale.title(piece["text"]) or locale.title_prefix(piece["text"])
+        ]
+        if raw_titles:
+            for title in raw_titles:
+                end, body = anchors_for(title, rows, locale, pieces=True)
+                center = title["x"] + title["w"] / 2
+                separate = all(
+                    max(
+                        title["x"] - piece["x"] - piece["w"],
+                        piece["x"] - title["x"] - title["w"],
+                    )
+                    >= max(title["h"], piece["h"])
+                    and abs(piece["x"] + piece["w"] / 2 - center) >= title["w"] * 0.65
+                    and not footer(piece, locale)
+                    and not locale.stat(piece["text"])
+                    for piece in pieces
+                    if piece is not title
                 )
-                >= max(title["h"], piece["h"])
-                and abs(piece["x"] + piece["w"] / 2 - center) >= title["w"] * 0.65
-                and not footer(piece, locale)
-                and not locale.stat(piece["text"])
-                for piece in pieces
-                if piece is not title
-            )
-            if end is not None and separate and independent_stats(body, locale):
-                replacements[index] = [restored_piece(p) for p in pieces]
+                if end is not None and separate and independent_stats(body, locale):
+                    replacements[index] = [restored_piece(p) for p in pieces]
+                    break
+            if index in replacements:
                 continue
         if len(pieces) != 2 or locale.stat(row["text"]):
             continue
@@ -423,10 +488,21 @@ def normalize_controls(rows, locale):
     """Fixed UI-label recovery does not supply card roles or numeric evidence."""
     expected = control_key(re.sub(r"<[^>]+>", "", locale.ui["fits"]))
     output = deepcopy(rows)
+    separate = []
     for row in output:
         text = row["text"]
         observed = control_key(text)
         words = [word for piece in row.get("rawPieces", ()) for word in piece["words"]]
+        # Adjacent menu buttons can share one OCR line. Use independently boxed,
+        # complete labels, never substrings of a card or a larger control.
+        for piece in row.get("rawPieces", ()):
+            control = locale.control(piece.get("text", ""))
+            if (
+                control in ("FUSION", "TRANSMUTE", "MODS", "REMOVE ALL")
+                and bounds(piece)
+                and not locale.control(text)
+            ):
+                separate.append({**piece, "text": control})
         if (
             len(words) == 2
             and bounds(words[0])
@@ -459,6 +535,7 @@ def normalize_controls(rows, locale):
             )
             if match:
                 row.update(text=match[1] + " Impact", displayText=text)
+    output.extend(separate)
     if locale.language in ("en", "ru"):
         if locale.language == "en":
             action_pattern = r"CYCLE\s+FOR\d+(?:[.,]\d+)*"

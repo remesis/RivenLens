@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # See LICENSE in the project root for the license and warranty disclaimer.
 
-"""Recognize item-details context without treating a preview as a new roll."""
+"""Recognize viewing context from independently located, visible UI labels."""
 
 import hashlib
 import re
@@ -63,7 +63,12 @@ def inspection_regions(lines):
 
 async def read_inspection_mode(engine, image):
     """Recheck learned context labels together in one compact, pixel-keyed read."""
-    regions = getattr(engine, "_inspection_regions", None)
+    return await read_context_mode(engine, image, "inspection", inspection_regions)
+
+
+async def read_context_mode(engine, image, name, locate):
+    """Read learned UI-label strips without retaining old context after a change."""
+    regions = getattr(engine, f"_{name}_regions", None)
     if not regions:
         return False
     boxes = tuple(clipped_box(image, box) for box in regions)
@@ -86,12 +91,15 @@ async def read_inspection_mode(engine, image):
         area.mode,
         hashlib.blake2b(area.tobytes(), digest_size=16).digest(),
     )
-    cached = getattr(engine, "_inspection_cache", None)
+    cached = getattr(engine, f"_{name}_cache", None)
     if cached and cached[0] == identity:
         return cached[1]
-    if time.monotonic() < getattr(engine, "_next_inspection_check", 0):
+    if time.monotonic() < getattr(engine, f"_next_{name}_check", 0):
         return False
-    lines = await primary_read(engine, ImageOps.autocontrast(area.convert("L")))
+    # Mod-menu headings can cross neutral UI rules; preserving their color
+    # avoids merging those rules into the first/last letter during contrast.
+    sample = area if name == "hover" else ImageOps.autocontrast(area.convert("L"))
+    lines = await primary_read(engine, sample)
     positioned = []
     for box, strip, offset in zip(boxes, strips, offsets):
         left, top = offset
@@ -101,7 +109,7 @@ async def read_inspection_mode(engine, image):
             if top <= line["y"] and line["y"] + line["h"] <= top + strip.height
         ]
         positioned.extend(map_lines(contained, (box[0] - left, box[1] - top)))
-    observed = inspection_regions(positioned) is not None
-    engine._inspection_cache = (identity, observed)
-    engine._next_inspection_check = time.monotonic() + (0 if observed else 0.5)
+    observed = locate(positioned) is not None
+    setattr(engine, f"_{name}_cache", (identity, observed))
+    setattr(engine, f"_next_{name}_check", time.monotonic() + (0 if observed else 0.5))
     return observed

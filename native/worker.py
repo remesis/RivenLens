@@ -27,6 +27,7 @@ from reader import read_frame, reset_layout
 from tracker import RollTracker
 from preferences import capture_settings
 from catalog import Catalog
+from hover_variants import HoverVariantMemory
 
 
 def worker_settings(settings):
@@ -134,6 +135,7 @@ class CaptureWorker(QThread):
         monitors, prior_revision = [], -1
         tracker = RollTracker()
         catalog = Catalog()
+        hover_variants = HoverVariantMemory(catalog)
         check_at = retry_at = 0
         last_cards = []
         try:
@@ -179,6 +181,7 @@ class CaptureWorker(QThread):
                                 engine.close()
                                 engine = None
                         tracker, last_cards = RollTracker(), []
+                        hover_variants.reset()
                         prior_revision, retry_at = revision, 0
                         self._publish(
                             revision,
@@ -224,6 +227,9 @@ class CaptureWorker(QThread):
                         camera.check()
                         stage = "ocr"
                         tracked = tracker.update(parsed, time.monotonic())
+                        tracked["cards"] = hover_variants.apply(
+                            tracked["cards"], tracker.view_mode
+                        )
                         if tracked["newRollWarning"]:
                             tracked["newRollWarning"] = {
                                 **tracked["newRollWarning"],
@@ -267,6 +273,7 @@ class CaptureWorker(QThread):
                             tracker = RollTracker(tracker.stat_warning)
                         if engine:
                             reset_layout(engine)
+                        hover_variants.reset()
                         retry_at, check_at = time.monotonic() + 1, 0
                         stopped = isinstance(exc, CaptureStopped)
                         if stopped:
