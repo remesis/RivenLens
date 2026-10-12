@@ -38,22 +38,25 @@ and extract **RivenLens.zip** into a folder you can keep.
 install is missing, the launcher offers to download and install Python 3.13 for
 you. Existing compatible installs are left alone.
 
-**Linux:** on an x86-64 X11 desktop, install Python 3.12–3.14 with its `venv`
-package, Qt's X11 libraries (`libxcb-cursor0` on Debian/Ubuntu) and fonts for
-your chosen language, then run
+**Linux:** on an x86-64 desktop, install Python 3.12–3.14 with its `venv`
+package, Qt's desktop libraries and fonts for your chosen language, then run
 `sh "Launch RivenLens - Linux.sh"` from the extracted folder. The launcher
-asks before downloading dependencies into your user folder. Wayland capture is
-not supported yet; live Warframe capture on Linux still needs user testing.
+asks before downloading dependencies into your user folder. X11 needs Qt's X11
+libraries (`libxcb-cursor0` on Debian/Ubuntu). Wayland needs PipeWire and your
+desktop's ScreenCast portal backend; **Start OCR** opens its screen-sharing
+chooser. Pause and start again to change screens. Wayland capture is experimental;
+live Warframe capture on Linux still needs user testing.
 
-Choose your monitor and press **Start OCR**. Put RivenLens beside the cards or
-on a second monitor. Capture always starts paused. **Pause OCR** stops scanning;
+Choose your monitor and press **Start OCR**; on Wayland, select the screen in
+the sharing chooser. Put RivenLens beside the cards or on a second monitor.
+Capture always starts paused. **Pause OCR** stops scanning;
 closing the window or choosing **Quit** exits the app.
 
 ## What's included
 
 - Current and new grades side by side, automatic variant detection and rank 8
-  by default. Chat-linked previews are graded in the current-card panel.
-  Automatic rank detection is available in Settings.
+  by default while rolling. Chat-linked previews use their detected rank in the
+  current-card panel.
 - Collapsible splice, manual-lock and final-odds stages with roll and Kuva estimates.
 - A platinum-icon seed finder for matching Warframe Market listings, sorted by
   the lowest listed price, with a remembered listing-age filter.
@@ -145,9 +148,10 @@ local. Support does not guarantee every roll will be read correctly.
 Grades measure rolled strength. A higher negative grade means a stronger penalty,
 not a more desirable negative; the same scale applies to splice ingredients.
 
-Grading defaults to **Manual rank 8/8**. Keep **Show Ranked** enabled in Warframe
-when using this setting. If viewing lower-rank values, choose **Auto-detect rank
-pips** under **Settings → Grading → Riven rank**. Your saved choice is remembered.
+Rolling defaults to **Manual rank 8/8**; keep **Show Ranked** enabled in Warframe.
+For lower-rank rolling values, choose **Auto-detect rank pips** under
+**Settings → Grading → Riven rank**. Chat-linked previews always detect the
+card's actual rank. Your saved rolling choice is remembered.
 
 Keep the stat text, card footer and bottom-right **Fits In** label visible; rank
 pips must also be visible when using automatic rank detection. For chat-linked

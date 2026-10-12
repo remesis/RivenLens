@@ -49,14 +49,11 @@ def main():
         raise RuntimeError(
             "Install Python 3.12, 3.13 or 3.14 with its venv package, then retry."
         )
-    if (
-        os.environ.get("WAYLAND_DISPLAY")
+    wayland = bool(
+        os.environ.get("WAYLAND_DISPLAY", "").strip()
         or os.environ.get("XDG_SESSION_TYPE", "").lower() == "wayland"
-    ):
-        raise RuntimeError(
-            "Live capture currently needs an X11 desktop session, not Wayland."
-        )
-    if not os.environ.get("DISPLAY", "").strip():
+    )
+    if not wayland and not os.environ.get("DISPLAY", "").strip():
         raise RuntimeError("No X11 display is available.")
     lock = NATIVE / "linux-requirements.txt"
     digest = lock_digest(lock)

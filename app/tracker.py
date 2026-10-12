@@ -68,6 +68,9 @@ class RollTracker:
         )
         candidate = dict(card)
         missing_metadata = False
+        if known and candidate.get("rankMode") != known.get("rankMode"):
+            # A manual rolling rank cannot stand in for unreadable preview pips.
+            known = {**known, "rank": None}
         if known:
             # An obscured pip/caption is not a new rank/variant. Retain the last
             # verified value for display, but never alert on this inferred scan.
@@ -76,7 +79,12 @@ class RollTracker:
                     candidate[field] = known[field]
                     missing_metadata = True
             candidate["title"] = known["title"]
-        observation = (identity, candidate.get("rank"), candidate.get("variantHint"))
+        observation = (
+            identity,
+            candidate.get("rank"),
+            candidate.get("variantHint"),
+            candidate.get("rankMode"),
+        )
         previous = self.previous[slot]
         same_stats = previous is not None and previous[0] == identity
         self.hits[slot] = self.hits[slot] + 1 if same_stats else 1
@@ -86,7 +94,11 @@ class RollTracker:
         for index, field in enumerate(("rank", "variantHint"), 1):
             count = self.metadata_hits[slot].get(field, 0)
             count = (
-                count + 1 if same_stats and observation[index] == previous[index] else 1
+                count + 1
+                if same_stats
+                and observation[index] == previous[index]
+                and (field != "rank" or observation[3] == previous[3])
+                else 1
             )
             self.metadata_hits[slot][field] = count
             if count < 2 and candidate.get(field) != (known or {}).get(field):

@@ -11,30 +11,22 @@ import threading
 import time
 import traceback
 
-import mss
 from PIL import ImageOps
 from PySide6.QtCore import QThread, Signal
 
 from capture import (
     CapturePending,
+    CaptureStopped,
     CaptureUnavailable,
-    DesktopCapture,
-    desktop_supported,
     monitor_token,
 )
+from capture_source import create_capture_source
 from ocr_engine import LocalOCR
 from ocr_budget import FrameBudget
 from reader import read_frame, reset_layout
 from tracker import RollTracker
 from preferences import capture_settings
 from catalog import Catalog
-
-
-def enumerate_monitors():
-    desktop_supported()
-    keys = ("left", "top", "width", "height", "unique_id", "name", "is_primary")
-    with mss.MSS() as probe:
-        return [{k: m[k] for k in keys if k in m} for m in probe.monitors[1:]]
 
 
 def worker_settings(settings):
@@ -57,6 +49,7 @@ class CaptureWorker(QThread):
         self._wake = threading.Event()
         self._monitors = []
         self._reported_errors = set()
+        self._source = create_capture_source(self)
 
     def configure(self, settings, running):
         with self._guard:
@@ -65,6 +58,8 @@ class CaptureWorker(QThread):
                 self._resolve_monitor(self._monitors)
             self._revision += 1
             revision = self._revision
+            active = self._config["running"]
+        self._source.set_running(active)
         self._wake.set()
         return revision
 
@@ -89,6 +84,17 @@ class CaptureWorker(QThread):
     def shutdown(self):
         self._stop.set()
         self._wake.set()
+        self._source.close()
+
+    def _pause_capture(self, revision):
+        with self._guard:
+            if revision != self._revision:
+                return
+            self._config["running"] = False
+            config = copy.deepcopy(self._config)
+            monitors = copy.deepcopy(self._monitors)
+        self._source.set_running(False)
+        self.displays.emit(monitors, {**config, "revision": revision})
 
     def _snapshot(self):
         with self._guard:
@@ -131,13 +137,13 @@ class CaptureWorker(QThread):
         check_at = retry_at = 0
         last_cards = []
         try:
-            with mss.MSS() as screen:
+            with self._source as source:
                 while not self._stop.is_set():
                     config, revision = self._snapshot()
                     if time.monotonic() >= check_at:
                         check_at = time.monotonic() + 2
                         try:
-                            refreshed = enumerate_monitors()
+                            refreshed = source.monitors()
                         except Exception as exc:
                             self._record_error("capture", exc)
                             self._publish(
@@ -192,8 +198,7 @@ class CaptureWorker(QThread):
                             engine = LocalOCR(config["language"])
                         stage = "capture"
                         if camera is None:
-                            camera = DesktopCapture(
-                                screen,
+                            camera = source.open(
                                 monitors[config["monitor"] - 1],
                                 config["backend"],
                             )
@@ -214,6 +219,10 @@ class CaptureWorker(QThread):
                             validate_stats=catalog.plausible_stats,
                             auto_rank=config["rankMode"] == "auto",
                         )
+                        # Permission can end while recognition is in progress.
+                        stage = "capture"
+                        camera.check()
+                        stage = "ocr"
                         tracked = tracker.update(parsed, time.monotonic())
                         if tracked["newRollWarning"]:
                             tracked["newRollWarning"] = {
@@ -232,12 +241,15 @@ class CaptureWorker(QThread):
                     except CapturePending as exc:
                         # Keep the new duplicator alive long enough to receive
                         # its first frame. No pixels means no OCR observation.
+                        tracker.interrupt()
                         retry_at = time.monotonic() + 0.05
                         self._publish(
                             revision,
                             status="waiting",
                             error=str(exc),
                             errorKind="capture",
+                            capturePending=True,
+                            captureBackend=camera.backend,
                             newRollWarning=None,
                             cards=[
                                 {**card, "snapshot": True, "displayStale": True}
@@ -256,11 +268,15 @@ class CaptureWorker(QThread):
                         if engine:
                             reset_layout(engine)
                         retry_at, check_at = time.monotonic() + 1, 0
+                        stopped = isinstance(exc, CaptureStopped)
+                        if stopped:
+                            self._pause_capture(revision)
                         self._publish(
                             revision,
                             status="error",
                             error=str(exc),
                             errorKind=stage,
+                            captureStopped=stopped,
                             newRollWarning=None,
                             cards=[
                                 {**card, "snapshot": True, "displayStale": True}

@@ -836,7 +836,7 @@ async def refine_result(
             engine, image, result["cards"][index], force
         )
         if on_verified and result["cards"][index]["complete"]:
-            await on_verified(result["cards"][index])
+            await on_verified(result["cards"][index], result.get("mode", "unknown"))
     result["complete"] = bool(result["cards"]) and all(
         card["complete"] for card in result["cards"]
     )
@@ -949,11 +949,19 @@ async def read_frame(
                 engine._next_variant_check = time.monotonic() + 5
         variant_attempted = priority_variant
 
-        async def annotate(card):
-            nonlocal hint, variant_attempted
+        async def annotate_rank(card, mode):
+            # Linked previews show the item's actual rank, not Show Ranked values.
+            automatic = auto_rank or mode == "inspection"
+            card["rankMode"] = "auto" if automatic else "manual"
+            if getattr(engine, "backend", None) == "rapid":
+                engine.automatic_rank = automatic
             card["rank"] = (
-                await read_rank(engine, metadata_image, card) if auto_rank else 8
+                await read_rank(engine, metadata_image, card) if automatic else 8
             )
+
+        async def annotate(card, mode):
+            nonlocal hint, variant_attempted
+            await annotate_rank(card, mode)
             compatible = hint in VARIANT_CHOICES.get(card["weapon"], set())
             if not compatible:
                 hint = engine._session_variant_hint = None
@@ -1041,9 +1049,15 @@ async def read_frame(
             )
         if any(card["complete"] for card in result["cards"]):
             engine._last_located_at = time.monotonic()
+            rank_mode = (
+                "auto" if auto_rank or result.get("mode") == "inspection" else "manual"
+            )
             for card in reversed(result["cards"]):
-                if card["complete"] and "rank" not in card:
-                    await annotate(card)
+                if card["complete"]:
+                    if "rank" not in card:
+                        await annotate(card, result.get("mode", "unknown"))
+                    elif card.get("rankMode") != rank_mode:
+                        await annotate_rank(card, result.get("mode", "unknown"))
             for card in result["cards"]:
                 if hint in VARIANT_CHOICES.get(card["weapon"], set()):
                     card["variantHint"] = hint
@@ -1246,7 +1260,7 @@ async def read_cards(
                 engine, image, positioned, actual_scale[0] < 1
             )
             if on_verified and result["cards"][index]["complete"]:
-                await on_verified(result["cards"][index])
+                await on_verified(result["cards"][index], result["mode"])
             new_ready = (
                 previous_new is not None
                 and result["mode"] == "comparison"
@@ -1379,6 +1393,9 @@ async def read_cards(
             engine._next_tile_search = time.monotonic() + 2
         tiled = parse_cards(tiles, image.width, image.height)
         if tiled["cards"]:
+            tiled["mode"] = mode_from_lines(tiles)
+            if tiled["mode"] == "unknown":
+                tiled["mode"] = result["mode"]
             reserve_verifications(engine, len(tiled["cards"]))
             tiled = await refine_result(
                 engine, image, tiled, recover=True, on_verified=on_verified
@@ -1391,9 +1408,7 @@ async def read_cards(
                 sum(card["complete"] for card in result["cards"]),
                 len(result["cards"]),
             ):
-                tiled["mode"] = observe_mode(engine, tiles)
-                if tiled["mode"] == "unknown":
-                    tiled["mode"] = result["mode"]
+                observe_mode(engine, tiles)
                 result = tiled
                 engine._scene_lines = tiles
                 if marker := fits_marker(tiles):

@@ -48,10 +48,15 @@ def grade_chance(name):
     return (10 - next(g[1] for g in GRADES if g[0] == name)) / 20
 
 
+def grading_rank_mode(card, preferences):
+    """Use the card's observed rank policy, falling back to saved preferences."""
+    return (card or {}).get("rankMode") or preferences.get("rankMode")
+
+
 def grading_rank(card, preferences):
     rank = (
         preferences.get("rank")
-        if preferences.get("rankMode") == "manual"
+        if grading_rank_mode(card, preferences) == "manual"
         else card.get("rank")
     )
     return rank if type(rank) is int and 0 <= rank <= 8 else None
@@ -138,7 +143,7 @@ def grade_stat(stat, trait, disposition, fmt, model, rank=8):
     if type(rank) is not int or not 0 <= rank <= 8:
         return {
             "unknown": True,
-            "message": "Rank unreadable: show pips or set a manual rank",
+            "message": "Rank unreadable: keep all eight pips visible",
         }
     if not trait or trait.get("value") is None:
         return {"unknown": True, "message": "Baseline unknown for this weapon type"}

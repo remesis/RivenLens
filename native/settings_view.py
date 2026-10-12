@@ -19,6 +19,7 @@ from PySide6.QtWidgets import (
 )
 
 from appearance import theme_for
+from capture import is_wayland
 from catalog import variant_label
 from dialogs import ModalDialog
 from ocr_engine import backend_for
@@ -203,10 +204,20 @@ class SettingsDialog(ModalDialog):
                 ("Compatibility", "gdi"),
             ]
             if sys.platform == "win32"
-            else [("X11 desktop", "auto")],
+            else [
+                ("Wayland screen sharing" if is_wayland() else "X11 desktop", "auto")
+            ],
             config["backend"],
         )
         capture.content.addWidget(field_row("Method", self.backend))
+        if is_wayland():
+            capture.content.addWidget(
+                label(
+                    "Start OCR opens the screen-sharing chooser. Pause and start again to choose another screen.",
+                    "muted",
+                    True,
+                )
+            )
         if backend_for(config["language"]) == "rapid":
             capture.content.addWidget(
                 label("RapidOCR · local CPU recognition · 4 threads", "muted", True)

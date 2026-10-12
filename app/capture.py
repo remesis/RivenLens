@@ -19,23 +19,37 @@ class CapturePending(CaptureUnavailable):
     """The desktop camera is starting; retain it for the next short retry."""
 
 
+class CaptureStopped(CaptureUnavailable):
+    """Screen sharing ended; only an explicit user action may restart it."""
+
+
+def is_wayland():
+    """An XWayland DISPLAY does not make the session an X11 desktop."""
+    return sys.platform == "linux" and bool(
+        os.environ.get("WAYLAND_DISPLAY", "").strip()
+        or os.environ.get("XDG_SESSION_TYPE", "").lower() == "wayland"
+    )
+
+
 def desktop_supported():
-    """Do not mistake XWayland for an unrestricted X11 desktop capture session."""
+    """Require a desktop session; authorization belongs to its capture source."""
     if sys.platform == "win32":
         return
     if sys.platform != "linux":
         raise CaptureUnavailable(
-            "Desktop capture is currently supported on Windows and Linux X11 only."
+            "Desktop capture is currently supported on Windows and Linux only."
         )
-    if (
-        os.environ.get("WAYLAND_DISPLAY")
-        or os.environ.get("XDG_SESSION_TYPE", "").lower() == "wayland"
-    ):
-        raise CaptureUnavailable(
-            "Wayland capture is not supported yet. Use an X11 desktop session."
-        )
-    if not os.environ.get("DISPLAY", "").strip():
+    if not is_wayland() and not os.environ.get("DISPLAY", "").strip():
         raise CaptureUnavailable("No X11 display is available.")
+
+
+def validate_frame(image):
+    """Reject unusable black frames consistently across capture sources."""
+    if max(image.size) > 16 and max(high for _, high in image.getextrema()) < 5:
+        raise CaptureUnavailable(
+            "Capture is black. Check the selected monitor and keep the Riven visible."
+        )
+    return image
 
 
 def monitor_token(monitor):
@@ -142,6 +156,9 @@ class DesktopCapture:
                 # A disconnected display may already have invalidated its handles.
                 pass
 
+    def check(self):
+        """Synchronous desktop grabs have no separately revocable sharing session."""
+
     def grab(self, region):
         box = capture_box(self.monitor, region)
         if self.camera is not None:
@@ -180,7 +197,7 @@ class DesktopCapture:
             self.pending_since = None
         else:
             return self._grab_gdi(box)
-        return self._validate(image)
+        return validate_frame(image)
 
     def _grab_gdi(self, box):
         try:
@@ -189,14 +206,6 @@ class DesktopCapture:
             raise CaptureUnavailable(
                 "Desktop pixels are temporarily unavailable."
             ) from exc
-        return self._validate(
+        return validate_frame(
             Image.frombytes("RGB", shot.size, shot.bgra, "raw", "BGRX")
         )
-
-    @staticmethod
-    def _validate(image):
-        if max(image.size) > 16 and max(high for _, high in image.getextrema()) < 5:
-            raise CaptureUnavailable(
-                "Capture is black. Check the selected monitor or try another capture method."
-            )
-        return image

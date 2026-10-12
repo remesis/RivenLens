@@ -424,7 +424,12 @@ class MainWindow(QWidget):
         options(
             self.monitor,
             (
-                (f"Monitor {i + 1} · {m['width']} × {m['height']}", i + 1)
+                (
+                    "Wayland screen sharing"
+                    if m.get("portal")
+                    else f"Monitor {i + 1} · {m['width']} × {m['height']}",
+                    i + 1,
+                )
                 for i, m in enumerate(monitors)
             ),
             config["monitor"],
@@ -533,23 +538,28 @@ class MainWindow(QWidget):
             if self.match_history.take(matches):
                 self.warning_sound.stop()
                 self.good_sound.play()
-        text = (
-            "Installing OCR language…"
-            if self.ocr_setup.busy
-            else "Capture reconnecting"
-            if state.get("error") and state.get("errorKind") == "capture"
-            else "OCR unavailable"
-            if state.get("error")
-            else "Check new roll stats"
-            if warning
-            else "Capture paused"
-            if not self.running
-            else "Watching for rolls"
-            if self.cards
-            else "Reading Riven stats"
-            if state.get("located")
-            else "Waiting for a Riven"
-        )
+        if self.ocr_setup.busy:
+            text = "Installing OCR language…"
+        elif state.get("captureStopped"):
+            text = "Capture paused"
+        elif state.get("capturePending") and state.get("captureBackend") == "wayland":
+            text = "Waiting for screen sharing"
+        elif state.get("error"):
+            text = (
+                "Capture reconnecting"
+                if state.get("errorKind") == "capture"
+                else "OCR unavailable"
+            )
+        elif warning:
+            text = "Check new roll stats"
+        elif not self.running:
+            text = "Capture paused"
+        elif self.cards:
+            text = "Watching for rolls"
+        elif state.get("located"):
+            text = "Reading Riven stats"
+        else:
+            text = "Waiting for a Riven"
         self.status.setText(text)
         self.status.setProperty("warning", bool(warning or state.get("error")))
         self.status.style().unpolish(self.status)

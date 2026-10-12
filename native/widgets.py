@@ -23,7 +23,13 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from grading import GRADE_COLORS, NEGATIVE_GRADE_NOTE, grade_stat, grading_rank
+from grading import (
+    GRADE_COLORS,
+    NEGATIVE_GRADE_NOTE,
+    grade_stat,
+    grading_rank,
+    grading_rank_mode,
+)
 from appearance import scaled_pixels
 from compact_numbers import compact_number
 from ui_text import (
@@ -618,6 +624,7 @@ class RollCard(QFrame):
             else None
         )
         rank = grading_rank(card, preferences) if card else None
+        rank_mode = grading_rank_mode(card, preferences)
         signature = repr(
             (
                 card
@@ -628,7 +635,7 @@ class RollCard(QFrame):
                 },
                 variant,
                 rank,
-                preferences["rankMode"],
+                rank_mode,
                 preferences["capture"]["language"],
             )
         )
@@ -641,7 +648,7 @@ class RollCard(QFrame):
             return
         self.stack.setCurrentIndex(1)
         rank_text = "RANK ?" if rank is None else f"RANK {rank}/8"
-        if preferences["rankMode"] == "manual":
+        if rank_mode == "manual":
             rank_text += " MANUAL"
         self.meta.setText(f"{self.caption} · {card['format']} · {rank_text}")
         self.name.setText(card.get("title") or card["weapon"])

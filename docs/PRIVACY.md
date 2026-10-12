@@ -3,8 +3,11 @@
 ## Screen pixels only
 
 RivenLens captures the selected monitor or region through Windows desktop
-capture or Linux X11 capture. Windows' installed OCR engine reads supported
-languages locally; RapidOCR handles Linux, and Ukrainian and Thai on Windows.
+capture, Linux X11 capture or user-authorized Wayland screen sharing. Wayland
+uses the desktop's ScreenCast portal and PipeWire; declining or ending sharing
+pauses capture, without automatic permission retries. Windows' installed OCR
+engine reads supported languages locally; RapidOCR handles Linux, and Ukrainian
+and Thai on Windows.
 It does not read game memory, inspect game files, obtain account credentials,
 send game input, attach to the game or contact Warframe servers.
 
