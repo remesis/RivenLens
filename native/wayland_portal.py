@@ -4,6 +4,8 @@
 
 """Observe this process's ScreenCast consent and explicitly close its session."""
 
+import re
+
 from PySide6.QtCore import QObject, Signal, Slot, SLOT
 from PySide6.QtDBus import (
     QDBusConnection,
@@ -22,7 +24,7 @@ CLOSED_SLOT = SLOT("_ended(QVariantMap,QDBusMessage)")
 
 
 class PortalWatch(QObject):
-    """Qt 6.11 does not forward cancelled requests or Session.Closed to capture."""
+    """Observe consent, cancellation and closure alongside Qt's capture backend."""
 
     stopped = Signal(str)
     ready = Signal()
@@ -32,6 +34,8 @@ class PortalWatch(QObject):
         super().__init__(parent)
         self.bus = QDBusConnection.sessionBus()
         self.session = ""
+        self._select_request = self._start_request = self._pending_request = ""
+        self._authorized = False
         self._closed = False
         self._probe = None
         self._checked = False
@@ -88,22 +92,42 @@ class PortalWatch(QObject):
             handle = handle.path()
         if (
             not self.session
+            and not result
             and isinstance(handle, str)
             and handle.startswith(self._session_prefix)
         ):
+            token = handle.rsplit("/", 1)[1]
+            modern = re.fullmatch(r"(qtmm_[0-9a-f]{32}_)([0-9]+)", token)
+            if modern:
+                # Qt 6.12 allocates distinct consecutive request/session tokens.
+                prefix, number = modern[1], int(modern[2])
+                if message.path() != self._request_prefix + prefix + str(number - 1):
+                    return
+                select, start = prefix + str(number + 1), prefix + str(number + 2)
+            else:
+                # Qt 6.11 reuses the session token for both requests.
+                select = start = token
             self.session = handle
-        # Qt uses its session token for the SelectSources and Start request paths.
-        # File chooser requests and other applications' responses are not ours.
-        if (
-            self.session
-            and message.path() == self._request_prefix + self.session.rsplit("/", 1)[1]
-        ):
-            if result:
-                self.stopped.emit(
-                    "Screen sharing was cancelled or declined. Press Start OCR to try again."
-                )
-            elif values.get("streams"):
+            self._select_request = self._pending_request = self._request_prefix + select
+            self._start_request = self._request_prefix + start
+        # Never authorize from another chooser's response or a different session.
+        if not self._pending_request or message.path() != self._pending_request:
+            return
+        if result:
+            self.stopped.emit(
+                "Screen sharing was cancelled or declined. Press Start OCR to try again."
+            )
+        elif message.path() == self._start_request and values.get("streams"):
+            self._pending_request = ""
+            if not self._authorized:
+                self._authorized = True
                 self.authorized.emit()
+        elif message.path() == self._select_request:
+            self._pending_request = self._start_request
+        else:
+            self.stopped.emit(
+                "The screen-sharing portal returned no streams. Press Start OCR to try again."
+            )
 
     @Slot("QVariantMap", QDBusMessage)
     def _ended(self, values, message):
@@ -133,12 +157,12 @@ class PortalWatch(QObject):
         if self.session:
             # Close both a pending chooser request and the granted stream without
             # waiting on the UI thread or issuing a fresh permission request.
-            token = self.session.rsplit("/", 1)[1]
-            self.bus.asyncCall(
-                QDBusMessage.createMethodCall(
-                    SERVICE, self._request_prefix + token, REQUEST, "Close"
+            if self._pending_request:
+                self.bus.asyncCall(
+                    QDBusMessage.createMethodCall(
+                        SERVICE, self._pending_request, REQUEST, "Close"
+                    )
                 )
-            )
             self.bus.asyncCall(
                 QDBusMessage.createMethodCall(SERVICE, self.session, SESSION, "Close")
             )

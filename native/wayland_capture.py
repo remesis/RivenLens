@@ -7,6 +7,7 @@
 import ctypes
 import os
 import threading
+import time
 
 from PIL import Image
 from PySide6.QtCore import QObject, Qt, QTimer, Signal, Slot
@@ -20,6 +21,10 @@ from PySide6.QtMultimedia import (
 
 from capture import CapturePending, CaptureStopped, capture_box, validate_frame
 from wayland_portal import PortalWatch
+
+SESSION_TIMEOUT_MS = 5000
+FIRST_FRAME_TIMEOUT_MS = 15000
+FRAME_MAX_AGE = 10.0
 
 
 def validate_capture_environment():
@@ -98,12 +103,12 @@ class WaylandSource(QObject):
         self._requested = self._closed = self._running = self._was_active = False
         self._generation = self._sequence = 0
         self._frame = self._error = None
+        self._last_frame_at = None
         self._session = self._capture = self._sink = None
         self._portal = None
         self._authorized = False
         self._portal_wait = QTimer(self)
         self._portal_wait.setSingleShot(True)
-        self._portal_wait.setInterval(5000)
         self._portal_wait.timeout.connect(self._sharing_not_started)
         self._connections = []
         self._running_requested.connect(self._set_running)
@@ -186,7 +191,7 @@ class WaylandSource(QObject):
                 self._capture.errorOccurred.connect(self._failed),
                 self._capture.activeChanged.connect(self._active_changed),
             ]
-            self._portal_wait.start()
+            self._portal_wait.start(SESSION_TIMEOUT_MS)
             self._capture.start()
         except Exception:
             self._fail(
@@ -205,15 +210,27 @@ class WaylandSource(QObject):
             # Qt may fall back internally; never accept pixels without the
             # successful Start response for our own ScreenCast session.
             with self._guard:
-                self._authorized = self._running
-            self._portal_wait.stop()
+                if not self._running or self._authorized:
+                    return
+                self._authorized = True
+            self._portal_wait.start(FIRST_FRAME_TIMEOUT_MS)
 
     @Slot()
     def _sharing_not_started(self):
-        if self._portal is not None and not self._portal.session:
+        if self._portal is None:
+            return
+        with self._guard:
+            waiting_for_frame = self._authorized and self._last_frame_at is None
+        if not self._portal.session:
             self._fail(
                 "The screen-sharing portal did not create a session. Check your "
                 "desktop's ScreenCast backend, then press Start OCR to try again."
+            )
+        elif waiting_for_frame:
+            self._fail(
+                "Screen-sharing permission was granted, but no readable frames "
+                "arrived from PipeWire. Check your desktop's ScreenCast backend "
+                "and PipeWire service, then press Start OCR to try again."
             )
 
     @Slot()
@@ -228,6 +245,7 @@ class WaylandSource(QObject):
             self._running = False
             self._authorized = False
             self._frame = None
+            self._last_frame_at = None
             self._generation += 1
         for connection in self._connections:
             QObject.disconnect(connection)
@@ -247,10 +265,13 @@ class WaylandSource(QObject):
             session.deleteLater()
 
     def _receive_frame(self, frame, generation):
-        # Runs on the producer thread. Only the shared buffer is touched here.
+        # Consent can reach the GUI after the producer's first frame. Retain it,
+        # but _check_frame never exposes pixels before the owned Start response.
         with self._guard:
-            if self._running and self._authorized and generation == self._generation:
+            if self._running and generation == self._generation:
                 self._frame = QVideoFrame(frame) if frame.isValid() else None
+                if self._frame is not None:
+                    self._last_frame_at = time.monotonic()
                 self._sequence += 1
 
     @Slot(QScreenCapture.Error, str)
@@ -279,12 +300,25 @@ class WaylandSource(QObject):
         with self._guard:
             self._error = message
 
+    def _check_frame(self):
+        """Called with the buffer guard held; unchanged desktops may be quiet."""
+        if self._error:
+            raise CaptureStopped(self._error)
+        if not self._running:
+            raise CapturePending("Screen sharing is paused.")
+        if not self._authorized:
+            raise CapturePending("Choose a screen in the screen-sharing dialog.")
+        if self._frame is None:
+            raise CapturePending("Waiting for a readable screen-sharing frame.")
+        if time.monotonic() - self._last_frame_at > FRAME_MAX_AGE:
+            raise CapturePending(
+                "Waiting for a new screen-sharing frame. Change the shared screen's "
+                "content; if capture does not resume, pause and start OCR again."
+            )
+
     def snapshot(self):
         with self._guard:
-            if self._error:
-                raise CaptureStopped(self._error)
-            if not self._running or self._frame is None:
-                raise CapturePending("Choose a screen in the screen-sharing dialog.")
+            self._check_frame()
             return QVideoFrame(self._frame), (self._generation, self._sequence)
 
     def validate_session(self, generation):
@@ -293,6 +327,7 @@ class WaylandSource(QObject):
                 raise CaptureStopped(self._error)
             if not self._running or generation != self._generation:
                 raise CapturePending("Screen sharing is paused.")
+            self._check_frame()
 
 
 class SharedScreenCapture:

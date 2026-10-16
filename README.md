@@ -48,6 +48,13 @@ desktop's ScreenCast portal backend; **Start OCR** opens its screen-sharing
 chooser. Pause and start again to change screens. Wayland capture is experimental;
 live Warframe capture on Linux still needs user testing.
 
+Linux updates use refreshed Qt screen-sharing modules in a separate runtime; the
+launcher asks before downloading them. Use the ScreenCast backend for your actual
+desktop/compositor; the GTK portal alone does not provide screen sharing. If
+permission is granted but no readable frames arrive, RivenLens pauses with a
+capture error. A stream with no new frames keeps previous grades as a snapshot;
+changing the shared screen's content resumes scanning when frames arrive again.
+
 Choose your monitor and press **Start OCR**; on Wayland, select the screen in
 the sharing chooser. Put RivenLens beside the cards or on a second monitor.
 Capture always starts paused. **Pause OCR** stops scanning;
