@@ -20,6 +20,7 @@ from alerts import History, find_matches
 from appearance import theme_for, window_scale
 from audio import SoundChannel
 from catalog import Catalog
+from grading import grading_rank
 from hover_variants import RECENT_HOVER_NOTE
 from capture import monitor_token
 from desktop import ICON
@@ -601,14 +602,19 @@ class MainWindow(QWidget):
         self.current_card.show_card(current, self.catalog, self.state)
         self.new_card.show_card(new, self.catalog, self.state)
         card = new or current
+        rank = grading_rank(card, self.state) if card else None
         variant = (
-            self.catalog.variant(card, self.state["gradeVariants"]) if card else None
+            self.catalog.variant(card, self.state["gradeVariants"], rank=rank)
+            if card
+            else None
         )
         if variant:
             text = variant["name"]
             tip = f"{variant['source']} · disposition {variant['disposition']}"
-        elif card and card.get("viewMode") == "hover":
-            fallback = self.catalog.grading_variant(card, self.state["gradeVariants"])
+        elif card and (card.get("viewMode") == "hover" or card.get("variantHint")):
+            fallback = self.catalog.grading_variant(
+                card, self.state["gradeVariants"], rank=rank
+            )
             if fallback and fallback["source"] == "recent-hover":
                 text = f"{fallback['name']}\nVariant unsure"
                 tip = RECENT_HOVER_NOTE.format(variant=fallback["name"])

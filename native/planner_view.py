@@ -23,7 +23,13 @@ from PySide6.QtWidgets import (
 
 from catalog import SPLICE_IDS, splices_for, variant_label
 from dialogs import ModalDialog
-from grading import FORMATS, GRADE_NAMES, NEGATIVE_GRADE_NOTE, format_range
+from grading import (
+    FORMATS,
+    GRADE_NAMES,
+    NEGATIVE_GRADE_NOTE,
+    format_range,
+    grading_rank,
+)
 from market_network import MarketClient
 from market_view import SeedDialog
 from planner import Planner
@@ -475,7 +481,7 @@ class PlannerView(Section):
             or card.get("displayStale")
         ):
             return
-        variant = self.catalog.variant(card)
+        variant = self.catalog.variant(card, rank=grading_rank(card, self.state))
         group = self.catalog.group(card)
         if variant is None or group is None:
             return

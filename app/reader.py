@@ -185,7 +185,7 @@ async def variant_hint(engine, image, *, discover=True):
     if same_pixels and cached[1] is not None:
         return cached[1]
     attempt = cached[2] if same_pixels else 0
-    label_seen = cached[3] if same_pixels else False
+    label_seen = bool(marker) or (cached[3] if same_pixels else False)
     attempted = False
     if (
         same_pixels
@@ -248,7 +248,6 @@ async def variant_hint(engine, image, *, discover=True):
         attempted = True
         hint = caption_variant(lines)
         located = fits_marker(lines)
-        label_seen = label_seen or located is not None
         attempt += 1
         engine._variant_hint_cache = (identity, hint, attempt, label_seen)
         if hint is not None:
@@ -267,6 +266,7 @@ async def variant_hint(engine, image, *, discover=True):
                         ),
                     )[0],
                 )
+                label_seen = True
                 continue
             sx, sy = sample.width / area.width, sample.height / area.height
             # The quick strips can contain the heading while clipping the name.
@@ -279,6 +279,7 @@ async def variant_hint(engine, image, *, discover=True):
                 # Finish any affordable treatments of this crop first. If they
                 # fail, the next scan uses the heading-relative panel instead.
                 remember_marker(engine, mapped)
+                label_seen = True
     if attempt == treatment_count and attempted:
         engine._next_variant_retry = time.monotonic() + 1
     if label_seen:

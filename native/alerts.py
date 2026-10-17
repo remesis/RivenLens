@@ -96,7 +96,7 @@ def find_matches(cards, catalog, preferences):
             continue
         rank = grading_rank(card, preferences)
         group = catalog.group(card)
-        variant = catalog.variant(card, preferences["gradeVariants"])
+        variant = catalog.variant(card, preferences["gradeVariants"], rank=rank)
         if (
             rank is None
             or not variant

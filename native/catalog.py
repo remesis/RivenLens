@@ -15,6 +15,7 @@ DATA_DIR = Path(__file__).resolve().parent / "data"
 REFERENCE = json.loads((DATA_DIR / "reference.json").read_text(encoding="utf-8"))
 SPLICES = REFERENCE["splices"]
 SPLICE_IDS = frozenset(row["id"] for row in SPLICES)
+FORM_SUFFIX = re.compile(r"\s*\((?:Primary|Secondary|Rifle|Melee)\)$", re.I)
 
 
 def slug(text):
@@ -100,12 +101,7 @@ class Catalog:
         self.groups = {}
         self.by_name = {}
         for weapon in self.weapons:
-            plain = re.sub(
-                r"\s*\((?:Primary|Secondary|Rifle|Melee)\)$",
-                "",
-                weapon["name"],
-                flags=re.I,
-            )
+            plain = FORM_SUFFIX.sub("", weapon["name"])
             group = self.groups.setdefault(
                 plain,
                 {
@@ -126,13 +122,13 @@ class Catalog:
     def group(self, card):
         return self.by_name.get(name_key(card.get("weapon")))
 
-    def variant(self, card, saved=None):
+    def variant(self, card, saved=None, *, rank=...):
         group = self.group(card)
         if not group:
             return None
         variants = group["variants"]
         if card.get("viewMode") == "hover":
-            compatible = self.hover_variants(card)
+            compatible = self.compatible_variants(card, rank=rank)
             return (
                 {**compatible[0], "source": "ranges"} if len(compatible) == 1 else None
             )
@@ -165,15 +161,26 @@ class Catalog:
         )
         if exact and name_key(card.get("weapon")) != name_key(group["name"]):
             return {**exact, "source": "title"}
+        if card.get("variantHint") and all(
+            name_key(FORM_SUFFIX.sub("", v["name"])) == name_key(card["variantHint"])
+            for v in variants
+        ):
+            # Some modular forms have the same printed caption. Every stat at
+            # the grading rank must fit one form, not merely its closest mean.
+            compatible = self.compatible_variants(card, rank=rank)
+            if len(compatible) == 1:
+                return {**compatible[0], "source": "ranges"}
         return None
 
-    def hover_variants(self, card):
-        """Resolve only whole-card ranges at the visibly detected hover rank."""
+    def compatible_variants(self, card, *, rank=...):
+        """Find complete whole-card range matches at the supplied or observed rank."""
         group = self.group(card)
-        rank = card.get("rank")
+        if rank is ...:
+            rank = card.get("rank")
         if (
             not group
             or not card.get("complete")
+            or card.get("format") not in FORMATS
             or type(rank) is not int
             or not 0 <= rank <= 8
         ):
@@ -210,14 +217,14 @@ class Catalog:
             identity = "melee-damage"
         return next((t for t in self.definitions[kind] if t["id"] == identity), None)
 
-    def grading_variant(self, card, saved=None):
+    def grading_variant(self, card, saved=None, *, rank=...):
         """Choose display ranges without asserting an uncertain variant."""
-        resolved = self.variant(card, saved)
+        resolved = self.variant(card, saved, rank=rank)
         if resolved:
             return resolved
         group = self.group(card)
         variants = (
-            self.hover_variants(card)
+            self.compatible_variants(card, rank=rank)
             if card.get("viewMode") == "hover"
             else group["variants"]
             if group

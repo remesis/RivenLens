@@ -619,12 +619,12 @@ class RollCard(QFrame):
         self.setMinimumHeight(round(164 * scale))
 
     def show_card(self, card, catalog, preferences):
+        rank = grading_rank(card, preferences) if card else None
         variant = (
-            catalog.grading_variant(card, preferences["gradeVariants"])
+            catalog.grading_variant(card, preferences["gradeVariants"], rank=rank)
             if card
             else None
         )
-        rank = grading_rank(card, preferences) if card else None
         rank_mode = grading_rank_mode(card, preferences)
         signature = repr(
             (
@@ -684,7 +684,7 @@ class RollCard(QFrame):
                 else {
                     "unknown": True,
                     "message": "Variant unsure: these values do not identify one weapon variant."
-                    if card.get("viewMode") == "hover"
+                    if card.get("viewMode") == "hover" or card.get("variantHint")
                     else "Waiting for the Fits In weapon variant. Keep its caption visible.",
                 }
             )

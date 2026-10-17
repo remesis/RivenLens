@@ -169,6 +169,11 @@ For lower-rank rolling values, choose **Auto-detect rank pips** under
 **Settings → Grading → Riven rank**. Chat-linked previews always detect the
 card's actual rank. Your saved rolling choice is remembered.
 
+Primary and secondary Kitguns can share the same **Fits In** name. RivenLens
+checks every stat at the grading rank to identify a form only when exactly one
+fits. Overlapping forms remain **Variant unsure**; the planner's selected weapon
+does not decide which grades to show.
+
 Keep the stat text, card footer and bottom-right **Fits In** label visible; rank
 pips must also be visible when using automatic rank detection. For chat-linked
 previews, keep the bottom-right **Exit** button visible; the top-left heading can

@@ -44,7 +44,7 @@ class HoverVariantMemory:
         if context != self.context:
             self.reset()
             self.context = context
-        compatible = self.catalog.hover_variants(card)
+        compatible = self.catalog.compatible_variants(card)
         if len(compatible) == 1:
             if not card.get("snapshot") and not card.get("displayStale"):
                 self.variant_id = compatible[0]["id"]
