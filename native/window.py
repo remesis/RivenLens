@@ -218,7 +218,7 @@ class MainWindow(QWidget):
             )
             self.tray.show()
         self.resize(*DEFAULT_WINDOW_SIZE)
-        self.setMinimumSize(500, 500)
+        self.setMinimumSize(500, 500 if self.planner.opened else 0)
         restored = False
         if self.state["geometry"]:
             restored = self.restoreGeometry(
@@ -232,16 +232,21 @@ class MainWindow(QWidget):
         if self._initial_size_pending:
             self.setWindowState(Qt.WindowState.WindowNoState)
             self.resize(*DEFAULT_WINDOW_SIZE)
-        elif self.state["windowSize"] and not self.isMaximized():
-            self.resize(*self.state["windowSize"])
         self.state["windowLayoutVersion"] = WINDOW_LAYOUT_VERSION
-        self.keep_on_screen()
         self.setWindowFlag(
             Qt.WindowType.WindowStaysOnTopHint, self.state["alwaysOnTop"]
         )
         if preferences.error:
             self.status.setToolTip(preferences.error)
         self.update_scale()
+        self.balance_layout()
+        if (
+            not self._initial_size_pending
+            and self.state["windowSize"]
+            and not self.isMaximized()
+        ):
+            self.resize(*self.state["windowSize"])
+        self.keep_on_screen()
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -353,7 +358,16 @@ class MainWindow(QWidget):
 
     def balance_layout(self):
         # Let compact cards give space back to the planner before adding a scrollbar.
+        self.planner_scroll.setMinimumHeight(
+            0
+            if self.planner.opened
+            else self.planner.minimumSizeHint().height()
+            + 2 * self.planner_scroll.frameWidth()
+        )
         self.layout().activate()
+        self.setMinimumHeight(
+            max(500 if self.planner.opened else 0, self.layout().minimumSize().height())
+        )
         self.planner_scroll.widget().layout().activate()
         planner_height = self.planner.height()
         spare = self.planner_scroll.viewport().height() - planner_height

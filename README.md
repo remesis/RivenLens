@@ -71,6 +71,7 @@ text. The last good grades stay visible while you move around the card.
   overlapping ranges show **Variant unsure** and can use a recent matching
   hover's variant, clearly labeled.
 - Collapsible splice, manual-lock and final-odds stages with roll and Kuva estimates.
+  Collapse **Target roll planner** to resize the window down around the live grades.
 - A platinum-icon seed finder for matching Warframe Market listings, sorted by
   the lowest listed price, with a remembered listing-age filter.
 - Multiple acceptable targets per unlocked stat slot, with odds for distinct
