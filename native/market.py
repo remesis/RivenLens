@@ -167,6 +167,13 @@ class SeedMatcher:
 
     def searches(self):
         desired = {(i, "positive") for i in self.ingredients}
+        if self.model.has_negative:
+            desired.update(
+                (i, "negative")
+                for i in self.ingredients
+                if (trait := self.model.catalog.trait(self.model.variant, i))
+                and trait["negative"]
+            )
         if self.model.splice:
             desired.add((self.model.splice, "positive"))
         if self.model.lock_target:
@@ -243,7 +250,7 @@ class SeedMatcher:
         stat = values.get(identity)
         return bool(
             stat
-            and stat["polarity"] == polarity
+            and (polarity is None or stat["polarity"] == polarity)
             and GRADE_NAMES.index(stat["grade"]) <= GRADE_NAMES.index(minimum)
         )
 
@@ -278,7 +285,13 @@ class SeedMatcher:
                 [
                     i
                     for i in sorted(self.ingredients | {splice})
-                    if i and self.qualifies(values, i, "positive", splice_grade)
+                    if i
+                    and self.qualifies(
+                        values,
+                        i,
+                        None if i in self.ingredients else "positive",
+                        splice_grade,
+                    )
                 ]
                 if splice
                 else []
@@ -290,8 +303,7 @@ class SeedMatcher:
                     or any(
                         all(i in values for i in pair)
                         and any(
-                            self.qualifies(values, i, "positive", splice_grade)
-                            for i in pair
+                            self.qualifies(values, i, None, splice_grade) for i in pair
                         )
                         for pair in self.pairs
                     )

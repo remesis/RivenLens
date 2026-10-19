@@ -7,6 +7,7 @@
 import json
 import math
 import time
+from collections import deque
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from urllib.parse import parse_qs, urlsplit
@@ -17,7 +18,10 @@ from PySide6.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequ
 from market import API_ROOT, SeedMatcher, attribute_map, weapon_slug
 from releases import ReleaseConfig
 
-REQUEST_INTERVAL = 6.1
+# Leave timing margins below the per-second and contract-search ceilings.
+REQUEST_INTERVAL = 0.35
+CONTRACT_REQUEST_LIMIT = 10
+CONTRACT_REQUEST_WINDOW = 60.1
 RESPONSE_LIMIT = 8 * 1024 * 1024
 CACHE_LIMIT = 32
 
@@ -56,6 +60,7 @@ class MarketClient(QObject):
         self.manager = QNetworkAccessManager(self)
         self.reply = None
         self.next_request = 0
+        self.contract_requests = deque()
         self.cache = {}
         self.active = False
         self.timer = QTimer(self)
@@ -95,7 +100,7 @@ class MarketClient(QObject):
             self.progress.emit("Using cached results · " + self.step)
             self.deliver(path, callback, cached[1])
             return
-        delay = max(0, self.next_request - time.monotonic())
+        delay = self.request_delay()
         if delay > 120:
             self.fail("Market rate limit reached. Try again later.")
             return
@@ -106,12 +111,27 @@ class MarketClient(QObject):
         else:
             self.progress.emit(self.step)
 
+    def request_delay(self, now=None):
+        now = time.monotonic() if now is None else now
+        while (
+            self.contract_requests
+            and self.contract_requests[0] + CONTRACT_REQUEST_WINDOW <= now
+        ):
+            self.contract_requests.popleft()
+        ready = self.next_request
+        if (
+            self.path.startswith("v1/auctions/")
+            and len(self.contract_requests) >= CONTRACT_REQUEST_LIMIT
+        ):
+            ready = max(ready, self.contract_requests[0] + CONTRACT_REQUEST_WINDOW)
+        return max(0, ready - now)
+
     def waiting(self):
         if self.reply is not None:
             seconds = int(time.monotonic() - self.request_started)
             self.progress.emit(self.step + f" · {seconds}s elapsed")
             return
-        seconds = math.ceil(max(0, self.next_request - time.monotonic()))
+        seconds = math.ceil(self.request_delay())
         self.progress.emit(f"Waiting {seconds}s for the next request · " + self.step)
 
     def request(self):
@@ -119,13 +139,11 @@ class MarketClient(QObject):
             return
         self.timer.stop()
         now = time.monotonic()
-        delay = self.next_request - now
+        delay = self.request_delay(now)
         if delay > 0:
             self.timer.start(math.ceil(delay * 1000))
             return
         self.progress.emit(self.step)
-        self.request_started = now
-        self.next_request = self.request_started + REQUEST_INTERVAL
         request = QNetworkRequest(QUrl(API_ROOT + self.path))
         request.setAttribute(
             QNetworkRequest.Attribute.RedirectPolicyAttribute,
@@ -138,6 +156,10 @@ class MarketClient(QObject):
         request.setRawHeader(b"Language", b"en")
         request.setTransferTimeout(20_000)
         self.data = bytearray()
+        self.request_started = time.monotonic()
+        self.next_request = self.request_started + REQUEST_INTERVAL
+        if self.path.startswith("v1/auctions/"):
+            self.contract_requests.append(self.request_started)
         self.reply = self.manager.get(request)
         self.reply.setReadBufferSize(64 * 1024)
         self.reply.readyRead.connect(self.read)
@@ -239,6 +261,8 @@ class MarketClient(QObject):
             params = parse_qs(urlsplit(path).query)
             slug = (params.get("positive_stats") or params.get("negative_stats"))[0]
             stat = self.planner.name(self.mapping[slug])
+            if "negative_stats" in params:
+                stat = "− " + stat
             index = self.search_count - len(self.pending)
             self.step = f"Searching listings {index}/{self.search_count}: {stat}…"
             if self.rows:

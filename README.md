@@ -104,16 +104,19 @@ eligibility legend to open **Purchase Ideal Starting Seed**. Without either
 selection, the button does nothing. Searches run from your machine only when
 you open this window or press **Refresh**. Planner changes never send requests;
 age and grade changes reuse downloaded listings. Results are cached for five
-minutes. Progress is shown while searching, with at least 6.1 seconds between
-requests and no automatic retries. The window remembers its placement, and each
-listing appears only in its highest matching stage. RivenLens never buys, bids
-or messages sellers.
+minutes. Requests run below three per second, with at most ten contract requests
+in any rolling minute and no automatic retries. The budget survives cancellation,
+reopening and Refresh within the running app. The window remembers its placement,
+and each listing appears only in its highest matching stage. RivenLens never buys,
+bids or messages sellers.
 
 For a splice, Stage 1 finds either ingredient or the already-spliced stat at the
 selected splice grade or better. With a manual lock too, Stage 2 requires that
 lock at its selected grade and both ingredients, with at least one meeting the
 splice grade (the partner can be any grade), or the qualifying splice itself.
 Both ingredient grades are shown when present: S + F still produces an S splice.
+Either positive or negative ingredients can meet the splice-grade threshold;
+manual locks still require their selected polarity.
 Without a splice, Stage 1 finds the selected lock. All sections require the
 selected format.
 
