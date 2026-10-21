@@ -55,6 +55,19 @@ STAGE_TITLES = {
     "lock": "Getting Selected Lock Stat",
     "final": "Final Target Roll Odds",
 }
+SETUP_ESTIMATE_NOTE = (
+    "Uncertain stat pool: higher average estimate shown, not a roll limit."
+)
+
+
+def setup_average(bounds):
+    """Keep setup figures compact without understating an uncertain mean."""
+    if not bounds:
+        return "Unavailable"
+    high = bounds["max"]
+    if bounds["min"] == high or not math.isfinite(high):
+        return number(high)
+    return "≤" + number(math.ceil(high * 10) / 10)
 
 
 class Calculator(QThread):
@@ -633,15 +646,21 @@ class PlannerView(Section):
     def show_splice_setup(self, setup):
         s, model = self.state, self.model
         unit_separator = " " if language.code == "en" else "<br>"
+        estimate_note = SETUP_ESTIMATE_NOTE + "\n" if setup["uncertain"] else ""
         if setup.get("singleStage"):
             self.splice_metrics.setText(
                 f'<table width="100%"><tr><td>Find both ingredients · ≥{s["spliceGrade"]}</td><td>Keep Vintage Locked</td></tr>'
-                f'<tr><td><b style="font-size:22px;color:#80d4fc">{interval(setup["total"])}</b>'
+                f'<tr><td><b style="font-size:22px;color:#80d4fc">{setup_average(setup["total"])}</b>'
                 f'{unit_separator}<span style="color:#8dabc0">avg rolls</span></td>'
                 f'<td style="color:#8dabc0">{html.escape(model.name(setup["lock"]["id"]))}</td></tr></table>'
             )
             self.splice_metrics.setToolTip(
-                "Keep the vintage stat locked. Both ingredients must be together on the same roll, with a positive ingredient at the selected grade or better."
+                (
+                    estimate_note + f"{interval(setup['total'])} avg rolls\n"
+                    if estimate_note
+                    else ""
+                )
+                + "Keep the vintage stat locked. Both ingredients must be together on the same roll, with a positive ingredient at the selected grade or better."
             )
             self.splice_note.setText(
                 f"Start {s['format']} with {model.name(setup['lock']['id'])} locked. Acquisition excluded."
@@ -653,11 +672,17 @@ class PlannerView(Section):
             return
         self.splice_metrics.setText(
             f'<table width="100%"><tr><td>1a. Find ≥{s["spliceGrade"]} ingredient</td><td>1b. Find its partner</td></tr>'
-            f'<tr><td><b style="font-size:22px;color:#80d4fc">{interval(setup["first"])}</b>{unit_separator}<span style="color:#8dabc0">avg rolls</span></td>'
-            f'<td><b style="font-size:22px;color:#80d4fc">{interval(setup["additional"])}</b>{unit_separator}<span style="color:#8dabc0">extra</span></td></tr></table>'
+            f'<tr><td><b style="font-size:22px;color:#80d4fc">{setup_average(setup["first"])}</b>{unit_separator}<span style="color:#8dabc0">avg rolls</span></td>'
+            f'<td><b style="font-size:22px;color:#80d4fc">{setup_average(setup["additional"])}</b>{unit_separator}<span style="color:#8dabc0">extra</span></td></tr></table>'
         )
         self.splice_metrics.setToolTip(
-            f"Already together on {interval({k: v * 100 for k, v in setup['ready'].items()}, 2)}% of qualifying finds. Otherwise lock the positive: {interval(setup['ifMissing'])} rolls on average to find a partner."
+            (
+                estimate_note
+                + f"1a: {interval(setup['first'])} · 1b: {interval(setup['additional'])}\n"
+                if estimate_note
+                else ""
+            )
+            + f"Already together on {interval({k: v * 100 for k, v in setup['ready'].items()}, 2)}% of qualifying finds. Otherwise lock the positive: {interval(setup['ifMissing'])} rolls on average to find a partner."
         )
         self.splice_note.setText(
             f"Start {s['format']} with a listed lock. Acquisition excluded."
@@ -706,7 +731,7 @@ class PlannerView(Section):
         if setup and setup["available"]:
             self.show_splice_setup(setup)
             self.stages["splice"].set_summary(
-                f"≥{s['spliceGrade']} · {interval(setup['total'])} avg rolls"
+                f"≥{s['spliceGrade']} · {setup_average(setup['total'])} avg rolls"
             )
         elif setup:
             self.splice_note.setText(

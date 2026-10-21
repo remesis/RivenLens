@@ -93,6 +93,11 @@ Each stage has its own **Ding** toggle. The final stage alerts only for a fully
 read new roll matching the whole target, including the selected lock and splice
 grades. Hover over the roll and Kuva figures for their assumptions.
 
+Splice setup shows one average-roll estimate per step. For unresolved stat pools,
+**≤** marks the higher possible average, rounded up; it is not a guarantee of
+success within that many rolls. Hover over the figures for the full range.
+Manual-lock and final-odds ranges remain visible.
+
 With a vintage stat locked, splice setup searches for both ingredients on the
 same roll. Keep that lock in place; there is no separate partner-search step.
 The splice ding waits for a complete pair too.

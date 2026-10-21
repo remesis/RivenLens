@@ -74,7 +74,7 @@ def tables(code):
             parts.append(re.escape(literal))
             if field:
                 value_pattern = (
-                    r"[+−\-\d.,%×msk∞– /]+"
+                    r"[+−\-\d.,%×msk∞≤– /]+"
                     if field in ("number", "count", "low", "high")
                     else r".+?"
                 )
