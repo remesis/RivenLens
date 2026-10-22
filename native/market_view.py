@@ -76,7 +76,7 @@ class SeedDialog(ModalDialog):
         )
         layout.addWidget(
             label(
-                "Market may limit results. Seller-entered values are graded at the listed rank using Market’s base-weapon disposition.",
+                "Market may limit results. Seller-entered values are graded at the listed rank using the shared 1.2 multiplier.",
                 "muted",
                 True,
             )

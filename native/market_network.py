@@ -239,15 +239,9 @@ class MarketClient(QObject):
 
     def weapon_ready(self, data):
         weapon = data["data"]
-        disposition = weapon["disposition"]
-        if (
-            weapon["slug"] != weapon_slug(self.planner.weapon["name"])
-            or type(disposition) not in (int, float)
-            or not math.isfinite(disposition)
-            or not 0 < disposition <= 2
-        ):
-            raise ValueError("Invalid weapon disposition")
-        self.matcher = SeedMatcher(self.planner, self.mapping, disposition)
+        if weapon["slug"] != weapon_slug(self.planner.weapon["name"]):
+            raise ValueError("Invalid Market weapon")
+        self.matcher = SeedMatcher(self.planner, self.mapping)
         self.pending = self.matcher.searches()
         if not self.pending or len(self.pending) > 32:
             self.fail("Market does not support the selected stats yet.")

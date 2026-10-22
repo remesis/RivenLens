@@ -12,6 +12,7 @@ from pathlib import Path
 from grading import FORMATS, grade_stat
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
+DISPOSITION = 1.2
 REFERENCE = json.loads((DATA_DIR / "reference.json").read_text(encoding="utf-8"))
 SPLICES = REFERENCE["splices"]
 SPLICE_IDS = frozenset(row["id"] for row in SPLICES)
@@ -90,10 +91,10 @@ class Catalog:
                             "id": slug(n),
                             "name": n,
                             "label": label,
-                            "disposition": dispo,
+                            "disposition": DISPOSITION,
                             "kind": family["kind"],
                         }
-                        for n, label, dispo in variants
+                        for n, label, _ in variants
                     ],
                 }
             )
@@ -127,11 +128,6 @@ class Catalog:
         if not group:
             return None
         variants = group["variants"]
-        if card.get("viewMode") == "hover":
-            compatible = self.compatible_variants(card, rank=rank)
-            return (
-                {**compatible[0], "source": "ranges"} if len(compatible) == 1 else None
-            )
         hint = next(
             (
                 v
@@ -142,6 +138,19 @@ class Catalog:
         )
         if hint:
             return {**hint, "source": "fits-in"}
+        if len({v["kind"] for v in variants}) == 1:
+            return {
+                "id": None,
+                "name": group["name"],
+                "kind": variants[0]["kind"],
+                "disposition": DISPOSITION,
+                "source": "shared",
+            }
+        if card.get("viewMode") == "hover":
+            compatible = self.compatible_variants(card, rank=rank)
+            return (
+                {**compatible[0], "source": "ranges"} if len(compatible) == 1 else None
+            )
         saved = saved or {}
         for identity in [group["id"], *group["memberIds"]]:
             selected = next(
@@ -249,6 +258,9 @@ class Catalog:
 
     def variant_mismatch(self, card, hint):
         """Request a caption recheck, never infer a variant from rolled values."""
+        group = self.group(card)
+        if group and len({v["kind"] for v in group["variants"]}) == 1:
+            return False
         variant = self.variant({**card, "variantHint": hint})
         if not variant or card.get("rank") is None or not card.get("complete"):
             return False
@@ -278,7 +290,7 @@ class Catalog:
         group = self.group(card)
         if not group or card.get("format") not in FORMATS:
             return True
-        for variant in group["variants"]:
+        for variant in {v["kind"]: v for v in group["variants"]}.values():
             known = [
                 (stat, trait)
                 for stat in card["stats"]

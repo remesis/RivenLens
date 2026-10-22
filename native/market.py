@@ -155,10 +155,10 @@ def active_listing(row, weapon, cutoff, now):
 class SeedMatcher:
     """Freeze the planner at opening; do not infer unadvertised stats or ranks."""
 
-    def __init__(self, planner, mapping, disposition):
+    def __init__(self, planner, mapping):
         self.model = planner
         self.mapping = mapping
-        self.disposition = disposition
+        self.disposition = planner.variant["disposition"]
         self.weapon = weapon_slug(planner.weapon["name"])
         self.pairs = (
             recipes(planner.splice, planner.weapon["kind"]) if planner.splice else []

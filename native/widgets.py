@@ -704,10 +704,8 @@ class RollCard(QFrame):
                     or "Relative to the mean"
                 )
                 if variant["source"] == "shared":
-                    tip += (
-                        " All compatible variants share these grading ranges."
-                        if card.get("viewMode") == "hover"
-                        else " All compatible variants share these ranges; the exact variant is still being read."
+                    tip += " " + translate(
+                        "All Rivens use the same 1.2 range multiplier."
                     )
                 elif variant["source"] == "recent-hover":
                     tip += "\n" + RECENT_HOVER_NOTE.format(variant=variant["name"])

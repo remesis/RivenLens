@@ -65,11 +65,11 @@ text. The last good grades stay visible while you move around the card.
 
 ## What's included
 
-- Current and new grades side by side, automatic variant detection and rank 8
+- Current and new grades side by side, a shared 1.2 range multiplier and rank 8
   by default while rolling. Chat links and expanded mod-menu hovers use the
   card's actual rank. Hover grades stay visible through brief obstructions;
-  overlapping ranges show **Variant unsure** and can use a recent matching
-  hover's variant, clearly labeled.
+  weapon variants share grading ranges, so an unreadable variant caption does
+  not prevent grading. Distinct weapon types still use their own stat baselines.
 - Collapsible splice, manual-lock and final-odds stages with roll and Kuva estimates.
   Collapse **Target roll planner** to resize the window down around the live grades.
 - A platinum-icon seed finder for matching Warframe Market listings, sorted by
@@ -79,7 +79,7 @@ text. The last good grades stay visible while you move around the card.
 - Separate good and warning dings, volume controls, ten presets each and custom audio.
 - Remembered plans per weapon, shared across its variants, plus sounds, collapsed
   sections and window placement. Settings can optionally make the planner follow
-  the graded weapon and variant; it stays independent by default.
+  the graded weapon; it stays independent by default.
 - **Always on top** in Settings for an overlay-style window. Use windowed or
   borderless play; exclusive fullscreen may cover it.
 
@@ -130,7 +130,7 @@ not the seller's latest refresh. You can save a different age filter. Results
 include PC and crossplay-enabled Xbox, PlayStation and mobile listings, but not
 Switch. Searches include both ingredient and already-spliced listings supported
 by Market. Market may limit results. Seller-entered values are graded at the
-listed rank using Market's base-weapon disposition; verify them with the seller.
+listed rank using the shared 1.2 multiplier; verify them with the seller.
 Auction prices show the lower listed endpoint, not a guaranteed purchase price.
 
 ## Language support

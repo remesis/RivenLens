@@ -100,16 +100,14 @@ def find_matches(cards, catalog, preferences):
         if (
             rank is None
             or not variant
-            or variant["id"] != preferences["variant"]
+            or variant["kind"] != weapon["kind"]
             or weapon["id"] not in group["memberIds"]
         ):
-            continue
-        if variant["source"] == "title" and len(group["variants"]) > 1:
             continue
         identity = json.dumps(
             [
                 weapon["id"],
-                variant["id"],
+                variant["kind"],
                 card["format"],
                 rank,
                 sorted(

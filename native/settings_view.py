@@ -20,7 +20,6 @@ from PySide6.QtWidgets import (
 
 from appearance import theme_for
 from capture import is_wayland
-from catalog import variant_label
 from dialogs import ModalDialog
 from ocr_engine import backend_for
 from widgets import Combo, box, label, options
@@ -184,25 +183,11 @@ class SettingsDialog(ModalDialog):
         grading.content.addWidget(follow)
         grading.content.addWidget(
             label(
-                "Switches to the detected weapon and variant and restores that weapon's saved targets. Off by default.",
+                "Switches to the detected weapon and restores its saved targets. Off by default.",
                 "muted",
                 True,
             )
         )
-        self.fallback = Combo()
-        self.fallback_group_id = ""
-        window.planner.changed.connect(self.fill_fallback)
-        self.fallback.activated.connect(self.fallback_changed)
-        grading.content.addWidget(field_row("Variant fallback", self.fallback))
-        grading.content.addWidget(
-            label(
-                "Uses the weapon selected in the main interface. The visible Fits In "
-                "caption takes priority; this fallback is for unreadable or custom-named weapons.",
-                "muted",
-                True,
-            )
-        )
-        self.fill_fallback()
         capture = SettingsCard("Capture")
         rows.addWidget(capture)
         config = self.state["capture"]
@@ -323,28 +308,6 @@ class SettingsDialog(ModalDialog):
         if enabled:
             self.owner.follow_graded_weapon()
         self.owner.persist()
-
-    def fill_fallback(self):
-        group = self.owner.catalog.group(
-            {"weapon": self.owner.planner.model.weapon["name"]}
-        )
-        self.fallback_group_id = group["id"]
-        self.fallback.setToolTip(f"Grading fallback for {group['name']}")
-        options(
-            self.fallback,
-            [
-                ("Auto-detect variant", ""),
-                *((variant_label(v), v["id"]) for v in group["variants"]),
-            ],
-            self.state["gradeVariants"].get(group["id"], ""),
-        )
-
-    def fallback_changed(self):
-        self.state["gradeVariants"][self.fallback_group_id] = (
-            self.fallback.currentData()
-        )
-        self.owner.persist()
-        self.owner.refresh_grades()
 
     def apply_capture(self):
         region = [spin.value() for spin in self.region]

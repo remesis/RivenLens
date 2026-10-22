@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from catalog import SPLICE_IDS, splices_for, variant_label
+from catalog import SPLICE_IDS, splices_for
 from dialogs import ModalDialog
 from grading import (
     FORMATS,
@@ -140,21 +140,18 @@ class PlannerView(Section):
         grid = QGridLayout(fields)
         grid.setContentsMargins(0, 0, 0, 0)
         grid.setSpacing(5)
-        self.category, self.format, self.variant = (Combo() for _ in range(3))
+        self.category, self.format = (Combo() for _ in range(2))
         self.weapon = SearchCombo()
         for caption, field, row, col in (
             ("Category", self.category, 0, 0),
             ("Format", self.format, 0, 1),
-            ("Weapon", self.weapon, 2, 0),
-            ("Variant", self.variant, 2, 1),
         ):
             grid.addWidget(label(caption, "muted"), row, col)
             grid.addWidget(field, row + 1, col)
+        grid.addWidget(label("Weapon", "muted"), 2, 0, 1, 2)
+        grid.addWidget(self.weapon, 3, 0, 1, 2)
         self.weapon.activated.connect(self.choose_weapon)
         self.category.activated.connect(self.choose_category)
-        self.variant.activated.connect(
-            lambda: self.save_value("variant", self.variant.currentData())
-        )
         self.format.activated.connect(
             lambda: self.save_value("format", self.format.currentData())
         )
@@ -485,7 +482,7 @@ class PlannerView(Section):
             self.changed.emit()
 
     def follow_card(self, card):
-        """Follow only a fresh card with an independently resolved variant."""
+        """Follow a fresh weapon without requiring a cosmetic variant caption."""
         if (
             not self.state["followGradedWeapon"]
             or not card
@@ -501,11 +498,19 @@ class PlannerView(Section):
         members = [
             self.catalog.by_id[identity]
             for identity in group["memberIds"]
-            if any(
-                v["id"] == variant["id"]
-                for v in self.catalog.by_id[identity]["variants"]
+            if (
+                variant["id"] is None
+                and self.catalog.by_id[identity]["kind"] == variant["kind"]
+                or any(
+                    v["id"] == variant["id"]
+                    for v in self.catalog.by_id[identity]["variants"]
+                )
             )
         ]
+        if len(members) > 1:
+            members = [
+                w for w in members if w["category"] == self.model.weapon["category"]
+            ]
         if len(members) == 1:
             self.select_weapon(members[0]["id"], variant["id"])
 
@@ -538,11 +543,6 @@ class PlannerView(Section):
                 if w["category"] == model.weapon["category"]
             ),
             s["weapon"],
-        )
-        options(
-            self.variant,
-            ((variant_label(v), v["id"]) for v in model.weapon["variants"]),
-            s["variant"],
         )
         options(self.format, ((fmt, fmt) for fmt in FORMATS), s["format"])
         for index in range(3):

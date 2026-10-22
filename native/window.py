@@ -624,7 +624,7 @@ class MainWindow(QWidget):
         )
         if variant:
             text = variant["name"]
-            tip = f"{variant['source']} · disposition {variant['disposition']}"
+            tip = "All Rivens use the same 1.2 range multiplier."
         elif card and (card.get("viewMode") == "hover" or card.get("variantHint")):
             fallback = self.catalog.grading_variant(
                 card, self.state["gradeVariants"], rank=rank

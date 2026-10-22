@@ -32,6 +32,9 @@ class HoverVariantMemory:
             return output
         card = output[0]
         group = self.catalog.group(card)
+        if group and len({v["kind"] for v in group["variants"]}) == 1:
+            self.reset()
+            return output
         menu = card.get("hoverMenu")
         if (
             card.get("viewMode") != "hover"
