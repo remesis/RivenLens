@@ -487,21 +487,22 @@ def companion_titles(rows, locale):
 def normalize_controls(rows, locale):
     """Fixed UI-label recovery does not supply card roles or numeric evidence."""
     expected = control_key(re.sub(r"<[^>]+>", "", locale.ui["fits"]))
+    menu_controls = ("FUSION", "TRANSMUTE", "DISSOLVE", "MODS", "REMOVE ALL")
     output = deepcopy(rows)
     separate = []
     for row in output:
         text = row["text"]
         observed = control_key(text)
+        control = locale.control(text)
+        if control in menu_controls:
+            row.setdefault("displayText", text)
+            row["text"] = control
         words = [word for piece in row.get("rawPieces", ()) for word in piece["words"]]
         # Adjacent menu buttons can share one OCR line. Use independently boxed,
         # complete labels, never substrings of a card or a larger control.
         for piece in row.get("rawPieces", ()):
             control = locale.control(piece.get("text", ""))
-            if (
-                control in ("FUSION", "TRANSMUTE", "MODS", "REMOVE ALL")
-                and bounds(piece)
-                and not locale.control(text)
-            ):
+            if control in menu_controls and bounds(piece) and not locale.control(text):
                 separate.append({**piece, "text": control})
         if (
             len(words) == 2

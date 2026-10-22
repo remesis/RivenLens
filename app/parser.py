@@ -190,6 +190,9 @@ def identify_trait(text):
     key = normalize(text)
     if key in TRAITS:
         return TRAITS[key]
+    # The Puncture pictogram can touch its label and be recognized as Y.
+    if key == "ypuncture":
+        return TRAITS["puncture"]
     # Element icons become isolated letters (e.g. the Toxin skull -> "Z").
     # Only strip a short separate leading token, and require an exact known label.
     iconless = re.sub(r"^\s*[^\s]{1,2}\s+", "", text)

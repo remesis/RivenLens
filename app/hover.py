@@ -14,7 +14,8 @@ from parser import FOOTER, VALUE, clean_text, game_card_headers, parse_cards
 def hover_controls(lines):
     """Require a pair of visible mod-menu controls, not absent rolling text."""
     for menu, labels in (
-        ("inventory", ("FUSION", "TRANSMUTE")),
+        ("inventory", ("FUSION", r"(?:RIVEN\s+)?TRANSMUTE")),
+        ("inventory", (r"(?:RIVEN\s+)?TRANSMUTE", "DISSOLVE")),
         ("arsenal", ("MODS", "REMOVE ALL")),
     ):
         pair = [
