@@ -60,8 +60,9 @@ QComboBox#statSelector QAbstractItemView {
 }
 QScrollArea { border: none; background: transparent; }
 QScrollArea > QWidget > QWidget { background: transparent; }
-QScrollBar:vertical { background: #0d141d; width: 6px; margin: 2px; }
-QScrollBar::handle:vertical { background: #354e63; min-height: 22px; border-radius: 2px; }
+QScrollBar:vertical { background: #0d141d; width: 12px; margin: 2px 1px; }
+QScrollBar::handle:vertical { background: #354e63; min-height: 24px; border-radius: 4px; }
+QScrollBar::handle:vertical:hover, QScrollBar::handle:vertical:pressed { background: #547c99; }
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
 QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: none; }
 QFrame#panel { background: #101822; border: 1px solid #2b3f51; border-radius: 8px; }
