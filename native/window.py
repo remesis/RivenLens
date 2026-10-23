@@ -134,7 +134,7 @@ class MainWindow(QWidget):
         self.planner.sound_toggled.connect(self.sound_toggled)
         self.planner.calculator.finished.connect(self.try_close)
         self.planner.calculator.completed.connect(self.schedule_balance)
-        self.planner.toggled.connect(self.schedule_balance)
+        self.planner.toggled.connect(self.resize_planner)
         for section in self.planner.findChildren(Section):
             section.toggled.connect(self.schedule_balance)
         wrapper, wrapper_layout = box(spacing=0)
@@ -355,6 +355,25 @@ class MainWindow(QWidget):
     def schedule_balance(self, *_):
         if not self._closing:
             self._balance_timer.start()
+
+    def resize_planner(self, opened):
+        if self._closing:
+            return
+        if self.isMinimized() or self.isMaximized() or self.isFullScreen():
+            self.schedule_balance()
+            return
+        if not opened:
+            self.state["plannerExpandedHeight"] = self.height()
+        target = self.state["plannerExpandedHeight"] or DEFAULT_WINDOW_SIZE[1]
+        self.update_scale()
+        self.balance_layout()
+        self.resize(self.width(), target if opened else self.minimumHeight())
+        # Compact height can change the UI scale; fit its settled layout too.
+        self.update_scale()
+        self.balance_layout()
+        if not opened:
+            self.resize(self.width(), self.minimumHeight())
+        self.keep_on_screen()
 
     def balance_layout(self):
         # Let compact cards give space back to the planner before adding a scrollbar.

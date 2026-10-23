@@ -45,6 +45,7 @@ DEFAULTS = {
     "seedListingAge": "30d",
     "seedWindowBounds": [],
     "plannerOpen": True,
+    "plannerExpandedHeight": 0,
     "alwaysOnTop": False,
     "soundId": "chime",
     "soundVolume": 50,
@@ -188,6 +189,8 @@ def sanitize(saved):
     size = state["windowSize"]
     if len(size) != 2 or any(type(n) is not int or not 1 <= n <= 32768 for n in size):
         state["windowSize"] = []
+    if not 0 <= state["plannerExpandedHeight"] <= 32768:
+        state["plannerExpandedHeight"] = 0
     for audio in (state, state["ocrWarningAudio"]):
         volume = audio.get("soundVolume", 50)
         audio["soundVolume"] = (
