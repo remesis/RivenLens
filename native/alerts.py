@@ -10,7 +10,11 @@ from collections import OrderedDict
 from catalog import recipes
 from grading import GRADE_NAMES, grade_stat, grading_rank
 from odds import matches_targets
-from planner import Planner
+from planner import Planner, watched_splices
+
+
+def stat_key(stat):
+    return stat["id"], stat["value"], stat["unit"], stat["polarity"]
 
 
 def meets_grade(result, minimum):
@@ -63,14 +67,17 @@ def find_matches(cards, catalog, preferences):
         return []
     watched_pairs = [
         pair
-        for identity in preferences["spliceWatch"]
+        for identity in watched_splices(preferences)
         for pair in recipes(identity, weapon["kind"])
     ]
     watched = {
         i
         for pair in watched_pairs
         for i in pair
-        if weapon["family"]["traits"].get(i, {}).get("positive") == "allowed"
+        if any(
+            weapon["family"]["traits"].get(i, {}).get(sign) == "allowed"
+            for sign in ("positive", "negative")
+        )
     }
     lock = preferences["lock"]
     lock_identity, polarity = (
@@ -104,37 +111,10 @@ def find_matches(cards, catalog, preferences):
             or weapon["id"] not in group["memberIds"]
         ):
             continue
-        identity = json.dumps(
-            [
-                weapon["id"],
-                variant["kind"],
-                card["format"],
-                rank,
-                sorted(
-                    (s["id"], s["value"], s["unit"], s["polarity"])
-                    for s in card["stats"]
-                ),
-            ]
-        )
-        grades = []
-        ready_ingredients = set()
-        if (
-            vintage_lock
-            and card["format"] == preferences["format"]
-            and any(
-                s["id"] == lock_identity and s["polarity"] == polarity
-                for s in card["stats"]
-            )
-        ):
-            present = {s["id"] for s in card["stats"]}
-            ready_ingredients = {
-                i
-                for pair in watched_pairs
-                if lock_identity not in pair and set(pair).issubset(present)
-                for i in pair
-            }
-        for stat in card["stats"]:
-            grade = grade_stat(
+        prefix = [weapon["id"], variant["kind"], card["format"], rank]
+        identity = json.dumps([*prefix, sorted(map(stat_key, card["stats"]))])
+        grades = [
+            grade_stat(
                 stat,
                 catalog.trait(variant, stat["id"]),
                 variant["disposition"],
@@ -142,15 +122,40 @@ def find_matches(cards, catalog, preferences):
                 catalog.range_model,
                 rank,
             )
-            grades.append(grade)
+            for stat in card["stats"]
+        ]
+        present = {
+            stat["id"]: (stat, grade)
+            for stat, grade in zip(card["stats"], grades)
+            if grade.get("grade") in GRADE_NAMES
+        }
+        retained_ready = not vintage_lock or (
+            card["format"] == preferences["format"]
+            and any(
+                s["id"] == lock_identity and s["polarity"] == polarity
+                for s in card["stats"]
+            )
+        )
+        ready_pairs = [
+            pair
+            for pair in watched_pairs
+            if card.get("complete") is True
+            and retained_ready
+            and (not vintage_lock or lock_identity not in pair)
+            and all(i in present for i in pair)
+            and any(present[i][0]["polarity"] == "positive" for i in pair)
+        ]
+        ready_ingredients = {i for pair in ready_pairs for i in pair}
+        for stat, grade in zip(card["stats"], grades):
             if (
                 preferences["spliceSound"]
-                and stat["polarity"] == "positive"
                 and stat["id"] in watched
                 and (not vintage_lock or stat["id"] in ready_ingredients)
                 and meets_grade(grade, preferences["spliceGrade"])
             ):
-                matches.append(("splice", identity))
+                matches.append(
+                    ("splice", json.dumps([*prefix, "ingredient", stat_key(stat)]))
+                )
             if (
                 preferences["lockSound"]
                 and lock_rollable
@@ -160,6 +165,23 @@ def find_matches(cards, catalog, preferences):
                 and meets_grade(grade, preferences["lockGrade"])
             ):
                 matches.append(("lock", identity))
+        if preferences["spliceSound"]:
+            for pair in ready_pairs:
+                if any(
+                    meets_grade(present[i][1], preferences["spliceGrade"]) for i in pair
+                ):
+                    matches.append(
+                        (
+                            "splice",
+                            json.dumps(
+                                [
+                                    *prefix,
+                                    "pair",
+                                    sorted(stat_key(present[i][0]) for i in pair),
+                                ]
+                            ),
+                        )
+                    )
         if (
             planner
             and card.get("slot", "current" if index == 0 else "new") == "new"
@@ -179,6 +201,8 @@ class History:
             if key not in self.seen:
                 self.seen[key] = None
                 fresh.append(key)
+            else:
+                self.seen.move_to_end(key)
         while len(self.seen) > 256:
             self.seen.popitem(last=False)
         return fresh

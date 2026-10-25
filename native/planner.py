@@ -20,6 +20,10 @@ from odds import (
 )
 
 
+def watched_splices(state):
+    return set(state["spliceWatch"]) | (set(state["positives"]) & SPLICE_IDS)
+
+
 class Planner:
     def __init__(self, catalog, state):
         self.catalog, self.state = catalog, state

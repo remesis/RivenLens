@@ -32,7 +32,7 @@ from grading import (
 )
 from market_network import MarketClient
 from market_view import SeedDialog
-from planner import Planner
+from planner import Planner, watched_splices
 from search_combo import SearchCombo
 from ui_text import QCheckBox, QFrame, QPushButton, language
 from widgets import (
@@ -594,7 +594,7 @@ class PlannerView(Section):
         self.final_ding.blockSignals(True)
         self.final_ding.setChecked(s["finalSound"])
         self.final_ding.blockSignals(False)
-        self.watch.setText(f"Watch splices ({len(set(s['spliceWatch']) & available)})")
+        self.watch.setText(f"Watch splices ({len(watched_splices(s) & available)})")
         self.generation += 1
         # Never leave old odds looking like results for a newly selected target.
         self.final_metrics.setText('<span style="color:#8dabc0">Calculating…</span>')
@@ -838,7 +838,8 @@ class PlannerView(Section):
         content, rows = box(spacing=12)
         for trait in splices_for(self.model.weapon["kind"]):
             checkbox = QCheckBox(trait["name"])
-            checkbox.setChecked(trait["id"] in self.state["spliceWatch"])
+            checkbox.setChecked(trait["id"] in watched_splices(self.state))
+            checkbox.setEnabled(trait["id"] != self.model.splice)
             rows.addWidget(checkbox)
             recipe = self.model.recipe_text(trait["id"])
             rows.addWidget(label(recipe, "recipe", True))
@@ -857,5 +858,7 @@ class PlannerView(Section):
         selected.add(identity) if checked else selected.discard(identity)
         self.state["spliceWatch"] = sorted(selected)
         available = {t["id"] for t in splices_for(self.model.weapon["kind"])}
-        self.watch.setText(f"Watch splices ({len(selected & available)})")
+        self.watch.setText(
+            f"Watch splices ({len(watched_splices(self.state) & available)})"
+        )
         self.changed.emit()

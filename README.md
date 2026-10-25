@@ -95,6 +95,11 @@ Each stage has its own **Ding** toggle. The final stage alerts only for a fully
 read new roll matching the whole target, including the selected lock and splice
 grades. Hover over the roll and Kuva figures for their assumptions.
 
+Stage 1 watches the planner's selected splice automatically; **Watch splices**
+adds other recipes. A new qualifying positive or negative ingredient can alert,
+and finding its partner can alert separately. An unchanged ingredient carried
+through later rolls does not repeat its ingredient alert.
+
 Splice setup shows one average-roll estimate per step. For unresolved stat pools,
 **≤** marks the higher possible average, rounded up; it is not a guarantee of
 success within that many rolls. Hover over the figures for the full range.
