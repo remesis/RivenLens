@@ -1580,11 +1580,14 @@ async def read_action_mode(engine, image):
 
 def observe_mode(engine, lines):
     mode = mode_from_lines(lines)
-    if mode != "unknown" and (mode == "hover") != bool(
-        getattr(engine, "_hover_regions", None)
+    hover = hover_controls(lines) if mode == "hover" else None
+    if mode != "unknown" and (
+        (mode == "hover") != bool(getattr(engine, "_hover_regions", None))
+        or hover
+        and hover[0] != getattr(engine, "_hover_menu", None)
     ):
-        # Hover text can be anywhere in a mod grid. Do not carry its tight crop
-        # into the centered preview or two-card rolling layout (or vice versa).
+        # Expanded cards move between menus. Do not carry a tight hover crop
+        # into another menu, the centered preview or the cycling layout.
         engine._card_region = None
         engine._next_scene_search = 0
     if mode == "inspection":
@@ -1593,7 +1596,7 @@ def observe_mode(engine, lines):
         engine._inspection_regions = None
         engine._inspection_cache = None
     if mode == "hover":
-        engine._hover_menu, engine._hover_regions = hover_controls(lines)
+        engine._hover_menu, engine._hover_regions = hover
     elif mode != "unknown":
         engine._hover_regions = None
         engine._hover_cache = None

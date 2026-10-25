@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # See LICENSE in the project root for the license and warranty disclaimer.
 
-"""Find the expanded card among collapsed inventory and upgrade-menu cards."""
+"""Find expanded Riven cards in inventory, upgrade and trading menus."""
 
 import re
 import unicodedata
@@ -12,11 +12,12 @@ from parser import FOOTER, VALUE, clean_text, game_card_headers, parse_cards
 
 
 def hover_controls(lines):
-    """Require a pair of visible mod-menu controls, not absent rolling text."""
+    """Require a pair of visible menu controls, not absent rolling text."""
     for menu, labels in (
         ("inventory", ("FUSION", r"(?:RIVEN\s+)?TRANSMUTE")),
         ("inventory", (r"(?:RIVEN\s+)?TRANSMUTE", "DISSOLVE")),
         ("arsenal", ("MODS", "REMOVE ALL")),
+        ("trading", (r"(?:[IO]\s+)?TRADING\s+POLICY", "EXIT")),
     ):
         pair = [
             [
@@ -34,6 +35,8 @@ def hover_controls(lines):
         ):
             continue
         if abs(first["y"] - second["y"]) > max(first["h"], second["h"]) * 2:
+            continue
+        if menu == "trading" and first["x"] + first["w"] > second["x"]:
             continue
         regions = tuple(
             (

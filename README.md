@@ -60,14 +60,16 @@ the sharing chooser. Put RivenLens beside the cards or on a second monitor.
 Capture always starts paused. **Pause OCR** stops scanning;
 closing the window or choosing **Quit** exits the app.
 
-For mod-menu hovers, let the card expand and briefly keep the pointer off its
-text. The last good grades stay visible while you move around the card.
+For mod-menu and trading-screen hovers, let the card expand and briefly keep the
+pointer off its text. The last good grades stay visible while you move around
+the card. Trading-screen detection currently uses the English Trading Policy
+and Exit labels; keep both buttons visible.
 
 ## What's included
 
 - Current and new grades side by side, a shared 1.2 range multiplier and rank 8
-  by default while rolling. Chat links and expanded mod-menu hovers use the
-  card's actual rank. Hover grades stay visible through brief obstructions;
+  by default while rolling. Chat links and expanded mod-menu or trading hovers
+  use the card's actual rank. Hover grades stay visible through brief obstructions;
   weapon variants share grading ranges, so an unreadable variant caption does
   not prevent grading. Distinct weapon types still use their own stat baselines.
 - Collapsible splice, manual-lock and final-odds stages with roll and Kuva estimates.

@@ -332,8 +332,14 @@ class Profile:
 
     def control(self, text):
         key = control_key(text)
-        if self.language == "en" and key in ("riventransmute", "dissolve"):
-            return "TRANSMUTE" if key == "riventransmute" else "DISSOLVE"
+        if self.language == "en":
+            control = {
+                "riventransmute": "TRANSMUTE",
+                "dissolve": "DISSOLVE",
+                "tradingpolicy": "TRADING POLICY",
+            }.get(key)
+            if control:
+                return control
         # The companion's translated headings must still exclude its own cards
         # when it is placed on the captured monitor. These are UI, not game stats.
         for canonical, heading in self.companion_headers.items():

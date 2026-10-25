@@ -487,7 +487,15 @@ def companion_titles(rows, locale):
 def normalize_controls(rows, locale):
     """Fixed UI-label recovery does not supply card roles or numeric evidence."""
     expected = control_key(re.sub(r"<[^>]+>", "", locale.ui["fits"]))
-    menu_controls = ("FUSION", "TRANSMUTE", "DISSOLVE", "MODS", "REMOVE ALL")
+    menu_controls = (
+        "FUSION",
+        "TRANSMUTE",
+        "DISSOLVE",
+        "MODS",
+        "REMOVE ALL",
+        "TRADING POLICY",
+        "EXIT",
+    )
     output = deepcopy(rows)
     separate = []
     for row in output:
