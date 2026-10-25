@@ -133,6 +133,7 @@ for alias, original in {
     "Melee Damage On Heavy Attack": "Heavy Attack Damage",
     "Slam Attack Damage": "Slam Damage",
     "Reload While Holstered": "Magazine Reload While Holstered",
+    "Magazine Reloaded/s when Holstered": "Magazine Reload While Holstered",
 }.items():
     TRAITS[normalize(alias)] = TRAITS[normalize(original)]
 for identity in COMBINED_IDS - {"parry-angle"}:
