@@ -69,9 +69,11 @@ class CaptureWorker(QThread):
         token = self._config["monitorId"]
         index = self._config["monitor"] - 1
         if not token and 0 <= index < len(self._monitors):
-            token = monitor_token(self._monitors[index])
+            token = monitor_token(self._monitors[index], self._monitors)
         if token:
-            matches = [i for i, m in enumerate(monitors) if monitor_token(m) == token]
+            matches = [
+                i for i, m in enumerate(monitors) if monitor_token(m, monitors) == token
+            ]
         else:
             matches = [index] if 0 <= index < len(monitors) else []
         if len(matches) != 1:
@@ -79,7 +81,7 @@ class CaptureWorker(QThread):
         else:
             index = matches[0]
             self._config.update(
-                monitor=index + 1, monitorId=monitor_token(monitors[index])
+                monitor=index + 1, monitorId=monitor_token(monitors[index], monitors)
             )
 
     def shutdown(self):

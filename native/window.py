@@ -454,7 +454,9 @@ class MainWindow(QWidget):
         self.state["capture"]["monitor"] = config["monitor"]
         index = config["monitor"] - 1
         self.state["capture"]["monitorId"] = (
-            monitor_token(monitors[index]) if 0 <= index < len(monitors) else ""
+            monitor_token(monitors[index], monitors)
+            if 0 <= index < len(monitors)
+            else ""
         )
         options(
             self.monitor,
@@ -476,7 +478,7 @@ class MainWindow(QWidget):
         self.state["capture"]["monitor"] = self.monitor.currentData()
         index = self.monitor.currentData() - 1
         self.state["capture"]["monitorId"] = (
-            monitor_token(self.monitors[index])
+            monitor_token(self.monitors[index], self.monitors)
             if 0 <= index < len(self.monitors)
             else ""
         )

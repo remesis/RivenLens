@@ -52,8 +52,8 @@ def validate_frame(image):
     return image
 
 
-def monitor_token(monitor):
-    identity = monitor_identity(monitor)
+def monitor_token(monitor, monitors=None):
+    identity = monitor_identity(monitor, monitors)
     return "id:" + identity if isinstance(identity, str) else "bounds:" + repr(identity)
 
 
@@ -73,10 +73,14 @@ def capture_box(monitor, region):
     }
 
 
-def monitor_identity(monitor):
-    return monitor.get("unique_id") or tuple(
-        monitor[key] for key in ("left", "top", "width", "height")
-    )
+def monitor_identity(monitor, monitors=None):
+    """Use physical identity when unique, otherwise the selected desktop bounds."""
+    identity = monitor.get("unique_id")
+    if identity and (
+        monitors is None or sum(m.get("unique_id") == identity for m in monitors) == 1
+    ):
+        return identity
+    return tuple(monitor[key] for key in ("left", "top", "width", "height"))
 
 
 def matching_output(outputs, monitor):
