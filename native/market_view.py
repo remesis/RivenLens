@@ -211,7 +211,7 @@ class SeedDialog(ModalDialog):
                     name = html.escape(translate(stat["name"]))
                     sign = "− " if stat["polarity"] == "negative" else ""
                     stats.append(
-                        f'<span style="color:{color};font-size:{grade_size:g}px;font-weight:600">{stat["grade"]}</span> {sign}{name}'
+                        f'<span style="color:{color};font-size:{grade_size:g}px;font-weight:600">{stat["grade"]}&nbsp;({stat["quality"]:+.3f})</span> {sign}{name}'
                     )
                 detail = (
                     f'{html.escape(number(entry["price"], 0))} <img src="rivenlens:platinum" width="{width}" height="{height}" style="vertical-align:middle"> - {html.escape(entry["format"])} - '

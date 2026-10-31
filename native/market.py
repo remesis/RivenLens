@@ -258,6 +258,7 @@ class SeedMatcher:
         return {
             "name": self.model.name(identity),
             "grade": values[identity]["grade"],
+            "quality": values[identity]["quality"],
             "polarity": values[identity]["polarity"],
         }
 
